@@ -1,20 +1,58 @@
 import { useState } from "react";
+import { validateRegister } from "../utils/validateRegister";
 
-function Register() {
+type RegisterErrors = {
+    name?: string;
+    email?: string;
+    password?: string;
+};
+
+
+
+function Register( { onChange }: { onChange: () => void } ) {
+
+    const backendUrl = import.meta.env.VITE_BACKEND_URL;
+    const [errors, setErrors] = useState<RegisterErrors>({});
+    
     const [form, setForm] = useState({
-        username: "",
+        name: "",
         email: "",
         password: ""
     });
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setForm({ ...form, [e.target.name]: e.target.value });
+    const handleChange =  (e: React.ChangeEvent<HTMLInputElement>) => {
+
+        const updated = { ...form, [e.target.name]: e.target.value };
+        setForm(updated);
+        setErrors(validateRegister(updated));
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        console.log("Datos de registro:", form);
-        // acá hacés el fetch/axios al endpoint /register
+        
+        const validation = validateRegister(form);
+
+    if (Object.keys(validation).length > 0) {
+        setErrors(validation);
+        return; // ❌ no enviar si hay errores
+    }
+        const res = await fetch(`${backendUrl}/users/register`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(form)
+        });
+        if(res.ok){
+            alert("Usuario creado con éxito");
+            setForm({ name: "", email: "", password: "" });
+            setErrors({});
+            onChange();
+        }
+        else{
+            const data = await res.json();
+            alert(`Error: ${data.message}`);
+        }
+
+
     };
 
     return (
@@ -27,13 +65,16 @@ function Register() {
 
                 <input
                     type="text"
-                    name="username"
+                    name="name"
                     placeholder="Usuario"
-                    value={form.username}
+                    value={form.name}
                     onChange={handleChange}
                     className="border p-2 rounded"
                     required
                 />
+                {errors.name && (
+                    <p className="text-red-500 text-sm">{errors.name}</p>
+                )}
 
                 <input
                     type="email"
@@ -43,6 +84,9 @@ function Register() {
                     onChange={handleChange}
                     className="border p-2 rounded"
                 />
+                 {errors.email && (
+                    <p className="text-red-500 text-sm">{errors.email}</p>
+                )}
 
                 <input
                     type="password"
@@ -53,6 +97,9 @@ function Register() {
                     className="border p-2 rounded"
                     required
                 />
+                {errors.password && (
+                    <p className="text-red-500 text-sm">{errors.password}</p>
+                )}
 
                 <button 
                     type="submit"

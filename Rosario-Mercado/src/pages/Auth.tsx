@@ -5,6 +5,9 @@ import { useState } from "react";
 function Auth(){
 
     const [isLogin, setIsLogin] = useState(true);
+    const handleChange = () => {
+        setIsLogin(true);
+    }
 
     return(
         <div className="text-[#1E293B] w-full flex justify-center mt-10 flex-col items-center">
@@ -23,7 +26,7 @@ function Auth(){
                 }
             >Crear cuenta</button>
             </div>
-            {isLogin ? <Login /> : <Register />}
+            {isLogin ? <Login /> : <Register onChange={handleChange} />}
         </div>
     );
 }
