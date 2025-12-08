@@ -1,6 +1,7 @@
 import { Routes, Route } from "react-router-dom";
-import Home from "./pages/Home/Home";
+import Home from "./pages/Home.tsx";
 import MainLayout from "./layouts/MainLayout";
+import Auth from "./pages/Auth";
 
 const AppRouter = () => {
   return (
@@ -8,6 +9,7 @@ const AppRouter = () => {
         {/* Rutas que usan el layout con Navbar */}
         <Route element={<MainLayout />}>
             <Route path="/" element={<Home />} />
+            <Route path="/auth" element={<Auth />} />
         </Route>
         {/* Rutas sin Navbar */}
 
