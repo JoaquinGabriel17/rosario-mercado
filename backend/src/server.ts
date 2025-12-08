@@ -16,7 +16,7 @@ app.use(express.json());
 
 // Rutas
 app.use("/users", userRoutes);
-app.use("/api/products", productRoutes);
+app.use("/products", productRoutes);
 
 app.listen(process.env.PORT, () => {
   connectDB();

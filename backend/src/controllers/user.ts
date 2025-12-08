@@ -28,13 +28,12 @@ export const register = async (req: Request, res: Response) => {
 export const login = async (req: Request, res: Response) => {
   try {
     const { name, password } = req.body;
-
+    
     const user = await User.findOne({ name });
     if (!user) return res.status(404).json({ message: "Usuario no encontrado" });
 
     const valid = await bcrypt.compare(password, user.password);
     if (!valid) return res.status(400).json({ message: "Password incorrecto" });
-
     const token = jwt.sign(
       { id: user._id, name: user.name },
       process.env.JWT_SECRET!,
