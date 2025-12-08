@@ -1,0 +1,8 @@
+nav{
+    background-color: #FFFFFF;
+    padding: 1rem;
+    border-bottom: solid .3rem #1E40AF;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}

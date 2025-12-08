@@ -1,0 +1,9 @@
+| Uso                    | Color                     |
+| ---------------------- | ------------------------- |
+| Primario               | `#2563EB` (Azul moderno)  |
+| Secundario             | `#1E40AF` (Azul profundo) |
+| Fondo claro            | `#F8FAFC`                 |
+| Fondo tarjetas         | `#FFFFFF`                 |
+| Texto                  | `#1E293B`                 |
+| Éxito / confirmaciones | `#16A34A`                 |
+| Error                  | `#DC2626`                 |
