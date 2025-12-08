@@ -2,7 +2,7 @@ import { useState } from "react";
 
 function Login() {
     const [form, setForm] = useState({
-        email: "",
+        name: "",
         password: ""
     });
 
@@ -17,20 +17,20 @@ function Login() {
     };
 
     return (
-        <div className="auth-container">
+        <div className="w-full flex justify-center mt-10">
             <form 
                 onSubmit={handleSubmit} 
-                className="auth-form"
+                className="flex flex-col gap-4 p-6 rounded-xl shadow-md w-80"
             >
-                <h2 className="auth-title">Iniciar sesión</h2>
+                <h2 className="text-xl font-bold text-center">Iniciar sesión</h2>
 
                 <input
-                    type="email"
-                    name="email"
-                    placeholder="Email"
-                    value={form.email}
+                    type="text"
+                    name="name"
+                    placeholder="Nombre de usuario"
+                    value={form.name}
                     onChange={handleChange}
-                    className="auth-input"
+                    className="border p-2 rounded"
                     required
                 />
 
@@ -40,13 +40,13 @@ function Login() {
                     placeholder="Contraseña"
                     value={form.password}
                     onChange={handleChange}
-                    className="auth-input"
+                    className="border p-2 rounded"
                     required
                 />
 
                 <button 
                     type="submit"
-                    className="auth-btn"
+                    className="bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
                 >
                     Entrar
                 </button>
