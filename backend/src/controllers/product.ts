@@ -3,28 +3,53 @@ import { AuthRequest } from "../middlewares/auth";
 import Product from "../models/Product";
 import User from "../models/User";
 import mongoose from "mongoose";
+import cloudinary from "../config/cloudinary";
 
 // CREAR PRODUCTO
 export const createProduct = async (req: AuthRequest, res: Response) => {
   try {
-    const { title, description, price, category, images } = req.body;
+    const { title, description, price, category } = req.body;
+
     if (!title || !description || !price || !category) {
       return res.status(400).json({ message: "Faltan datos obligatorios" });
     }
 
+    let imageUrl = "";
 
-  
+    // Si viene archivo → subir a Cloudinary con await
+    if (req.file) {
+      imageUrl = await new Promise((resolve, reject) => {
+        const uploadStream = cloudinary.uploader.upload_stream(
+          { folder: "products" },
+          (error, result) => {
+            if (error) return reject(error);
+            resolve(result!.secure_url);
+          }
+        );
+
+        uploadStream.end(req.file!.buffer);
+      });
+    }
+
+
     const newProduct = await Product.create({
-      ...req.body,
+      title,
+      description,
+      price,
+      category,
+      image: imageUrl,
       userId: req.user.id,
     });
 
-    res.json(newProduct);
+    return res.json(newProduct);
 
   } catch (error) {
-    res.status(500).json({ message: error });
+    console.error(error);
+    return res.status(500).json({ message: "Error al crear producto" });
   }
 };
+
+
 
 // OBTENER PRODUCTOS POR ID DE USUARIO
 export const getProductsByUserId = async (req: AuthRequest, res: Response) => {
