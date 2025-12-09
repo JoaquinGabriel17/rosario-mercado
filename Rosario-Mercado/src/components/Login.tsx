@@ -18,8 +18,8 @@ function Login() {
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
-        console.log("Submitting login form:", form);
-        e.preventDefault();
+        try {
+            e.preventDefault();
         if(!form.email || !form.password) {
             alert("Faltan datos obligatorios");
             return;
@@ -40,9 +40,15 @@ function Login() {
                 name: data.user.name,
                 token: data.token
             });
-            console.log("Login exitoso:", data);
             navigate("/");
         }
+        else{
+            alert(`Error: ${data.message}`);
+        }
+        } catch (error) {
+            return alert("Error al conectar con el servidor: " + error);
+        }
+        
     };
 
     return (
