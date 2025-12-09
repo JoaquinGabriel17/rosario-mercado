@@ -4,32 +4,41 @@ import Product from "../models/Product";
 import User from "../models/User";
 import mongoose from "mongoose";
 import cloudinary from "../config/cloudinary";
+import { uploadToCloudinary } from "../utils/cloudinary";
+
+
+
 
 // CREAR PRODUCTO
 export const createProduct = async (req: AuthRequest, res: Response) => {
   try {
+    //haz un tipo para imageData
+
+
     const { title, description, price, category } = req.body;
 
     if (!title || !description || !price || !category) {
       return res.status(400).json({ message: "Faltan datos obligatorios" });
     }
 
-    let imageUrl = "";
-
+    
     // Si viene archivo → subir a Cloudinary con await
-    if (req.file) {
-      imageUrl = await new Promise((resolve, reject) => {
+    if (!req.file) {
+      return res.status(400).json({ message: "No se envió una imagen para crear el producto" });
+    }
+
+      const imageData = await new Promise<{ imageUrl: string; imageId: string }>((resolve, reject) => {
         const uploadStream = cloudinary.uploader.upload_stream(
           { folder: "products" },
           (error, result) => {
             if (error) return reject(error);
-            resolve(result!.secure_url);
+            resolve({imageUrl: result!.secure_url, imageId: result!.public_id});
           }
         );
 
         uploadStream.end(req.file!.buffer);
       });
-    }
+    
 
 
     const newProduct = await Product.create({
@@ -37,7 +46,8 @@ export const createProduct = async (req: AuthRequest, res: Response) => {
       description,
       price,
       category,
-      image: imageUrl,
+      imageUrl: imageData.imageUrl,
+      imageId:  imageData.imageId, 
       userId: req.user.id,
     });
 
@@ -77,6 +87,21 @@ export const getProductsByUserId = async (req: AuthRequest, res: Response) => {
 // EDITAR PRODUCTO POR ID
 export const editProductById = async (req: AuthRequest, res: Response) => {
   try {
+    const uploadToCloudinary = (fileBuffer: Buffer): Promise<any> => {
+  return new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      { folder: "productos" },
+      (error, result) => {
+        if (error) reject(error);
+        else resolve(result);
+      }
+    );
+
+    stream.end(fileBuffer);
+  });
+};
+
+
     const { productId } = req.params;
     if(!productId){
       return res.status(400).json({ message: "No se envió el ID del producto" });
@@ -85,29 +110,45 @@ export const editProductById = async (req: AuthRequest, res: Response) => {
       return res.status(400).json({ message: "El formato de productId es inválido" });
     }
 
-    if(!req.body){
-      return res.status(400).json({ message: "No se enviaron datos para editar" });
+    const product = await Product.findById(productId);
+    if (!product) return res.status(404).json({ message: "Producto no encontrado" });
+
+    // verificar que el producto pertenezca al usuario autenticado
+    if (product.userId !== req.user.id) {
+      return res.status(403).json({ message: "El ID del producto enviado no pertenece a tu usuario" });
     }
-    const { title, images, description, price, category}= req.body;
-    if (
-  title === undefined &&
-  description === undefined &&
-  price === undefined &&
-  category === undefined &&
-  images === undefined
-) {
-  return res.status(400).json({ message: "No se enviaron datos para editar" });
+
+
+ // 1. Si viene una nueva imagen
+    if (req.file) {
+  console.log("Nueva imagen recibida");
+
+  // Subir buffer en vez de req.file.path
+  const uploadResult = await uploadToCloudinary(req.file.buffer);
+
+  // Eliminar imagen vieja si existe
+  if (product.imageUrl) {
+    await cloudinary.uploader.destroy(product.imageId);
+  }
+
+  product.imageUrl = uploadResult.secure_url;
+  product.imageId = uploadResult.public_id;
 }
 
-    const updatedProduct = await Product.findByIdAndUpdate(
-      productId,
-      { title, images, description, price, category },
-      { new: true }
-    );
-    if (!updatedProduct) {
-      return res.status(404).json({ message: "Producto no encontrado" });
-    }
-    res.json({message: "producto editado correctamente", updatedProduct});
+    
+
+        // 2. Actualizar campos comunes si fueron enviados
+    const { title, description, price, category}= req.body;
+
+    if (title) product.title = title;
+    if (description) product.description = description;
+    if (price) product.price = price;
+    if (category) product.category = category;
+
+    const updatedProduct =  await product.save();
+
+    
+    res.json({message: "producto actualizado correctamente", updatedProduct});
 
   } catch (error) {
     if(error )

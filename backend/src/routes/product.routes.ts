@@ -12,7 +12,7 @@ const router = Router();
 
 router.post("/", auth, upload.single("image"), createProduct);  // Crear producto
 router.get("/:userId", auth, getProductsByUserId);  // Obtener productos por ID de usuario
-router.put("/:productId", auth, editProductById);  // Editar producto por ID
+router.put("/:productId", auth,  upload.single("image"), editProductById);  // Editar producto por ID
 router.delete("/:productId", auth, deleteProductById);  // Eliminar producto por ID 
 
 export default router;
