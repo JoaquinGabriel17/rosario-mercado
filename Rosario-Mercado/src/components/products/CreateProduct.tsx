@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useUserStore } from "../store/userStore";
+import { useUserStore } from "../../store/userStore";
 
     const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
@@ -45,14 +45,14 @@ export default function CreateProduct() {
     e.preventDefault();
 
     // Validaciones obligatorias
-    if (!form.title || !form.description || !form.price || !form.category || !form.image) {
+    if (!form.title || !form.price || !form.category || !form.image) {
       setErrors("Todos los campos obligatorios deben completarse.");
       return;
     }
 
     const formData = new FormData();
     formData.append("title", form.title);
-    formData.append("description", form.description);
+    if(form.description) formData.append("description", form.description);
     formData.append("price", form.price.toString());
     formData.append("category", form.category);
     formData.append("image", form.image); 
@@ -120,14 +120,13 @@ export default function CreateProduct() {
 
         {/* DESCRIPCIÓN */}
         <div>
-          <label className="font-medium">Descripción *</label>
+          <label className="font-medium">Descripción</label>
           <textarea
             name="description"
             value={form.description}
             onChange={handleChange}
             placeholder="Ej: Pizza casera con queso..."
             className="w-full p-2 border rounded-lg h-24"
-            required
           />
         </div>
 
