@@ -1,30 +1,30 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
 
 interface User {
   id: string;
+  username: string;
   email: string;
-  name: string;
   token: string;
 }
 
 interface UserState {
   user: User | null;
-  setUser: (data: User) => void;
+  setUser: (user: User) => void;
   logout: () => void;
 }
 
-export const useUserStore = create<UserState>()(
-  persist(
-    (set) => ({
-      user: null,
+export const useUserStore = create<UserState>((set) => ({
+  user: sessionStorage.getItem("user")
+    ? JSON.parse(sessionStorage.getItem("user")!)
+    : null,
 
-      setUser: (data) => set({ user: data }),
+  setUser: (user) => {
+    sessionStorage.setItem("user", JSON.stringify(user));
+    set({ user });
+  },
 
-      logout: () => set({ user: null }),
-    }),
-    {
-      name: "user-storage", // nombre en localStorage
-    }
-  )
-);
+  logout: () => {
+    sessionStorage.removeItem("user");
+    set({ user: null });
+  }
+}));
