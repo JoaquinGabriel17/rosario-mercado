@@ -17,7 +17,7 @@ export const createProduct = async (req: AuthRequest, res: Response) => {
 
     const { title, description, price, category } = req.body;
 
-    if (!title || !description || !price || !category) {
+    if (!title || !price || !category) {
       return res.status(400).json({ message: "Faltan datos obligatorios" });
     }
 
@@ -182,3 +182,26 @@ export const deleteProductById = async (req: AuthRequest, res: Response) => {
     
   }
 };
+
+//OBTENER PRODUCTO POR ID DE PRODUCTO
+export const getProductById = async (req: AuthRequest, res: Response) => {
+  try {
+    const { productId } = req.params
+    if(!productId){
+      return res.status(400).json({ message: "No se envió el ID del producto" });
+    }
+
+    if (!mongoose.Types.ObjectId.isValid(productId)) {
+      return res.status(400).json({ message: "El formato de productId es inválido" });
+    }
+    const product = await Product.findById(productId);
+    if (!product) {
+      return res.status(404).json({ message: "Producto no encontrado" });
+    }
+
+    res.json(product)
+
+  } catch (error) {
+    
+  }
+}
