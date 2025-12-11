@@ -4,12 +4,14 @@ import { useState } from "react";
 import { Button } from "../ui/Button";
 import Alert from "../ui/Alert";
 import Loading from "../ui/Loading";
+import { useNavigate } from "react-router-dom";
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 
 
 const ResetPassword = () => {
+  const navigate = useNavigate()
   const [searchParams] = useSearchParams();
   const token = searchParams.get("token");
   const [loading, setLoading] = useState<boolean>(false)
@@ -61,6 +63,7 @@ return;
             message: "Contraseña actualizada correctamente",
             type: "success"
         })
+        navigate("/auth")
     }
     else{
         setLoading(false)
