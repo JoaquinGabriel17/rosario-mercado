@@ -5,7 +5,7 @@ import jwt from "jsonwebtoken";
 
 export const register = async (req: Request, res: Response) => {
   try {
-    const { name, password, email } = req.body;
+    const { name, password, email, phoneNumber, businessHours, address, whatsappAvailable, delivery } = req.body;
 
     if(!name || !password || !email) {
       return res.status(400).json({ message: "Faltan datos obligatorios" });
@@ -23,7 +23,14 @@ export const register = async (req: Request, res: Response) => {
 
     const hashed = await bcrypt.hash(password, 10);
 
-    const newUser = await User.create({ email, name, password: hashed });
+    const newUser = await User.create({
+      email, name, password: hashed,
+      phoneNumber: phoneNumber || undefined,
+      businessHours: businessHours || undefined,
+      address: address || undefined,
+      whatsappAvailable: whatsappAvailable ?? false,
+      delivery: delivery ?? false,
+    });
 
     return res.json({
       message: "Usuario creado correctamente",
@@ -56,7 +63,13 @@ export const login = async (req: Request, res: Response) => {
     return res.json({
       message: "Login correcto",
       token,
-      user: { id: user._id, email: user.email, name: user.name }
+      user: { id: user._id, email: user.email, name: user.name,
+        phoneNumber: user.phoneNumber,
+        businessHours: user.businessHours,
+        address: user.address,
+        whatsappAvailable: user.whatsappAvailable,
+        delivery: user.delivery,
+      }
     });
   } catch (error) {
     res.status(500).json({ message: "Error al hacer login", error });

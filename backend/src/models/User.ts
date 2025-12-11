@@ -4,13 +4,25 @@ export interface IUser extends Document {
   name: string;
   email: string;
   password: string;
+  phoneNumber?: string;
+  businessHours?: string;     // horario de atención
+  address?: string;           // dirección
+  whatsappAvailable?: boolean;
+  delivery?: boolean;
 }
 
 const userSchema = new Schema<IUser>(
   {
     name: { type: String, required: true, unique: true },
     email: { type: String, required: true, unique: true },
-    password: { type: String, required: true }
+    password: { type: String, required: true },
+
+    phoneNumber: { type: String },
+    businessHours: { type: String },       // horario de atención
+    address: { type: String },
+
+    whatsappAvailable: { type: Boolean, default: false },
+    delivery: { type: Boolean, default: false },
   },
   { timestamps: true }
 );
