@@ -2,6 +2,9 @@ import { Request, Response } from "express";
 import User from "../models/User";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import { AuthRequest } from "../middlewares/auth";
+import sendEmail from "../utils/sendEmail"; // función que envía correo
+
 
 export const register = async (req: Request, res: Response) => {
   try {
@@ -73,5 +76,160 @@ export const login = async (req: Request, res: Response) => {
     });
   } catch (error) {
     res.status(500).json({ message: "Error al hacer login", error });
+  }
+};
+
+export const updateInfo = async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.user.id;
+
+
+    // Campos permitidos
+    const allowedFields = [
+      "email",
+      "name",
+      "phoneNumber",
+      "address",
+      "businessHours",
+      "whatsappAvailable",
+      "delivery",
+    ];
+
+    // Filtrar los campos enviados en la request
+    const updates: Record<string, any> = {};
+
+    allowedFields.forEach((field) => {
+      if (req.body[field] !== undefined) {
+        updates[field] = req.body[field];
+      }
+    });
+
+    // Si no se envió ningún campo válido → error
+    if (Object.keys(updates).length === 0) {
+      return res.status(400).json({
+        message: "No se envió ningún campo válido para actualizar",
+      });
+    }
+
+    // Validar email duplicado
+if (updates.email) {
+  const emailExists = await User.findOne({
+    email: updates.email,
+    _id: { $ne: userId }, // excluir al usuario actual
+  });
+
+  if (emailExists) {
+    return res.status(400).json({
+      message: "El email ingresado ya está registrado"
+    });
+  }
+}
+
+// Validar nombre duplicado
+if (updates.name) {
+  const nameExists = await User.findOne({
+    name: updates.name,
+    _id: { $ne: userId }, // excluir al usuario actual
+  });
+
+  if (nameExists) {
+    return res.status(400).json({
+      message: "El nombre ingresado ya está registrado"
+    });
+  }
+}
+
+    const updatedUser = await User.findByIdAndUpdate(userId, updates, {
+      new: true,
+    });
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: "Usuario no encontrado" });
+    }
+
+    return res.status(200).json({
+      message: "Usuario actualizado correctamente",
+      user: updatedUser,
+    });
+
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      message: "Error al actualizar el usuario",
+      error: error
+    });
+  }
+}
+
+
+export const forgotPassword = async (req: Request, res: Response) => {
+  try {
+    const  { email }  = req.body;
+
+    if (!email) {
+      return res.status(400).json({ message: "No se envió un email" });
+    }
+
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({ message: "No existe un usuario con ese email" });
+    }
+
+    // Crear token temporal (15 minutos)
+    const token = jwt.sign(
+      { id: user._id },
+      process.env.JWT_RESET_SECRET!,
+      { expiresIn: "60m" }
+    );
+
+    const resetLink = `${process.env.FRONTEND_URL}/reset-password?token=${token}`;
+
+    await sendEmail({
+      to: email,
+      subject: "Recuperar contraseña - Rosario Mercado",
+      html: `
+        <p>Para recuperar tu contraseña de Rosario Mercado, hacé clic en el siguiente enlace:</p>
+        <a href="${resetLink}" target="_blank">${resetLink}</a>
+      `
+    });
+
+    res.json({ message: "Correo enviado correctamente" });
+
+  } catch (error: any) {
+    console.log(error);
+    res.status(500).json({ message: "Error al enviar correo" });
+  }
+};
+
+
+export const resetPassword = async (req: Request, res: Response) => {
+  try {
+    const { token, password } = req.body;
+
+    if (!token || !password) {
+      return res.status(400).json({ message: "Token y contraseña son requeridos" });
+    }
+
+    // Verificar token
+    const decoded: any = jwt.verify(token, process.env.JWT_RESET_SECRET!);
+
+    const user = await User.findById(decoded.id);
+
+    if (!user) {
+      return res.status(404).json({ message: "Usuario no encontrado" });
+    }
+
+    // Guardar contraseña hasheada
+    const salt = await bcrypt.genSalt(10);
+    user.password = await bcrypt.hash(password, salt);
+
+    await user.save();
+
+    res.json({ message: "Contraseña actualizada correctamente" });
+
+  } catch (error: any) {
+    console.log(error);
+    res.status(400).json({ message: "Token inválido o expirado" });
   }
 };
