@@ -5,6 +5,11 @@ interface User {
   name: string;
   email: string;
   token: string;
+  phoneNumber?: string;
+  businessHours?: string;
+  address?: string;
+  whatsappAvailable: boolean;
+  delivery: boolean;
 }
 
 interface UserState {

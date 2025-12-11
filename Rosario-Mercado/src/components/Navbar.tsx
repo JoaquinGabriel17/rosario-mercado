@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { useUserStore } from "../store/userStore";
+import { Button } from './ui/Button';
 
 function Navbar() {
 
@@ -11,29 +12,23 @@ function Navbar() {
         <nav className='bg-[#FFFFFF] flex justify-between items-center p-4 text-[#1E293B] border-b-4 border-b-[#2563EB]' >
             
             {user ? (
-                <button
-                className="px-6 py-2 rounded-lg bg-blue-600 text-white font-medium 
-active:scale-95 transition-all duration-150 shadow-sm"
+                <Button
                 onClick={() => navigate('/dashboard')}
                 >
                     Mi cuenta
-                </button>
+                </Button>
             )
             :
             (
-                <button
-                className="px-6 py-2 rounded-lg bg-blue-600 text-white font-medium 
-active:scale-95 transition-all duration-150 shadow-sm"
+                <Button
                 onClick={() => navigate('/auth')}
-            >Iniciar sesión</button>
+            >Iniciar sesión</Button>
             )
         }
             
-            <button
-                className="px-6 py-2 rounded-lg bg-blue-600 text-white font-medium 
-active:scale-95 transition-all duration-150 shadow-sm"
+            <Button
                 onClick={() => navigate('/')}
-            >Inicio</button>
+            >Inicio</Button>
         </nav>
     )
 }

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useUserStore } from "../../store/userStore";
 import Loading from "../ui/Loading";
 import Alert from "../ui/Alert";
+import { Button } from "../ui/Button";
 
     const backendUrl = import.meta.env.VITE_BACKEND_URL;
 

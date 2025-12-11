@@ -3,6 +3,7 @@ import { useUserStore } from "../store/userStore";
 import { useNavigate } from "react-router-dom";
 import Loading from "./ui/Loading";
 import Alert from "./ui/Alert";
+import { Button } from "./ui/Button";
 
 function Login() {
     const [form, setForm] = useState({
@@ -52,7 +53,12 @@ setAlert({
                 id: data.user.id,
                 email: data.user.email,
                 name: data.user.name,
-                token: data.token
+                token: data.token,
+                whatsappAvailable: data.user.whatsappAvailable,
+                delivery: data.user.delivery,
+                phoneNumber: data.user.phoneNumber || undefined,
+                businessHours: data.user.businessHours || undefined,
+                address: data.user.address || undefined
             });
             setLoading(false)
             navigate("/");
@@ -115,13 +121,12 @@ return;
                     required
                 />
 
-                <button 
+                <Button 
                     type="submit"
-                    className="bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
                     onClick={handleSubmit}
                 >
                     Entrar
-                </button>
+                </Button>
             </form>
         </div>
     );
