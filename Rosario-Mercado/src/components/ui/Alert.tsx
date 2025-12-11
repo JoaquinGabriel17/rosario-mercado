@@ -25,24 +25,23 @@ const Alert: React.FC<AlertProps> = ({
   };
 
  /* // Para mostrar uno:
+ import Loading from "../ui/Loading";
+import Alert from "../ui/Alert";
+
+const [loading, setLoading] = useState<boolean>(false)
  const [alert, setAlert] = useState({
   open: false,
   message: "",
   type: "info" as "info" | "success" | "error",
 });
 
+setLoading(false)
 setAlert({
   open: true,
   message: "Producto creado con éxito",
   type: "success",
 });
 
-{alert && <Alert
-  open={alert.open}
-  message={alert.message}
-  type={alert.type}
-  onClose={() => setAlert({ ...alert, open: false })}
-/>}
 
   {loading && <Loading></Loading>}
     {alert && <Alert
@@ -50,6 +49,8 @@ setAlert({
   message={alert.message}
   type={alert.type}
   onClose={() => setAlert({ ...alert, open: false })}/>}
+
+  
 */
   return (
     <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-100 px-4">

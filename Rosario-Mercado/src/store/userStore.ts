@@ -28,3 +28,5 @@ export const useUserStore = create<UserState>((set) => ({
     set({ user: null });
   }
 }));
+
+//    const logout = useUserStore((state) => state.logout);

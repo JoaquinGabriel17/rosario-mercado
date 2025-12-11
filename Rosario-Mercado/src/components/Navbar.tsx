@@ -4,7 +4,6 @@ import { useUserStore } from "../store/userStore";
 function Navbar() {
 
     const user = useUserStore((state) => state.user);
-    const logout = useUserStore((state) => state.logout);
 
     const navigate = useNavigate();
 
