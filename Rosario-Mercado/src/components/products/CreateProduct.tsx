@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { useUserStore } from "../../store/userStore";
+import Loading from "../ui/Loading";
+import Alert from "../ui/Alert";
 
     const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
@@ -24,6 +26,12 @@ export default function CreateProduct() {
   });
 
   const [errors, setErrors] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false)
+  const [ alert, setAlert] = useState({
+    open: false, 
+    message: "", 
+    type: "info" as "info" | "success" | "error",
+  })
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -42,11 +50,17 @@ export default function CreateProduct() {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
+    setLoading(true)
     e.preventDefault();
 
     // Validaciones obligatorias
     if (!form.title || !form.price || !form.category || !form.image) {
-      setErrors("Todos los campos obligatorios deben completarse.");
+      setLoading(false)
+      setAlert({
+  open: true,
+  message: "Debe completar todos los campos obligatorios *",
+  type: "error",
+});
       return;
     }
 
@@ -74,9 +88,15 @@ export default function CreateProduct() {
     
     if (!res.ok) {
     console.log("Error:", data.message);
+    setLoading(false)
     return;
   }
-  alert("Producto creado con éxito");
+  setLoading(false)
+  setAlert({
+  open: true,
+  message: "Producto creado con éxito",
+  type: "success",
+});
 
     // Reset form
     setForm({
@@ -86,13 +106,20 @@ export default function CreateProduct() {
       category: "",
       image: null,
     });
+    
   };
   
 
 
   return (
+    
     <div className="p-4 text-left">
-
+    {loading && <Loading></Loading>}
+    {alert && <Alert
+  open={alert.open}
+  message={alert.message}
+  type={alert.type}
+  onClose={() => setAlert({ ...alert, open: false })}/>}
 
       <h2 className="text-xl font-semibold mb-4 text-center">Crear Producto</h2>
 

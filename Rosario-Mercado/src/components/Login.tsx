@@ -1,12 +1,20 @@
 import { useState } from "react";
 import { useUserStore } from "../store/userStore";
 import { useNavigate } from "react-router-dom";
+import Loading from "./ui/Loading";
+import Alert from "./ui/Alert";
 
 function Login() {
     const [form, setForm] = useState({
         email: "",
         password: ""
     });
+    const [loading, setLoading] = useState<boolean>(false)
+ const [alert, setAlert] = useState({
+  open: false,
+  message: "",
+  type: "info" as "info" | "success" | "error",
+});
 
     const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
@@ -19,9 +27,15 @@ function Login() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         try {
+            setLoading(true)
             e.preventDefault();
         if(!form.email || !form.password) {
-            alert("Faltan datos obligatorios");
+            setLoading(false)
+setAlert({
+  open: true,
+  message: "Faltan datos obligatorios",
+  type: "error",
+});
             return;
         }
         
@@ -40,19 +54,41 @@ function Login() {
                 name: data.user.name,
                 token: data.token
             });
+            setLoading(false)
             navigate("/");
         }
         else{
-            alert(`Error: ${data.message}`);
+           setLoading(false)
+setAlert({
+  open: true,
+  message: "Error al iniciar sesión",
+  type: "error",
+});
+return;
         }
         } catch (error) {
-            return alert("Error al conectar con el servidor: " + error);
+            setLoading(false)
+setAlert({
+  open: true,
+  message: "Error al iniciar sesión",
+  type: "error",
+});
+return;
+        }
+        finally{
+            setLoading(false);
         }
         
     };
 
     return (
         <div className="w-full flex justify-center mt-10">
+            {loading && <Loading></Loading>}
+    {alert && <Alert
+  open={alert.open}
+  message={alert.message}
+  type={alert.type}
+  onClose={() => setAlert({ ...alert, open: false })}/>}
             <form 
                 onSubmit={handleSubmit} 
                 className="flex flex-col gap-4 p-6 rounded-xl shadow-md w-80"

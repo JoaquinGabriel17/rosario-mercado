@@ -1,14 +1,19 @@
 import { useEffect, useState } from "react";
 import { Button } from "../ui/Button";
 import { useUserStore } from "../../store/userStore";
-
+import Loading from "../ui/Loading";
+import Alert from "../ui/Alert";
 
 
 export default function EditProducts({ productId, onBack }:{ productId: string, onBack: () => void; } ) {
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState("");
     const [selectedProduct, setSelectedProduct] = useState<any>(null);
     const user = useUserStore((state) => state.user);
+    const [alert, setAlert] = useState({
+  open: false,
+  message: "",
+  type: "info" as "info" | "success" | "error",
+});
 
 
   const [formData, setFormData] = useState({
@@ -24,17 +29,41 @@ export default function EditProducts({ productId, onBack }:{ productId: string, 
   const fetchProductToEdit = async () => {
     try {
         setLoading(true)
-        if(!user){ alert('Usuario no identificado'); return;}
+        if(!user){ 
+          setLoading(false)
+          setAlert({
+  open: true,
+  message: "Usuario no identificado",
+  type: "error",
+});
+          ; return;
+        }
       const res = await fetch(`${API_BASE}/products/${productId}`, {
         headers: { Authorization: `Bearer ${user.token}` },
       });
 
-      if (!res.ok) throw new Error("Error al cargar producto para editar");
+      if (!res.ok) {
+        setLoading(false)
+        setAlert({
+  open: true,
+  message: "Error al cargar producto para editar",
+  type: "error",
+});
+console.log(res)
+return;
+      }
       const data = await res.json();
 
       setSelectedProduct(data);
     } catch (err) {
-      setError("Error al cargar el producto seleccionado");
+      setLoading(false)
+
+      setAlert({
+  open: true,
+  message: "Error al cargar producto para editar",
+  type: "error",
+});
+console.log(err)
     }
     finally{
         setLoading(false)
@@ -43,13 +72,18 @@ export default function EditProducts({ productId, onBack }:{ productId: string, 
 
   useEffect(() => {
     if (productId) {
+      
       fetchProductToEdit();
     } else {
       setLoading(false)
-      setError("No se seleccionó un producto para editar")
+      setAlert({
+  open: true,
+  message: "Error al cargar producto para editar",
+  type: "error",
+});
       return
     }
-  }, [productId]);
+  }, []);
 
   const handleChange = (e: any) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -65,7 +99,25 @@ export default function EditProducts({ productId, onBack }:{ productId: string, 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     try {
-        if(!user){ alert('Usuario no identificado'); return;}
+      setLoading(true)
+        if(!user){ 
+          setLoading(false)
+      setAlert({
+  open: true,
+  message: "Usuario no identificado",
+  type: "error",
+});
+ return;}
+
+    if(!formData.title && !formData.description && !formData.price && !formData.category && !formData.image){
+       setLoading(false)
+      setAlert({
+  open: true,
+  message: "Debe modificar al menos un campo",
+  type: "error",
+});
+return;
+    }
 
       const res = await fetch(`${API_BASE}/products/${productId}`, {
         method: "PUT",
@@ -77,18 +129,45 @@ export default function EditProducts({ productId, onBack }:{ productId: string, 
       });
 
       if (!res.ok) throw new Error("Error al actualizar producto");
-      alert("Producto actualizado correctamente");
-      onBack()
+      setLoading(false)
+      setAlert({
+  open: true,
+  message: "Producto actualizado correctamente",
+  type: "success",
+});
     } catch (err) {
-      alert("Error al actualizar");
+      setLoading(false)
+      console.log(err)
+      setAlert({
+  open: true,
+  message: "Error al actualizar producto",
+  type: "error",
+});
+    }
+    finally{
+      setLoading(false)
     }
   };
 
-  if (loading) return <p className="text-center mt-10">Cargando...</p>;
-  if (error) return <p className="text-center mt-10 text-red-500">{error}</p>;
+  const handleCloseAlert = () => {
+    if(alert.type === "success"){
+      setAlert({ ...alert, open: false }); 
+      onBack();
+      return;
+    }
+    setAlert({ ...alert, open: false });
+  }
+
 
   return (
     <div className="p-4">
+        {loading && <Loading></Loading>}
+    {alert && <Alert
+  open={alert.open}
+  message={alert.message}
+  type={alert.type}
+  onClose={handleCloseAlert}/>}
+  {selectedProduct && ( <>
       <h2 className="text-xl font-bold mb-4">Editando producto {selectedProduct.title}</h2>
 
       <form className="grid gap-4" onSubmit={handleSubmit}>
@@ -148,6 +227,7 @@ export default function EditProducts({ productId, onBack }:{ productId: string, 
 
         <Button onClick={handleSubmit} type="submit">Guardar cambios</Button>
       </form>
+</>)}
     </div>
   );
 }

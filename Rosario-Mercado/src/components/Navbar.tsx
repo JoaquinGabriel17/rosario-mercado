@@ -10,7 +10,7 @@ function Navbar() {
 
     return (
         <nav className='bg-[#FFFFFF] flex justify-between items-center p-4 text-[#1E293B] border-b-4 border-b-[#2563EB]' >
-            <h2 className='text-2xl'>Rosario Mercado</h2>
+            
             {user ? (
                 <button
                 className="px-6 py-2 rounded-lg bg-blue-600 text-white font-medium 

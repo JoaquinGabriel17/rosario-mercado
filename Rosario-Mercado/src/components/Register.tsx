@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { validateRegister } from "../utils/validateRegister";
+import Alert from "./ui/Alert";
+import Loading from "./ui/Loading";
 
 type RegisterErrors = {
     name?: string;
@@ -10,6 +12,13 @@ type RegisterErrors = {
 
 
 function Register( { onChange }: { onChange: () => void } ) {
+
+    const [loading, setLoading] = useState<boolean>(false)
+ const [alert, setAlert] = useState({
+  open: false,
+  message: "",
+  type: "info" as "info" | "success" | "error",
+});
 
     const backendUrl = import.meta.env.VITE_BACKEND_URL;
     const [errors, setErrors] = useState<RegisterErrors>({});
@@ -29,11 +38,13 @@ function Register( { onChange }: { onChange: () => void } ) {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        setLoading(true);
         
         const validation = validateRegister(form);
 
     if (Object.keys(validation).length > 0) {
         setErrors(validation);
+        setLoading(false)
         return; // ❌ no enviar si hay errores
     }
         const res = await fetch(`${backendUrl}/users/register`, {
@@ -42,21 +53,36 @@ function Register( { onChange }: { onChange: () => void } ) {
             body: JSON.stringify(form)
         });
         if(res.ok){
-            alert("Usuario creado con éxito");
+            setLoading(false)
+setAlert({
+  open: true,
+  message: "Usuario creado con éxito",
+  type: "success",
+});
             setForm({ name: "", email: "", password: "" });
             setErrors({});
             onChange();
         }
         else{
             const data = await res.json();
-            alert(`Error: ${data.message}`);
+            setLoading(false)
+setAlert({
+  open: true,
+  message: `Error al crear usuario: ${data.message}`,
+  type: "error",
+});
         }
-
 
     };
 
     return (
         <div className="w-full flex justify-center mt-10">
+             {loading && <Loading></Loading>}
+    {alert && <Alert
+  open={alert.open}
+  message={alert.message}
+  type={alert.type}
+  onClose={() => setAlert({ ...alert, open: false })}/>}
             <form 
                 onSubmit={handleSubmit} 
                 className="flex flex-col gap-4 p-6 rounded-xl shadow-md w-80"

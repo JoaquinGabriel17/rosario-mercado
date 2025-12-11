@@ -4,12 +4,16 @@ import UserProducts from "../components/products/UserProducts";
 import { useUserStore } from "../store/userStore";
 import EditProducts from "../components/products/EditProducts";
 import { Button } from "../components/ui/Button";
+import { useNavigate } from "react-router-dom";
 
 function Dashboard() {
   const [activeView, setActiveView] = useState<"menu" | "create" | "view" | "edit" | "delete" >("menu");
   const [ productIdToEdit, setProductIdToEdit ] = useState<string>('')
 
   const user = useUserStore((state) => state.user);
+  const logout = useUserStore((state) => state.logout);
+  const navigate = useNavigate();
+
 
   const back = () => setActiveView("menu");
 
@@ -79,6 +83,7 @@ function Dashboard() {
           <Button onClick={back}>Volver</Button>
         </>
       )}
+      <Button onClick={() => {logout(); navigate('/')}}>Cerrar sesión</Button>
     </div>
   );
 }
