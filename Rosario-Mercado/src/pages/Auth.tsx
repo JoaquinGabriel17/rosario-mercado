@@ -1,5 +1,5 @@
-import Login from "../components/Login";
-import Register from "../components/Register";
+import Login from "../components/account/Login";
+import Register from "../components/account/Register";
 import { useState } from "react";
 
 function Auth(){

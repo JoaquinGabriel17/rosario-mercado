@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { validateRegister } from "../utils/validateRegister";
-import Alert from "./ui/Alert";
-import Loading from "./ui/Loading";
+import { validateRegister } from "../../utils/validateRegister";
+import Alert from "../ui/Alert";
+import Loading from "../ui/Loading";
 
 type RegisterErrors = {
     name?: string;

@@ -5,6 +5,8 @@ import Auth from "./pages/Auth";
 import ProductDashboard from "./pages/ProductDashboard.tsx";
 import Dashboard from "./pages/Dashboard.tsx";
 import Shop from "./pages/Shop.tsx";
+import ResetPassword from "./components/account/ResetPassword.tsx";
+import ForgotPassword from "./components/account/ForgotPassword.tsx";
 
 const AppRouter = () => {
   return (
@@ -18,6 +20,8 @@ const AppRouter = () => {
             <Route path="/products" element={<ProductDashboard />} />
         </Route>
         {/* Rutas sin Navbar */}
+        <Route path="/forgot-password" element={ <ForgotPassword />}/>
+        <Route path="/reset-password" element={<ResetPassword />}/>
 
 
         {/* Not found */}

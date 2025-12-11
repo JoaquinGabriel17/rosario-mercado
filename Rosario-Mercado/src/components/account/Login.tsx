@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { useUserStore } from "../store/userStore";
+import { useUserStore } from "../../store/userStore";
 import { useNavigate } from "react-router-dom";
-import Loading from "./ui/Loading";
-import Alert from "./ui/Alert";
-import { Button } from "./ui/Button";
+import Loading from "../ui/Loading";
+import Alert from "../ui/Alert";
+import { Button } from "../ui/Button";
 
 function Login() {
     const [form, setForm] = useState({
@@ -87,8 +87,10 @@ return;
         
     };
 
+    
+
     return (
-        <div className="w-full flex justify-center mt-10">
+        <div className="w-full flex flex-col items-center justify-center mt-10">
             {loading && <Loading></Loading>}
     {alert && <Alert
   open={alert.open}
@@ -128,6 +130,9 @@ return;
                     Entrar
                 </Button>
             </form>
+            <a className="mt-8 cursor-pointer text-blue-700"
+            onClick={() => navigate("/forgot-password")}
+            >¿Olvidaste tu contraseña? Haz click aquí para restablecerla.</a>
         </div>
     );
 }
