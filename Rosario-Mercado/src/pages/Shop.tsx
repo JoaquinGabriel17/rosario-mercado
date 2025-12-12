@@ -13,7 +13,6 @@ export default function Shop(){
 
     const user = useUserStore((state) => state.user);
     const navigate = useNavigate()
-    console.log(user?.address, user?.businessHours, user?.phoneNumber)
 
     return(
         <div className="text-center">
@@ -48,13 +47,17 @@ export default function Shop(){
 
             {activeView === "editAccount" && (
                 <>
-                    <Button onClick={back}>Volver</Button>
+                    <div className="flex justify-start pl-2">
+                        <Button onClick={back}>Volver</Button>
+                    </div>
                     <EditAccount></EditAccount>
                 </>
             )}
             {activeView === "categories" && (
                 <>
-                    <Button onClick={back}>Volver</Button>
+                    <div className="flex justify-start pl-2">
+                        <Button onClick={back}>Volver</Button>
+                    </div>
                     <Categories></Categories>
                 </>
             )}

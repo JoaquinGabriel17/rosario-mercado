@@ -201,12 +201,12 @@ export default function CreateProduct() {
         </div>
 
         {/* SUBMIT */}
-        <button
+        <Button
           type="submit"
           className="w-full py-3 bg-blue-600 text-white font-medium rounded-lg active:scale-95 transition"
         >
           Crear producto
-        </button>
+        </Button>
       </form>
     </div>
   );

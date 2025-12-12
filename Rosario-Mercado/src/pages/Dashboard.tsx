@@ -61,24 +61,30 @@ export default function Dashboard () {
         
               {/* Aquí en el futuro agregar los otros componentes */}
               {activeView === "accountInfo" && user && (
-                <>
-                  <Button onClick={back}>Volver</Button>
-                  <EditAccount />
-                </>
-              )}
-              {activeView === "purchases" && user &&(
-                <>
-                  <Button onClick={back}>Volver</Button>
-                  <Purchases />
-                </>
-                )}
-              {activeView === "support" && user &&(
-                <>
-                  <Button onClick={back}>Volver</Button>
-                  <Support />
-                </>
-                )}
+          <>
+            <div className="flex justify-start pl-2">
+              <Button onClick={back}>Volver</Button>
             </div>
+            <EditAccount />
+          </>
+        )}
+        {activeView === "purchases" && user && (
+          <>
+            <div className="flex justify-start pl-2">
+              <Button onClick={back}>Volver</Button>
+            </div>
+            <Purchases />
+          </>
+        )}
+        {activeView === "support" && user && (
+          <>
+            <div className="flex justify-start pl-2">
+              <Button onClick={back}>Volver</Button>
+            </div>
+            <Support />
+          </>
+        )}
+      </div>
     )
 
 }

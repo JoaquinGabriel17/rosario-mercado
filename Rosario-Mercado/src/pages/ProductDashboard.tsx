@@ -57,10 +57,9 @@ function ProductDashboard() {
       {/* ---------- CREAR PRODUCTO ---------- */}
       {activeView === "create" && (
         <>
-          <Button className="m-1 px-6 py-2 rounded-lg bg-blue-600 text-white"
-            onClick={back}>
-            Volver
-          </Button>
+          <div className="flex justify-start pl-2">
+            <Button onClick={back}>Volver</Button>
+          </div>
 
           <CreateProduct />
         </>
@@ -69,19 +68,25 @@ function ProductDashboard() {
       {/* Aquí en el futuro agregar los otros componentes */}
       {activeView === "view" && user && (
         <>
-          <Button onClick={back}>Volver</Button>
+          <div className="flex justify-start pl-2">
+            <Button onClick={back}>Volver</Button>
+          </div>
           <UserProducts userId={user.id} onChangeViewToEdit={changeViewToEdit}></UserProducts> 
         </>
       )}
       {activeView === "edit" && user &&(
         <>
-          <Button onClick={back}>Volver</Button>
+          <div className="flex justify-start pl-2">
+            <Button onClick={back}>Volver</Button>
+          </div>
           <EditProducts productId={productIdToEdit} onBack={back}></EditProducts>
         </>
         )}
       {activeView === "delete" && user && (
         <>
-          <Button onClick={back}>Volver</Button>
+          <div className="flex justify-start pl-2">
+            <Button onClick={back}>Volver</Button>
+          </div>
         </>
       )}
     </div>

@@ -1,5 +1,8 @@
 import { create } from "zustand";
 
+//    const user = useUserStore((state) => state.user);
+
+
 interface User {
   id: string;
   name: string;
