@@ -9,6 +9,7 @@ export interface IUser extends Document {
   address?: string;           // dirección
   whatsappAvailable?: boolean;
   delivery?: boolean;
+  isSeller: boolean;
 }
 
 const userSchema = new Schema<IUser>(
@@ -23,6 +24,8 @@ const userSchema = new Schema<IUser>(
 
     whatsappAvailable: { type: Boolean, default: false },
     delivery: { type: Boolean, default: false },
+    isSeller: { type: Boolean, default: false, required: true}
+    
   },
   { timestamps: true }
 );
