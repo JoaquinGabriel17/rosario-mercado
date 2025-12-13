@@ -6,9 +6,10 @@ import { AuthRequest } from "../middlewares/auth";
 import sendEmail from "../utils/sendEmail"; // función que envía correo
 
 
+// CREAR USUARIO
 export const register = async (req: Request, res: Response) => {
   try {
-    const { name, password, email, phoneNumber, businessHours, address, whatsappAvailable, delivery } = req.body;
+    const { name, password, email, phoneNumber, businessHours, address, whatsappAvailable, delivery, facebookUrl, instagramUrl } = req.body;
 
     if(!name || !password || !email) {
       return res.status(400).json({ message: "Faltan datos obligatorios" });
@@ -33,6 +34,8 @@ export const register = async (req: Request, res: Response) => {
       address: address || undefined,
       whatsappAvailable: whatsappAvailable ?? false,
       delivery: delivery ?? false,
+      facebookUrl: facebookUrl ?? undefined,
+      instagramUrl: instagramUrl ?? undefined
     });
 
     return res.json({
@@ -44,6 +47,7 @@ export const register = async (req: Request, res: Response) => {
   }
 };
 
+// INICIAR SESION
 export const login = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
@@ -72,6 +76,8 @@ export const login = async (req: Request, res: Response) => {
         address: user.address,
         whatsappAvailable: user.whatsappAvailable,
         delivery: user.delivery,
+        facebookUrl: user.facebookUrl,
+        instagramUrl: user.instagramUrl
       }
     });
   } catch (error) {
@@ -79,6 +85,7 @@ export const login = async (req: Request, res: Response) => {
   }
 };
 
+// ACTUALIZAR INFORMACIÓN DE USUARIO
 export const updateInfo = async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.user.id;
@@ -93,6 +100,8 @@ export const updateInfo = async (req: AuthRequest, res: Response) => {
       "businessHours",
       "whatsappAvailable",
       "delivery",
+      "instagramUrl",
+      "facebookUrl"
     ];
 
     // Filtrar los campos enviados en la request
@@ -161,7 +170,7 @@ if (updates.name) {
   }
 }
 
-
+// ENVIAR EMAIL PARA CAMBIO DE CONTRASEÑA
 export const forgotPassword = async (req: Request, res: Response) => {
   try {
     const  { email }  = req.body;
@@ -202,7 +211,7 @@ export const forgotPassword = async (req: Request, res: Response) => {
   }
 };
 
-
+// CAMBIAR CONTRASEÑAS
 export const resetPassword = async (req: Request, res: Response) => {
   try {
     const { token, password } = req.body;

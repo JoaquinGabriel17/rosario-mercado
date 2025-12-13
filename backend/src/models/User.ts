@@ -10,6 +10,8 @@ export interface IUser extends Document {
   whatsappAvailable?: boolean;
   delivery?: boolean;
   isSeller: boolean;
+  facebookUrl?: string;
+  instagramUrl?: string;
 }
 
 const userSchema = new Schema<IUser>(
@@ -24,7 +26,9 @@ const userSchema = new Schema<IUser>(
 
     whatsappAvailable: { type: Boolean, default: false },
     delivery: { type: Boolean, default: false },
-    isSeller: { type: Boolean, default: false, required: true}
+    isSeller: { type: Boolean, default: false, required: true},
+    facebookUrl: { type: String },
+    instagramUrl: { type: String },
     
   },
   { timestamps: true }
