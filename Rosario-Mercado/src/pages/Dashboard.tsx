@@ -33,7 +33,7 @@ export default function Dashboard () {
                   <div className="items-center  px-20 flex flex-col p-4">
                     <Button className="mt-4 py-6 min-w-2xs"
                         onClick={() => setActiveView("accountInfo")}
-                    >Información de la cuenta</Button>
+                    >Editar información de la cuenta</Button>
 
                     <Button className="mt-4 py-6 min-w-2xs"
                         onClick={() => setActiveView("purchases")}

@@ -28,7 +28,7 @@ export default function Shop(){
                 }
                 <Button className="min-w-2xs mt-4"
                     onClick={() => setActiveView("editAccount")}
-                >Información de la cuenta</Button>
+                >Editar información de la cuenta</Button>
 
                 <Button onClick={() => navigate("/products")}
                 className="min-w-2xs mt-4"
