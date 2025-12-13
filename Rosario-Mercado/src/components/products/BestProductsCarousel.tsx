@@ -27,16 +27,16 @@ export default function BestProductsCarousel({ products }: { products: Array<Pro
       </div>
 
       {/* Controles */}
-      <div className="flex justify-between w-full mt-1 px-10">
+      <div className="flex justify-between w-full mt-1 px-10 ">
         <button
           onClick={prevSlide}
-          className="w-15 h-15 flex items-center justify-center rounded-full bg-black/20 text-white shadow-md hover:bg-black/40 transition active:scale-95"
+          className="w-15 h-15 flex items-center justify-center rounded-full bg-blue-500 text-white shadow-md hover:bg-black/40 transition active:scale-95"
         >
           ◀
         </button>
         <button
           onClick={nextSlide}
-          className="w-15 h-15 flex items-center justify-center rounded-full bg-black/20 text-white shadow-md hover:bg-black/40 transition active:scale-95"
+          className="w-15 h-15 flex items-center justify-center rounded-full bg-blue-500 bg-black/20 text-white shadow-md hover:bg-black/40 transition active:scale-95"
         >
           ▶
         </button>

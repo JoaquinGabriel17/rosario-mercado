@@ -34,10 +34,11 @@ export default function Dashboard () {
                     <Button className="mt-4 py-6 min-w-2xs"
                         onClick={() => setActiveView("accountInfo")}
                     >Editar información de la cuenta</Button>
-
+                  {/*
                     <Button className="mt-4 py-6 min-w-2xs"
                         onClick={() => setActiveView("purchases")}
                     >Mis compras</Button>
+                    */}
 
                     <Button className="mt-4 py-6 min-w-2xs"
                         onClick={() => navigate("/shop")}
