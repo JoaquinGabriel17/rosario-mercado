@@ -16,7 +16,7 @@ export default function BestProductsCarousel({ products }: { products: Array<Pro
           alt={products[currentIndex].title}
           className="w-full h-full   object-contain bg-black transform transition-transform duration-500 hover:scale-105"
         />
-        <div className="absolute bottom-0 w-full h-1/3 bg-gradient-to-t from-black/60 to-transparent"></div>
+        <div className="absolute bottom-0 w-full h-1/3 bg-linear-to-t from-black/60 to-transparent"></div>
       </div>
 
       {/* Info del producto */}
@@ -36,7 +36,7 @@ export default function BestProductsCarousel({ products }: { products: Array<Pro
         </button>
         <button
           onClick={nextSlide}
-          className="w-15 h-15 flex items-center justify-center rounded-full bg-blue-500 bg-black/20 text-white shadow-md hover:bg-black/40 transition active:scale-95"
+          className="w-15 h-15 flex items-center justify-center rounded-full bg-blue-500 text-white shadow-md hover:bg-black/40 transition active:scale-95"
         >
           ▶
         </button>
