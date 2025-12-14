@@ -13,6 +13,8 @@ interface User {
   address?: string;
   whatsappAvailable: boolean;
   delivery: boolean;
+  instagramUrl: string;
+  facebookUrl: string;
 }
 
 interface UserState {

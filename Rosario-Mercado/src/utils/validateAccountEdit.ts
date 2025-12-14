@@ -6,6 +6,8 @@ export interface FormData {
   businessHours: string;
   whatsappAvailable: boolean;
   delivery: boolean;
+  facebookUrl: string;
+  instagramUrl: string;
 }
 
 // Recibe: form con los valores ingresados y editEnabled con qué campos están habilitados
@@ -42,6 +44,12 @@ export function validateEditAccountForm(
 
     if (field === "phoneNumber" && typeof value === 'string' && value.length < 6) {
       return "Número de teléfono inválido.";
+    }
+    if(field === "instagramUrl" && typeof value === 'string' && !/^https?:\/\/(www\.)?instagram\.com\/[A-Za-z0-9._%-]+\/?$/.test(value as string)){
+      return "URL de instagram inválida.";
+    }
+    if(field === "facebookUrl" && typeof value === 'string' && !/^https?:\/\/(www\.)?facebook\.com\/[A-Za-z0-9.?=&_\-#/]+$/.test(value as string)){
+      return "URL de facebook inválida.";
     }
   }
 

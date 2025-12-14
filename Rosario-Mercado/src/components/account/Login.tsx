@@ -58,7 +58,9 @@ setAlert({
                 delivery: data.user.delivery,
                 phoneNumber: data.user.phoneNumber || undefined,
                 businessHours: data.user.businessHours || undefined,
-                address: data.user.address || undefined
+                address: data.user.address || undefined,
+                facebookUrl: data.user.facebookUrl || undefined,
+                instagramUrl: data.user.instagramUrl || undefined
             });
             setLoading(false)
             navigate("/");

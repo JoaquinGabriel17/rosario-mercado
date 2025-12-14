@@ -7,6 +7,8 @@ import Dashboard from "./pages/Dashboard.tsx";
 import Shop from "./pages/Shop.tsx";
 import ResetPassword from "./components/account/ResetPassword.tsx";
 import ForgotPassword from "./components/account/ForgotPassword.tsx";
+import Profile from "./components/account/Profile.tsx";
+
 
 const AppRouter = () => {
   return (
@@ -18,6 +20,7 @@ const AppRouter = () => {
             <Route path="/dashboard" element={<Dashboard/>} />
             <Route path="/shop" element={<Shop />} />
             <Route path="/products" element={<ProductDashboard />} />
+            <Route path="/users/:id" element={<Profile />} /> 
         </Route>
         {/* Rutas sin Navbar */}
         <Route path="/forgot-password" element={ <ForgotPassword />}/>

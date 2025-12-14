@@ -66,7 +66,10 @@ export default function EditAccount() {
                 body: JSON.stringify(form),
             });
             const data = await response.json();
+            console.log(data)
             if (response.ok) {
+                let currentToken:string = ""
+                if(user?.token) {currentToken = user?.token}
                 setLoading(false)
                 setAlert({
                     open: true,
@@ -81,17 +84,21 @@ export default function EditAccount() {
                     businessHours: false,
                     whatsappAvailable: false,
                     delivery: false,
+                    instagramUrl: false,
+                    facebookUrl: false
                 });
                 setUser({
-                    id: data.user.id,
+                    id: data.user._id,
                     email: data.user.email,
                     name: data.user.name,
-                    token: data.token,
+                    token: currentToken,
                     whatsappAvailable: data.user.whatsappAvailable,
                     delivery: data.user.delivery,
                     phoneNumber: data.user.phoneNumber || undefined,
                     businessHours: data.user.businessHours || undefined,
-                    address: data.user.address || undefined
+                    address: data.user.address || undefined,
+                    instagramUrl: data.user.instagramUrl || undefined,
+                    facebookUrl: data.user.facebookUrl || undefined,
                 });
             }
             else{
@@ -124,6 +131,8 @@ export default function EditAccount() {
         businessHours: false,
         whatsappAvailable: false,
         delivery: false,
+        facebookUrl: false,
+        instagramUrl: false
     });
 
     const handleToggleEdit = (field: keyof FormData) => {
@@ -205,6 +214,40 @@ export default function EditAccount() {
               placeholder={user?.businessHours || "Horario de atención"}
               onChange={handleChange}
               disabled={!editEnabled.businessHours}
+          />
+
+          <div className="w- border border-black"></div>
+
+          <label className="flex items-center gap-2">
+              <input type="checkbox" checked={editEnabled.instagramUrl} 
+              onChange={() => handleToggleEdit("instagramUrl")} />
+              Editar link para instagram
+          </label>
+          <input
+              type="text"
+              name="instagramUrl"
+              value={form.instagramUrl ?? ""}
+              placeholder={user?.instagramUrl}
+              onChange={handleChange}
+              className="border p-2 rounded"
+              disabled={!editEnabled.instagramUrl}
+          />
+
+          <div className="w- border border-black"></div>
+
+          <label className="flex items-center gap-2">
+              <input type="checkbox" checked={editEnabled.facebookUrl}
+                onChange={() => handleToggleEdit("facebookUrl")} />
+              Editar link para facebook
+          </label>
+          <input
+              type="facebookUrl"
+              name="facebookUrl"
+              value={form.facebookUrl ?? ""}
+              placeholder={user?.facebookUrl}
+              onChange={handleChange}
+              className="border p-2 rounded"
+              disabled={!editEnabled.facebookUrl}
           />
           <div className="w- border border-black"></div>
 

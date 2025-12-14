@@ -4,6 +4,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { AuthRequest } from "../middlewares/auth";
 import sendEmail from "../utils/sendEmail"; // función que envía correo
+import mongoose from "mongoose";
 
 
 // CREAR USUARIO
@@ -242,3 +243,26 @@ export const resetPassword = async (req: Request, res: Response) => {
     res.status(400).json({ message: "Token inválido o expirado" });
   }
 };
+
+// OBTENER INFORMACIÓN DE UN USUARIO POR ID
+export const getUserById = async (req: Request, res: Response) => {
+  try {
+    const { userId } = req.params;
+    if(!userId){
+      return res.status(400).json({ message: "Debe enviar un ID de usuario"});
+    };
+
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({ message: "El formato del ID de usuario es inválido" });
+    };
+
+    const user = await User.findById(userId).select('-password -__v').lean();    
+    if(!user){
+      return res.status(404).json({ message: "Usuario no encontrado"});
+    };
+    res.json(user);
+ 
+  } catch (error) {
+    res.status(500).json({ error: error ?? "Error al obtener información de usuario por ID"})
+  }
+}
