@@ -10,7 +10,9 @@ function Navbar() {
 
     return (
         <nav className='bg-[#FFFFFF] flex justify-between items-center p-4 text-[#1E293B] border-b-4 border-b-[#2563EB]' >
-            
+            <Button
+                onClick={() => navigate('/')}
+            >Inicio</Button>
             {user ? (
                 <Button
                 onClick={() => navigate('/dashboard')}
@@ -26,9 +28,7 @@ function Navbar() {
             )
         }
             
-            <Button
-                onClick={() => navigate('/')}
-            >Inicio</Button>
+            
         </nav>
     )
 }

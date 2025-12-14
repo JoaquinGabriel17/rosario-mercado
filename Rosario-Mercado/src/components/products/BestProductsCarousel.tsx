@@ -1,8 +1,10 @@
 import { useState } from "react";
 import type { Product } from "../../pages/Home";
+import { useNavigate } from "react-router-dom";
 
 export default function BestProductsCarousel({ products }: { products: Array<Product> }) {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const navigate = useNavigate()
 
   const nextSlide = () => setCurrentIndex((prev) => (prev + 1) % products.length);
   const prevSlide = () => setCurrentIndex((prev) => (prev - 1 + products.length) % products.length);
@@ -10,7 +12,7 @@ export default function BestProductsCarousel({ products }: { products: Array<Pro
   return (
     <div className="w-full relative flex flex-col items-center p-4">
       {/* Imagen con overlay */}
-      <div className="w-full h-92  rounded-2xl shadow-lg overflow-hidden relative">
+      <div onClick={() => navigate(`/products/${products[currentIndex]._id}`)} className="w-full h-92  rounded-2xl shadow-lg overflow-hidden relative">
         <img
           src={products[currentIndex].imageUrl}
           alt={products[currentIndex].title}

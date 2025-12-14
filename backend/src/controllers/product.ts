@@ -201,7 +201,13 @@ export const getProductById = async (req: AuthRequest, res: Response) => {
       return res.status(404).json({ message: "Producto no encontrado" });
     }
 
-    res.json(product)
+    const userProduct = await User.findById(product.userId).select('-password -__v');
+    if(!userProduct){
+      return res.status(400).json({ message: "El usuario que creó el producto fue eliminado."})
+    };
+    
+
+    res.json({product: product, user: userProduct})
 
   } catch (error) {
     res.status(500).json({ message: error || "Error al obtener productos" });

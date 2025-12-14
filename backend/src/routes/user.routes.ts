@@ -9,6 +9,6 @@ router.post("/login", login); // Inicio de sesión
 router.put("/update", auth, updateInfo) //Actualizar información del usuario
 router.post("/forgotPassword", forgotPassword) // Enviar correo para cambio de contraseña
 router.post("/resetPassword",  resetPassword); // Cambiar contraseña
-router.get("/:userId", auth, getUserById); // Obtener información del usuario
+router.get("/:userId",  getUserById); // Obtener información del usuario
 
 export default router;
