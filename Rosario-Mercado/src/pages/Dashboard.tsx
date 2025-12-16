@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "../components/ui/Button";
 import EditAccount from "../components/account/EditAccount";
 import Purchases from "../components/account/Purchases";
-import Support from "../components/Support";
+import Support from "./Support";
 
 export default function Dashboard () {
     
@@ -50,7 +50,7 @@ export default function Dashboard () {
 
                     <Button 
                         className="mt-4 py-6 min-w-2xs"
-                        onClick={() => setActiveView("support")}    
+                        onClick={() => navigate("/support")}    
                     >Soporte - Ayuda</Button>
                     </div>
 
@@ -79,14 +79,6 @@ export default function Dashboard () {
               <Button onClick={back}>Volver</Button>
             </div>
             <Purchases />
-          </>
-        )}
-        {activeView === "support" && user && (
-          <>
-            <div className="flex justify-start pl-2">
-              <Button onClick={back}>Volver</Button>
-            </div>
-            <Support />
           </>
         )}
       </div>

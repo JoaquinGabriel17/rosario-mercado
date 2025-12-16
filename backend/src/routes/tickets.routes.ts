@@ -14,10 +14,10 @@ const router = Router();
 router.post("/", auth, createTicket);
 
 // Obtener tickets de un usuario
-router.get("/user/:userId", getUserTickets);
+router.get("/user/:userId", auth, getUserTickets);
 
 // Obtener mensajes de un ticket
-router.get("/:ticketId/messages", getTicketMessages);
+router.get("/:ticketId/messages", auth, getTicketMessages);
 
 // Agregar mensaje a un ticket
 router.post("/:ticketId/messages", auth, addMessageToTicket);

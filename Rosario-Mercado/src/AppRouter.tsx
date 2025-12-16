@@ -9,6 +9,9 @@ import ResetPassword from "./components/account/ResetPassword.tsx";
 import ForgotPassword from "./components/account/ForgotPassword.tsx";
 import Profile from "./components/account/Profile.tsx";
 import ProductDetails from "./pages/ProductDetail.tsx";
+import Support from "./pages/Support.tsx";
+import Chat from "./components/support/Chat.tsx";
+import ViewAllTickets from "./components/support/ViewAllTickets.tsx";
 
 
 
@@ -24,10 +27,14 @@ const AppRouter = () => {
             <Route path="/products" element={<ProductDashboard />} />
             <Route path="/users/:id" element={<Profile />} /> 
             <Route path="/products/:productId" element={<ProductDetails />} />
+            <Route path="/support" element={<Support/>} />
+            <Route path="/support/tickets" element={<ViewAllTickets/>}/>
+            
         </Route>
         {/* Rutas sin Navbar */}
         <Route path="/forgot-password" element={ <ForgotPassword />}/>
         <Route path="/reset-password" element={<ResetPassword />}/>
+        <Route path="/tickets/:ticketId/chat" element={<Chat/>} />
 
 
         {/* Not found */}

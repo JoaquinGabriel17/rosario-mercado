@@ -10,9 +10,11 @@ export const createTicket = async (req: AuthRequest, res: Response) => {
   try {
     const { title } = req.body;
     const userId = req.user.id
-    if(!title) res.status(400).json({ message: "Debe enviar un título"});
+    if(!title ) res.status(400).json({ message: "Faltan datos obligatorios"});
     
+    const user = await User.findById(userId);
     const ticket = await Ticket.create({ userId, title });
+  
     res.status(201).json(ticket);
   } catch (error) {
     res.status(500).json({ error: "Error creando ticket" });
@@ -51,6 +53,9 @@ export const addMessageToTicket = async (req: AuthRequest, res: Response) => {
   try {
     const  ticketId  = req.params.ticketId as string;
     const { message, status } = req.body;
+    
+    const  ticket = await Ticket.findById(ticketId);
+    if(!ticket) res.status(400).json({ message: "Ticket no encontrado"})
     
     const sender = await User.findById(req.user.id);
     if(!sender) res.status(400).json({ message: "Su usuario no fue encontrado"});
