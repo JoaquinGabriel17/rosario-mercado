@@ -12,6 +12,7 @@ export interface IUser extends Document {
   isSeller: boolean;
   facebookUrl?: string;
   instagramUrl?: string;
+  role: string;
 }
 
 const userSchema = new Schema<IUser>(
@@ -19,6 +20,7 @@ const userSchema = new Schema<IUser>(
     name: { type: String, required: true, unique: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
+    role: { type: String,  default: "user", required: true},
 
     phoneNumber: { type: String },
     businessHours: { type: String },       // horario de atención

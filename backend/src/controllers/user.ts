@@ -102,7 +102,8 @@ export const updateInfo = async (req: AuthRequest, res: Response) => {
       "whatsappAvailable",
       "delivery",
       "instagramUrl",
-      "facebookUrl"
+      "facebookUrl",
+      "role"
     ];
 
     // Filtrar los campos enviados en la request
