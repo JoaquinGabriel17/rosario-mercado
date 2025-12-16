@@ -1,16 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import type { User } from "../types/user";
-import type { Product, ProductResponse } from "../types/product";
+import type { ProductResponse } from "../types/product";
 import Loading from "../components/ui/Loading";
 import CopyInfoButton from "../utils/CopyInfoButton";
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL
 const formatCurrency = (value: number) =>
   new Intl.NumberFormat("es-AR", { style: "currency", currency: "ARS" }).format(value);
-
-const formatDate = (iso?: string) =>
-  iso ? new Date(iso).toLocaleString("es-AR", { dateStyle: "medium", timeStyle: "short" }) : "-";
 
 export const ProductDetails: React.FC = () => {
   const { productId } = useParams<{ productId: string }>();
@@ -124,10 +120,6 @@ export const ProductDetails: React.FC = () => {
                 <p className="font-medium text-gray-800">Stock</p>
                 <p>{product.stock}</p>
               </div>
-              <div>
-                <p className="font-medium text-gray-800">Vendidos</p>
-                <p>{product.soldCount}</p>
-              </div>
             </div>
 
             <div className="mt-6 flex items-center gap-3">
@@ -192,6 +184,7 @@ export const ProductDetails: React.FC = () => {
 
         <div className="mt-6 flex flex-col gap-3">
           <p className="font-medium text-gray-800">Redes sociales</p>
+          {!user.facebookUrl && !user.instagramUrl && <p>El usuario no tiene redes sociales disponibles.</p>}
           {user.facebookUrl && (
             <a
               href={user.facebookUrl}

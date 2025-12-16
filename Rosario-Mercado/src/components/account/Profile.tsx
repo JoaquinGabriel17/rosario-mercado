@@ -1,8 +1,9 @@
 // src/components/Profile.tsx
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import Loading from '../ui/Loading';
 import { useUserStore } from '../../store/userStore';
+import CopyInfoButton from '../../utils/CopyInfoButton';
 
 type User = {
   _id: string;
@@ -25,6 +26,7 @@ export default function Profile() {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const userLog = useUserStore((state) => state.user);
+  const navigate = useNavigate()
 
 
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
@@ -71,22 +73,6 @@ export default function Profile() {
     return () => controller.abort();
   }, [id]);
 
-  function formatDate(iso?: string) {
-    if (!iso) return '—';
-    try {
-      return new Intl.DateTimeFormat('es-AR', {
-        year: 'numeric',
-        month: 'short',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-      }).format(new Date(iso));
-    } catch {
-      return iso;
-    }
-  }
-
-
   if (error) {
     return (
       <div className="max-w-3xl mx-auto p-6">
@@ -111,10 +97,6 @@ export default function Profile() {
       <header className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-semibold text-gray-800">{user.name}</h1>
-        </div>
-        <div className="text-right">
-          <p className="text-sm text-gray-500">Creado</p>
-          <p className="text-sm font-medium text-gray-700">{formatDate(user.createdAt)}</p>
         </div>
       </header>
 
@@ -142,19 +124,34 @@ export default function Profile() {
             {user.delivery ? 'Ofrece delivery' : 'No ofrece delivery'}
           </p>
         </div>
+        <div className="flex flex-col sm:flex-row gap-3">
+                    {user.phoneNumber && (
+                      <CopyInfoButton phoneNumber={user.phoneNumber} textInButton="Copiar número de teléfono" />
+                    )}
+                    {user.whatsappAvailable && user.phoneNumber && (
+                      <a
+                        href={`https://wa.me/${user.phoneNumber}`}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="px-4 py-2 border bg-green-600 text-white rounded hover:bg-green-700 text-center"
+                      >
+                        WhatsApp
+                      </a>
+                    )}
+                    <button
+                      onClick={() => navigate(`/users/${user._id}`)}
+                      className="px-4 py-2 border border-gray-300 rounded hover:bg-gray-50 text-center"
+                    >
+                      Ver perfil
+                    </button>
+                  </div>
       </section>
 
       <section className="mb-6">
         <h2 className="text-sm font-semibold text-gray-700 mb-2">Detalles</h2>
         <div className="space-y-2">
           <div className="text-sm text-gray-600">
-            <span className="font-medium text-gray-800">Vendedor</span>: {user.isSeller ? 'Sí' : 'No'}
-          </div>
-          <div className="text-sm text-gray-600">
             <span className="font-medium text-gray-800">Horario de disponibilidad</span>: {user.businessHours ?? '—'}
-          </div>
-          <div className="text-sm text-gray-600">
-            <span className="font-medium text-gray-800">Última actualización</span>: {formatDate(user.updatedAt)}
           </div>
         </div>
       </section>

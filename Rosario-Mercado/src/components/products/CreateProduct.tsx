@@ -186,6 +186,7 @@ export default function CreateProduct() {
             <option value="">Seleccionar categoría</option>
             <option value="comidas">Comidas</option>
             <option value="bebidas">Bebidas</option>
+            <option value="combos">Combos</option>
           </select>
         </div>
 
