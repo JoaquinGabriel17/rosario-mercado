@@ -78,7 +78,8 @@ export const login = async (req: Request, res: Response) => {
         whatsappAvailable: user.whatsappAvailable,
         delivery: user.delivery,
         facebookUrl: user.facebookUrl,
-        instagramUrl: user.instagramUrl
+        instagramUrl: user.instagramUrl,
+        role: user.role,
       }
     });
   } catch (error) {

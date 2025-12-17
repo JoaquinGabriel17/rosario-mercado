@@ -36,8 +36,6 @@ export default function CreateTicket() {
         setErrors(prev => ({ ...prev, [name]: '' }));
     };
 
-
-
     const handleSubmit = async (e: React.FormEvent) => {
         try {
             setLoading(true);
@@ -58,14 +56,40 @@ export default function CreateTicket() {
                     Authorization: `Bearer ${user?.token}`
                 },
             });
-            if (response.status == 201) {
-                setAlert({
+            if (response.status !== 201) {
+              setAlert({
+                    open: true,
+                    message: "Error al crear la solicitud",
+                    type: "error",
+                });
+                setLoading(false);
+                return;
+            }
+            
+                const firstMessageResponse = await axios.post(`${backendUrl}/tickets/${response.data._id}/messages`, 
+          {
+            message: formData.description
+          },
+          {
+            headers: { 'Content-Type': 'application/json', 
+              Authorization: `Bearer ${user?.token}`}
+          });
+          if(firstMessageResponse.status !== 201){
+            setAlert({
+                    open: true,
+                    message: "Error al crear la solicitud",
+                    type: "error",
+                });
+                setLoading(false);
+                return;
+          };
+          setFormData({ title: '', description: '' });
+            setAlert({
                     open: true,
                     message: "Solicitud creada correctamente, la podrás ver en tus solicitudes",
                     type: "success",
                 });
-                setFormData({ title: '', description: '' });
-            }
+          
 
         } catch (error) {
             console.log(error)

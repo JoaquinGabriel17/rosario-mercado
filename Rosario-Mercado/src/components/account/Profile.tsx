@@ -138,12 +138,6 @@ export default function Profile() {
                         WhatsApp
                       </a>
                     )}
-                    <button
-                      onClick={() => navigate(`/users/${user._id}`)}
-                      className="px-4 py-2 border border-gray-300 rounded hover:bg-gray-50 text-center"
-                    >
-                      Ver perfil
-                    </button>
                   </div>
       </section>
 

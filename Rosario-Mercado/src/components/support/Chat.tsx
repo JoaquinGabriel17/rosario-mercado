@@ -33,7 +33,6 @@ export default function Chat() {
             }
         });
         if (res.status !== 200) throw new Error('Error al obtener mensajes');
-        console.log(res)
         const data: Message[] = await res.data;
         setMessages(data);
       } catch (err: any) {
@@ -89,7 +88,7 @@ export default function Chat() {
               type={alert.type}
               onClose={() => setAlert({ ...alert, open: false })} />}
           <div className='bg-white w-full border-b-2 px-2'>
-              <Button onClick={() => navigate("/support/tickets")} >Volver</Button>
+              <Button onClick={() => navigate(-1)} >Volver</Button>
           </div>
           <div className="flex-1 overflow-y-auto p-4 space-y-3">
 
@@ -105,7 +104,7 @@ export default function Chat() {
               className={`px-4 py-2 rounded-lg max-w-xs wrap-break-words ${
                 msg.senderId === 'admin'
                   ? 'bg-gray-200 text-gray-800'
-                  : 'bg-blue-600 text-white'
+                  : 'bg-green-500 text-white'
               }`}
             >
               <p>{msg.message}</p>

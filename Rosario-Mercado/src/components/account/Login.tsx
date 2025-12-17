@@ -60,7 +60,8 @@ setAlert({
                 businessHours: data.user.businessHours || undefined,
                 address: data.user.address || undefined,
                 facebookUrl: data.user.facebookUrl || undefined,
-                instagramUrl: data.user.instagramUrl || undefined
+                instagramUrl: data.user.instagramUrl || undefined,
+                role: data.user.role || "user",
             });
             setLoading(false)
             navigate("/");

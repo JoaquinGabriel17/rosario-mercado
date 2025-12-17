@@ -99,6 +99,7 @@ export default function EditAccount() {
                     address: data.user.address || undefined,
                     instagramUrl: data.user.instagramUrl || undefined,
                     facebookUrl: data.user.facebookUrl || undefined,
+                    role: data.user.role || "user",
                 });
             }
             else{
@@ -229,7 +230,7 @@ export default function EditAccount() {
               value={form.instagramUrl ?? ""}
               placeholder={user?.instagramUrl}
               onChange={handleChange}
-              className="border p-2 rounded"
+                className={user?.instagramUrl ? "border p-2 rounded" : "border-red-500 border p-2 rounded"}
               disabled={!editEnabled.instagramUrl}
           />
 
@@ -246,7 +247,7 @@ export default function EditAccount() {
               value={form.facebookUrl ?? ""}
               placeholder={user?.facebookUrl}
               onChange={handleChange}
-              className="border p-2 rounded"
+              className={user?.facebookUrl ? "border p-2 rounded" : "border-red-500 border p-2 rounded"}
               disabled={!editEnabled.facebookUrl}
           />
           <div className="w- border border-black"></div>

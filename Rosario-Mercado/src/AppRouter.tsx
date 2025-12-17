@@ -12,6 +12,7 @@ import ProductDetails from "./pages/ProductDetail.tsx";
 import Support from "./pages/Support.tsx";
 import Chat from "./components/support/Chat.tsx";
 import ViewAllTickets from "./components/support/ViewAllTickets.tsx";
+import TicketsAdminView from "./components/support/TicketsAdminView.tsx";
 
 
 
@@ -29,7 +30,7 @@ const AppRouter = () => {
             <Route path="/products/:productId" element={<ProductDetails />} />
             <Route path="/support" element={<Support/>} />
             <Route path="/support/tickets" element={<ViewAllTickets/>}/>
-            
+            <Route path="/support/tickets/admin" element={<TicketsAdminView/>} />
         </Route>
         {/* Rutas sin Navbar */}
         <Route path="/forgot-password" element={ <ForgotPassword />}/>

@@ -15,6 +15,7 @@ interface User {
   delivery: boolean;
   instagramUrl: string;
   facebookUrl: string;
+  role: string;
 }
 
 interface UserState {

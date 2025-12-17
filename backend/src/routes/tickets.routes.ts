@@ -5,6 +5,7 @@ import {
   getTicketMessages,
   addMessageToTicket,
   updateTicketStatus,
+  getAllTickets
 } from "../controllers/tickets";
 import { auth } from "../middlewares/auth";
 
@@ -24,5 +25,8 @@ router.post("/:ticketId/messages", auth, addMessageToTicket);
 
 // Actualizar estado del ticket (solo admin)
 router.patch("/:ticketId/status", auth, updateTicketStatus);
+
+//Obtener todos los tickets de todos los usuarios (solo admin)
+router.get("/all", auth, getAllTickets);
 
 export default router;

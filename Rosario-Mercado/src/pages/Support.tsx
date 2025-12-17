@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useUserStore } from "../store/userStore";
 import { Button } from "../components/ui/Button";
 import CreateTicket from "../components/support/CreateTicket";
-import ViewAllTickets from "../components/support/ViewAllTickets";
 import { useNavigate, useParams } from "react-router-dom";
 
 export default function Support(){
@@ -11,6 +10,7 @@ export default function Support(){
     const { view } = useParams<{ view: "create" | "view" }>();
     if(view) setActiveView(view)
     const navigate = useNavigate();
+  const user = useUserStore((state) => state.user);
 
       const back = () => setActiveView("menu");
     
@@ -30,6 +30,11 @@ export default function Support(){
                 <Button
                     onClick={() => navigate("/support/tickets")}
                 >Ver todos mis tickets</Button>
+                {user?.role === "admin" && 
+                <Button 
+                  onClick={() => navigate("/support/tickets/admin")}
+                >Ver todos los tickets</Button>
+                }
             </div>
           )}
     

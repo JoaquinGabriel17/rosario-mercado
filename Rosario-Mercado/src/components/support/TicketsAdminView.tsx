@@ -12,7 +12,7 @@ import { Button } from '../ui/Button';
 
 
 
-export const ViewAllTickets: React.FC = () => {
+export const TicketsAdminView: React.FC = () => {
     const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
     const user = useUserStore((state) => state.user);
@@ -28,7 +28,7 @@ export const ViewAllTickets: React.FC = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.get(`${backendUrl}/tickets/user/${userId}`,{
+      const response = await axios.get(`${backendUrl}/tickets/all`,{
         headers:{
             Authorization: `Bearer ${user?.token}`
         }
@@ -73,11 +73,10 @@ export const ViewAllTickets: React.FC = () => {
     <div className="max-w-2xl mx-auto mt-2">
       {loading && <Loading/>}
       <Button
-        onClick={() => navigate("/support")}
+        onClick={() => navigate(-1)}
       >Volver</Button>
       {tickets.length ? 
       <>
-      <h2 className="text-2xl font-bold mb-4 text-center">Mis Tickets</h2>
       <ul className="divide-y divide-gray-200 rounded-lg shadow bg-white">
         {tickets.map(ticket => (
           <TicketItem key={ticket._id} ticket={ticket} onClick={handleTicketClick} />
@@ -95,4 +94,4 @@ export const ViewAllTickets: React.FC = () => {
   );
 };
 
-export default ViewAllTickets;
+export default TicketsAdminView;

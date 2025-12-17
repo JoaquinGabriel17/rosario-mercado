@@ -105,3 +105,26 @@ export const updateTicketStatus = async (req: AuthRequest, res: Response) => {
     res.status(500).json({ error: "Error actualizando estado" });
   }
 };
+
+export const getAllTickets = async( req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.user.id;
+    const user = await User.findById(userId);
+    if(!user) res.status(404).json({message: "Usuario no encontrado"});
+
+    if(user?.role !== "admin") res.status(401).json({ message: "Usuario no autorizado para este endpoint"});
+
+    const allTickets = await Ticket.find({
+      status: { $in: ["open", "in_progress"] }
+    })
+    .sort({ createdAt: -1 })
+    .limit(10)
+    .populate("userId", "name email")
+    .lean()
+
+    res.status(200).json(allTickets)
+  } catch (error) {
+    console.error("Error al obtener todos los tickets: ",error);
+    return res.status(500).json({message: "Error interno del servidor"});
+  }
+}
