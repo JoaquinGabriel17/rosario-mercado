@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "../components/ui/Button";
 import EditAccount from "../components/account/EditAccount";
 import Purchases from "../components/account/Purchases";
-import Support from "./Support";
+
 
 export default function Dashboard () {
     
