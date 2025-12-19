@@ -1,39 +1,36 @@
 import { useNavigate } from 'react-router-dom';
 import { useUserStore } from "../store/userStore";
+import { Button } from './ui/Button';
+import { useTicketsStore } from '../store/ticketsStore';
 
 function Navbar() {
 
     const user = useUserStore((state) => state.user);
+    const { openTickets } = useTicketsStore();
 
     const navigate = useNavigate();
 
     return (
         <nav className='bg-[#FFFFFF] flex justify-between items-center p-4 text-[#1E293B] border-b-4 border-b-[#2563EB]' >
-            
+            <Button
+                onClick={() => navigate('/')}
+            >Inicio</Button>
             {user ? (
-                <button
-                className="px-6 py-2 rounded-lg bg-blue-600 text-white font-medium 
-active:scale-95 transition-all duration-150 shadow-sm"
+                <Button
                 onClick={() => navigate('/dashboard')}
                 >
-                    Mi cuenta
-                </button>
+                    {openTickets.length > 0 && user?.role === "admin" ?  "Mi cuenta  🚨" : "Mi cuenta"}
+                </Button>
             )
             :
             (
-                <button
-                className="px-6 py-2 rounded-lg bg-blue-600 text-white font-medium 
-active:scale-95 transition-all duration-150 shadow-sm"
+                <Button
                 onClick={() => navigate('/auth')}
-            >Iniciar sesión</button>
+            >Iniciar sesión</Button>
             )
         }
             
-            <button
-                className="px-6 py-2 rounded-lg bg-blue-600 text-white font-medium 
-active:scale-95 transition-all duration-150 shadow-sm"
-                onClick={() => navigate('/')}
-            >Inicio</button>
+            
         </nav>
     )
 }

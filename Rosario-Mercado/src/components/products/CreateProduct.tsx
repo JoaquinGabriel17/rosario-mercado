@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useUserStore } from "../../store/userStore";
 import Loading from "../ui/Loading";
 import Alert from "../ui/Alert";
+import { Button } from "../ui/Button";
 
     const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
@@ -185,6 +186,7 @@ export default function CreateProduct() {
             <option value="">Seleccionar categoría</option>
             <option value="comidas">Comidas</option>
             <option value="bebidas">Bebidas</option>
+            <option value="combos">Combos</option>
           </select>
         </div>
 
@@ -200,12 +202,12 @@ export default function CreateProduct() {
         </div>
 
         {/* SUBMIT */}
-        <button
+        <Button
           type="submit"
           className="w-full py-3 bg-blue-600 text-white font-medium rounded-lg active:scale-95 transition"
         >
           Crear producto
-        </button>
+        </Button>
       </form>
     </div>
   );

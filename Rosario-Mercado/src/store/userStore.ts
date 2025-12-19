@@ -1,10 +1,21 @@
 import { create } from "zustand";
 
+//    const user = useUserStore((state) => state.user);
+
+
 interface User {
   id: string;
   name: string;
   email: string;
   token: string;
+  phoneNumber?: string;
+  businessHours?: string;
+  address?: string;
+  whatsappAvailable: boolean;
+  delivery: boolean;
+  instagramUrl: string;
+  facebookUrl: string;
+  role: string;
 }
 
 interface UserState {

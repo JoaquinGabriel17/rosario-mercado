@@ -8,6 +8,8 @@ export interface IProduct extends Document {
   imageUrl: string;
   imageId: string;
   userId: string;
+  stock: number;
+  soldCount: number;
 }
 
 const productSchema = new Schema<IProduct>(
@@ -18,7 +20,9 @@ const productSchema = new Schema<IProduct>(
     category: { type: String, required: true },
     imageUrl: { type: String, required: true }, 
     imageId: { type: String, required: true },
-    userId: { type: String, required: true } 
+    userId: { type: String, required: true } ,
+    stock: { type: Number, default: 0,required: true},
+    soldCount: { type: Number, default: 0, required: true}
   },
   { timestamps: true }
 );

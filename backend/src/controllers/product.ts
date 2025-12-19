@@ -1,4 +1,4 @@
-import { Response } from "express";
+import { Request, Response } from "express";
 import { AuthRequest } from "../middlewares/auth";
 import Product from "../models/Product";
 import User from "../models/User";
@@ -15,7 +15,7 @@ export const createProduct = async (req: AuthRequest, res: Response) => {
     //haz un tipo para imageData
 
 
-    const { title, description, price, category } = req.body;
+    const { title, description, price, category, stock, soldCount } = req.body;
 
     if (!title || !price || !category) {
       return res.status(400).json({ message: "Faltan datos obligatorios" });
@@ -49,6 +49,8 @@ export const createProduct = async (req: AuthRequest, res: Response) => {
       imageUrl: imageData.imageUrl,
       imageId:  imageData.imageId, 
       userId: req.user.id,
+      stock: stock ?? 0,
+      soldCount: soldCount ?? 0
     });
 
     return res.json(newProduct);
@@ -151,8 +153,8 @@ export const editProductById = async (req: AuthRequest, res: Response) => {
     res.json({message: "producto actualizado correctamente", updatedProduct});
 
   } catch (error) {
-    if(error )
-    res.status(500).json({ message:  error });
+    res.status(500).json({ message: error || "Error al obtener productos" });
+
   }
 };
 
@@ -179,7 +181,7 @@ export const deleteProductById = async (req: AuthRequest, res: Response) => {
     await Product.findByIdAndDelete(productId);
     res.json({ message: "Producto eliminado correctamente" });
   } catch (error) {
-    
+    res.status(500).json({ message: error || "Error al eliminar producto" });
   }
 };
 
@@ -199,9 +201,31 @@ export const getProductById = async (req: AuthRequest, res: Response) => {
       return res.status(404).json({ message: "Producto no encontrado" });
     }
 
-    res.json(product)
+    const userProduct = await User.findById(product.userId).select('-password -__v');
+    if(!userProduct){
+      await Product.findByIdAndDelete(productId);
+      return res.status(400).json({ message: "El usuario que creó el producto fue eliminado."})
+    };
+    
+
+    res.json({product: product, user: userProduct})
 
   } catch (error) {
-    
+    res.status(500).json({ message: error || "Error al obtener productos" });
+  }
+};
+
+// OBTENER PRODUCTOS ORDENADOS DESC. POR VENTAS
+export const getProductsToHome = async (req: Request, res: Response) => {
+  try {
+    const [bestSellers, combos, bebidasTop] = await Promise.all([
+    Product.find().sort({ soldCount: -1 }).limit(10),
+    Product.find({ category: "combos" }).sort({ soldCount: -1 }).limit(10),
+    Product.find({ category: "bebidas" }).sort({ soldCount: -1 }).limit(10),
+  ]);
+
+  res.json({ bestSellers, combos, bebidasTop });
+  } catch (error) {
+    res.status(500).json({ message: error || "Error al obtener productos" });
   }
 }

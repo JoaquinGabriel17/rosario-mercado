@@ -6,7 +6,7 @@ import cors from "cors";
 import { connectDB } from "./config/db";
 import userRoutes from "./routes/user.routes";
 import productRoutes from "./routes/product.routes";
-
+import ticketRoutes from "./routes/tickets.routes"
 
 
 
@@ -19,6 +19,7 @@ app.use(express.json());
 // Rutas
 app.use("/users", userRoutes);
 app.use("/products", productRoutes);
+app.use("/tickets", ticketRoutes)
 
 app.listen(process.env.PORT, () => {
   connectDB();
