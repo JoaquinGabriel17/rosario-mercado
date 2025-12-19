@@ -22,6 +22,7 @@ export default function EditProducts({ productId, onBack }:{ productId: string, 
     price: "",
     category: "",
     image: null as File | null,
+    stock: "",
   });
 
   const API_BASE = import.meta.env.VITE_BACKEND_URL;
@@ -109,7 +110,7 @@ console.log(err)
 });
  return;}
 
-    if(!formData.title && !formData.description && !formData.price && !formData.category && !formData.image){
+    if(!formData.stock && !formData.title && !formData.description && !formData.price && !formData.category && !formData.image){
        setLoading(false)
       setAlert({
   open: true,
@@ -198,6 +199,19 @@ return;
           value={formData.price}
           onChange={handleChange}
           required
+          min="1"
+        />
+
+        <label className="font-medium m-0">Stock</label>
+        <input
+          name="stock"
+          type="number"
+          className="border rounded-xl px-3 py-2"
+          placeholder={selectedProduct.stock}
+          value={formData.stock}
+          onChange={handleChange}
+          required
+          min="0"
         />
         
         <label className="font-medium">Categoría</label>

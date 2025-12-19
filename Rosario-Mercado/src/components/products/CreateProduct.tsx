@@ -12,6 +12,7 @@ interface ProductForm {
   price: number | "";
   category: string;
   image?: File | null;
+  stock: number | "0";
 }
 
 
@@ -24,6 +25,7 @@ export default function CreateProduct() {
     price: "",
     category: "",
     image: null,
+    stock: "0"
   });
 
   const [errors, setErrors] = useState<string>("");
@@ -71,6 +73,7 @@ export default function CreateProduct() {
     formData.append("price", form.price.toString());
     formData.append("category", form.category);
     formData.append("image", form.image); 
+    formData.append("stock", form.stock.toString());
 
 
 
@@ -106,6 +109,7 @@ export default function CreateProduct() {
       price: "",
       category: "",
       image: null,
+      stock: "0",
     });
     
   };
@@ -171,6 +175,18 @@ export default function CreateProduct() {
             required
             min="1"
           />
+        </div>
+        <div>
+          <label className="font-medium">Stock</label>
+          <input
+            type="number"
+            name="stock"
+            value={form.stock}
+            onChange={handleChange}
+            placeholder="Ej: 10"
+            className="w-full p-2 border rounded-lg"   
+            min="0"        
+          ></input>
         </div>
 
         {/* CATEGORÍA */}
