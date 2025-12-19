@@ -3,7 +3,6 @@ import { Card, CardContent } from "../ui/Card";
 import { Button } from "../ui/Button";
 import { motion } from "framer-motion";
 
-// Ajusta la URL de tu backend
     const API_URL = import.meta.env.VITE_BACKEND_URL;
 
 export default function UserProducts({ userId, onChangeViewToEdit }: { userId: string, onChangeViewToEdit: (view: string) => void; }) {

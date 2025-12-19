@@ -5,6 +5,7 @@ import { useUserStore } from "../store/userStore";
 import EditProducts from "../components/products/EditProducts";
 import { Button } from "../components/ui/Button";
 import { useNavigate } from "react-router-dom";
+import DeleteProduct from "../components/products/DeleteProduct";
 
 function ProductDashboard() {
   const [activeView, setActiveView] = useState<"menu" | "create" | "view" | "edit" | "delete" >("menu");
@@ -87,6 +88,7 @@ function ProductDashboard() {
           <div className="flex justify-start pl-2">
             <Button onClick={back}>Volver</Button>
           </div>
+          <DeleteProduct/>
         </>
       )}
     </div>
