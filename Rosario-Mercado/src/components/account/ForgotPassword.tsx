@@ -37,7 +37,7 @@ const ForgotPassword = () => {
       });
 
       const data = await res.json();
-
+      
       if (!res.ok) {
         setLoading(false)
         setAlert({
@@ -54,8 +54,8 @@ const ForgotPassword = () => {
   type: "success",
 })
     setEmail("")
-    navigate("/auth")
-      }
+      };
+
     } catch (err) {
         setLoading(false)
       setAlert({
