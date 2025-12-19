@@ -17,7 +17,7 @@
     "noUncheckedSideEffectImports": true,
     "moduleDetection": "force",
     "skipLibCheck": true,
-
+    "outDir": "./dist",
     "typeRoots": ["./node_modules/@types", "./src/types"],
     "esModuleInterop": true
   },
