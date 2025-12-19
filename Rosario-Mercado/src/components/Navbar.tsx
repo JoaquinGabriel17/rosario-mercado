@@ -1,10 +1,12 @@
 import { useNavigate } from 'react-router-dom';
 import { useUserStore } from "../store/userStore";
 import { Button } from './ui/Button';
+import { useTicketsStore } from '../store/ticketsStore';
 
 function Navbar() {
 
     const user = useUserStore((state) => state.user);
+    const { openTickets } = useTicketsStore();
 
     const navigate = useNavigate();
 
@@ -17,7 +19,7 @@ function Navbar() {
                 <Button
                 onClick={() => navigate('/dashboard')}
                 >
-                    Mi cuenta
+                    {openTickets.length > 0 && user?.role === "admin" ?  "Mi cuenta  🚨" : "Mi cuenta"}
                 </Button>
             )
             :

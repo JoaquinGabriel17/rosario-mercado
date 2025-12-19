@@ -3,6 +3,7 @@ import { useUserStore } from "../store/userStore";
 import { Button } from "../components/ui/Button";
 import CreateTicket from "../components/support/CreateTicket";
 import { useNavigate, useParams } from "react-router-dom";
+import { useTicketsStore } from "../store/ticketsStore";
 
 export default function Support(){
 
@@ -11,6 +12,7 @@ export default function Support(){
     if(view) setActiveView(view)
     const navigate = useNavigate();
   const user = useUserStore((state) => state.user);
+  const { openTickets } = useTicketsStore();
 
       const back = () => setActiveView("menu");
     
@@ -36,7 +38,7 @@ export default function Support(){
                 {user?.role === "admin" && 
                 <Button 
                   onClick={() => navigate("/support/tickets/admin")}
-                >Ver todos los tickets</Button>
+                >{openTickets.length > 0 && user?.role === "admin" ?  "Ver todos los tickets 🚨" : "Ver todos los tickets"}</Button>
                 }
             </div>
           )}

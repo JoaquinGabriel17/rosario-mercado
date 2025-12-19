@@ -203,6 +203,7 @@ export const getProductById = async (req: AuthRequest, res: Response) => {
 
     const userProduct = await User.findById(product.userId).select('-password -__v');
     if(!userProduct){
+      await Product.findByIdAndDelete(productId);
       return res.status(400).json({ message: "El usuario que creó el producto fue eliminado."})
     };
     

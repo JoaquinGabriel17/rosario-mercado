@@ -44,7 +44,7 @@ export default function Dashboard () {
                     >Mis compras</Button>
                     */}
 
-                    <Button className="mt-4 py-6 min-w-2xs"
+                    <Button className="mt-4 py-6 min-w-2xs bg-green-600"
                         onClick={() => navigate("/shop")}
                     >Mi tienda - Empezar a vender</Button>
 

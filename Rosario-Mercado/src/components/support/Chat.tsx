@@ -17,22 +17,22 @@ export default function Chat() {
   const [newMessage, setNewMessage] = useState('');
   const navigate = useNavigate()
   const [alert, setAlert] = useState({
-  open: false,
-  message: "",
-  type: "info" as "info" | "success" | "error",
-});
-  const [ isOpen, setIsOpen ] = useState<boolean>(false);
-  const [ ticketStatus, setTicketStatus ] = useState<string>("")
+    open: false,
+    message: "",
+    type: "info" as "info" | "success" | "error",
+  });
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [ticketStatus, setTicketStatus] = useState<string>("")
 
   useEffect(() => {
     const fetchMessages = async () => {
       try {
         setLoading(true);
         setError(null);
-        const res = await axios.get(`${backendUrl}/tickets/${ticketId}/messages`,{
-            headers:{
-                Authorization: `Bearer ${user?.token}`
-            }
+        const res = await axios.get(`${backendUrl}/tickets/${ticketId}/messages`, {
+          headers: {
+            Authorization: `Bearer ${user?.token}`
+          }
         });
         if (res.status !== 200) throw new Error('Error al obtener mensajes');
         const data: Message[] = await res.data.messages;
@@ -49,24 +49,21 @@ export default function Chat() {
     if (ticketId) fetchMessages();
   }, [ticketId]);
 
+  //Enviar mensaje
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true)
     if (!newMessage.trim()) {
-        setLoading(false)
-        setAlert({
-  open: true,
-  message: "Debe ingresar un mensaje para enviar",
-  type: "error",
-});
-        return;
+      setLoading(false)
+      setAlert({ open: true, message: "Debe ingresar un mensaje para enviar", type: "error", });
+      return;
     };
 
     try {
-      const res = await axios.post(`${backendUrl}/tickets/${ticketId}/messages`, JSON.stringify({ message: newMessage, status: ticketStatus }),{
-        headers: { 
-            'Content-Type': 'application/json', 
-            Authorization: `Bearer ${user?.token}`
+      const res = await axios.post(`${backendUrl}/tickets/${ticketId}/messages`, JSON.stringify({ message: newMessage, status: (user?.role === "user" ? "open" : ticketStatus ) }), {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${user?.token}`
         }
       });
       if (res.status !== 201) throw new Error('Error al enviar mensaje');
@@ -76,11 +73,12 @@ export default function Chat() {
     } catch (err: any) {
       setError(err.message);
     }
-    finally{
-        setLoading(false)
+    finally {
+      setLoading(false)
     }
   };
 
+  //Cambiar estado de ticket
   const handleChangeStatus = (status: string) => {
     setTicketStatus(status);
     setIsOpen(false);

@@ -16,7 +16,14 @@ export interface Product {
   __v?: number;
 }
 
+
 export interface ProductResponse {
   product: Product;
   user: User;
+}
+
+export interface ProductsInfo {
+  bestSellers: Product[];
+  combos: Product[];
+  bebidasTop: Product[];
 }
