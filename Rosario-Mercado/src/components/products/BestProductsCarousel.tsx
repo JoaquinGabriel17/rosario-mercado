@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { Product } from "../../pages/Home";
+import type { Product } from "../../types/product";
 import { useNavigate } from "react-router-dom";
 
 export default function BestProductsCarousel({ products }: { products: Array<Product> }) {
