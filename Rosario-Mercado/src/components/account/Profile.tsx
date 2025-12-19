@@ -93,7 +93,7 @@ export default function Profile() {
   }
 
   return (
-    <div className="max-w-3xl mx-auto px-6 bg-white shadow-sm rounded-md">
+    <div className="max-w-3xl mx-auto pb-4 px-6 bg-white shadow-sm rounded-md">
       <Button className="top-0 left-0" onClick={() => navigate(-1)}>Volver</Button>
     {loading && <Loading></Loading>}
       <header className="flex items-center justify-between mb-6 text-center">
