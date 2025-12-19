@@ -16,12 +16,15 @@ export default function Support(){
     
     
       return (
-        <div className="text-center">
+        <div className="">
+
+          {activeView === "menu" && <Button className="left-0" onClick={ () => navigate("/dashboard")}>Volver</Button>}
             
     
           {/* ---------- MENU PRINCIPAL ---------- */}
           {activeView === "menu" && (
             <div className="flex flex-col items-center">
+              
                 <h1 className="text-3xl m-6">Soporte - Asistencia</h1>
                 <Button
                     className=""

@@ -21,6 +21,8 @@ export default function Chat() {
   message: "",
   type: "info" as "info" | "success" | "error",
 });
+  const [ isOpen, setIsOpen ] = useState<boolean>(false);
+  const [ ticketStatus, setTicketStatus ] = useState<string>("")
 
   useEffect(() => {
     const fetchMessages = async () => {
@@ -33,7 +35,9 @@ export default function Chat() {
             }
         });
         if (res.status !== 200) throw new Error('Error al obtener mensajes');
-        const data: Message[] = await res.data;
+        const data: Message[] = await res.data.messages;
+        const status = await res.data.ticketInfo.status;
+        setTicketStatus(status);
         setMessages(data);
       } catch (err: any) {
         setError(err.message);
@@ -59,7 +63,7 @@ export default function Chat() {
     };
 
     try {
-      const res = await axios.post(`${backendUrl}/tickets/${ticketId}/messages`, JSON.stringify({ message: newMessage }),{
+      const res = await axios.post(`${backendUrl}/tickets/${ticketId}/messages`, JSON.stringify({ message: newMessage, status: ticketStatus }),{
         headers: { 
             'Content-Type': 'application/json', 
             Authorization: `Bearer ${user?.token}`
@@ -77,6 +81,11 @@ export default function Chat() {
     }
   };
 
+  const handleChangeStatus = (status: string) => {
+    setTicketStatus(status);
+    setIsOpen(false);
+  }
+
   if (loading) return <Loading></Loading>;
   if (error) return <p className="text-center text-red-500 mt-4">{error}</p>;
 
@@ -87,10 +96,22 @@ export default function Chat() {
               message={alert.message}
               type={alert.type}
               onClose={() => setAlert({ ...alert, open: false })} />}
-          <div className='bg-white w-full border-b-2 px-2'>
+          <div className='bg-white w-full border-b-2 px-2 flex flex-row justify-between'>
+              
               <Button onClick={() => navigate(-1)} >Volver</Button>
+              {user?.role === 'admin' && <Button onClick={() => setIsOpen(!isOpen)}>{ticketStatus}</Button>}
+              
+              
           </div>
+          
           <div className="flex-1 overflow-y-auto p-4 space-y-3">
+            {isOpen && 
+                <ul className='absolute z-999 bg-white border rounded p-6 text-center right-2 top-20'>
+                  <li onClick={() => handleChangeStatus("closed")} className='border-blue-600 border-2 p-2 rounded w-full mt-1 cursor-pointer'>Cerrado</li>
+                  <li onClick={() => handleChangeStatus("open")} className='border-blue-600 border-2 p-2 rounded w-full mt-1 cursor-pointer'>Abierto</li>
+                  <li onClick={() => handleChangeStatus("in_progress")} className='border-blue-600 border-2 p-2 rounded w-full mt-1 cursor-pointer'>En progreso</li>
+                </ul>
+              }
 
         {!messages.length && <p className='text-center text-2xl'>Aún no hay mensajes en el ticket</p>}
         {messages.map(msg => (

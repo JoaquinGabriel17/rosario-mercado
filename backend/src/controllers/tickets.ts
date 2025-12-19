@@ -41,8 +41,9 @@ export const getUserTickets = async (req: Request, res: Response) => {
 export const getTicketMessages = async (req: Request, res: Response) => {
   try {
     const  ticketId  = req.params.ticketId as string;
+    const ticketInfo = await Ticket.findById(ticketId)
     const messages = await Message.find({ ticketId }).sort({ createdAt: 1 });
-    res.json(messages);
+    res.json({messages, ticketInfo});
   } catch (error) {
     res.status(500).json({ error: "Error obteniendo mensajes" });
   }
@@ -106,6 +107,7 @@ export const updateTicketStatus = async (req: AuthRequest, res: Response) => {
   }
 };
 
+// Obtener todos los tickets de todos los usuarios (solo admin)
 export const getAllTickets = async( req: AuthRequest, res: Response) => {
   try {
     const userId = req.user.id;
@@ -117,7 +119,7 @@ export const getAllTickets = async( req: AuthRequest, res: Response) => {
     const allTickets = await Ticket.find({
       status: { $in: ["open", "in_progress"] }
     })
-    .sort({ createdAt: -1 })
+    .sort({ updatedAt: -1 })
     .limit(10)
     .populate("userId", "name email")
     .lean()

@@ -4,6 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import Loading from '../ui/Loading';
 import { useUserStore } from '../../store/userStore';
 import CopyInfoButton from '../../utils/CopyInfoButton';
+import { Button } from '../ui/Button';
 
 type User = {
   _id: string;
@@ -92,11 +93,12 @@ export default function Profile() {
   }
 
   return (
-    <div className="max-w-3xl mx-auto p-6 bg-white shadow-sm rounded-md">
+    <div className="max-w-3xl mx-auto px-6 bg-white shadow-sm rounded-md">
+      <Button className="top-0 left-0" onClick={() => navigate(-1)}>Volver</Button>
     {loading && <Loading></Loading>}
-      <header className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="text-2xl font-semibold text-gray-800">{user.name}</h1>
+      <header className="flex items-center justify-between mb-6 text-center">
+        <div className='text-center'>
+          <h1 className=" text-center text-2xl font-semibold text-gray-800">{user.name}</h1>
         </div>
       </header>
 
