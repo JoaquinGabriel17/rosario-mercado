@@ -5,6 +5,7 @@ import jwt from "jsonwebtoken";
 import { AuthRequest } from "../middlewares/auth";
 import sendEmail from "../utils/sendEmail"; // función que envía correo
 import mongoose from "mongoose";
+import { resend } from "../config/resend";
 
 
 // CREAR USUARIO
@@ -185,7 +186,7 @@ export const forgotPassword = async (req: Request, res: Response) => {
     const user = await User.findOne({ email });
 
     if (!user) {
-      return res.status(404).json({ message: "No existe un usuario con ese email" });
+      return res.status(404).json({ message: "Si el email existe, recibirás un correo para restablecer la contraseña1" });
     }
 
     // Crear token temporal (15 minutos)
@@ -197,16 +198,18 @@ export const forgotPassword = async (req: Request, res: Response) => {
 
     const resetLink = `${process.env.FRONTEND_URL}/reset-password?token=${token}`;
 
-    await sendEmail({
+    await resend.emails.send({
+      from: 'Acme <onboarding@resend.dev>',
       to: email,
-      subject: "Recuperar contraseña - Rosario Mercado",
+      subject: "Recuperar contraseña - Agora",
       html: `
-        <p>Para recuperar tu contraseña de Rosario Mercado, hacé clic en el siguiente enlace:</p>
+        <p>Para recuperar tu contraseña de Agora, hacé clic en el siguiente enlace:</p>
         <a href="${resetLink}" target="_blank">${resetLink}</a>
+        <p>Este enlace expira en 20 minutos.</p>
       `
     });
 
-    res.json({ message: "Correo enviado correctamente" });
+    res.json({ message: "Si el email existe, recibirás un correo para restablecer la contraseña" });
 
   } catch (error: any) {
     console.log(error);
