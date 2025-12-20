@@ -121,7 +121,7 @@ export const ProductDetails: React.FC = () => {
                 <p>{product.stock}</p>
               </div>
             </div>
-
+            {/*
             <div className="mt-6 flex items-center gap-3">
               <button className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
                 Comprar
@@ -130,6 +130,7 @@ export const ProductDetails: React.FC = () => {
                 Agregar al carrito
               </button>
             </div>
+            */}
           </div>
         </div>
       </section>
