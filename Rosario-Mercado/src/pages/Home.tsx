@@ -70,7 +70,7 @@ function Home() {
 
     return (
       <div>
-        {loading && <h2>Cargando productos...</h2>}
+        {loading && <h2 className="text-2xl text-center mt-4">Cargando productos...</h2>}
         {alert && <Alert
           open={alert.open}
           message={alert.message}
