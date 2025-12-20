@@ -219,9 +219,9 @@ export const getProductById = async (req: AuthRequest, res: Response) => {
 export const getProductsToHome = async (req: Request, res: Response) => {
   try {
     const [bestSellers, combos, bebidasTop] = await Promise.all([
-    Product.find().sort({ soldCount: -1 }).limit(10),
-    Product.find({ category: "combos" }).sort({ soldCount: -1 }).limit(10),
-    Product.find({ category: "bebidas" }).sort({ soldCount: -1 }).limit(10),
+    Product.find({stock: { $gt: 0 }}).sort({ soldCount: -1 }).limit(10),
+    Product.find({ category: "combos",stock: { $gt: 0 } }).sort({ soldCount: -1 }).limit(10),
+    Product.find({ category: "bebidas", stock: { $gt: 0 } }).sort({ soldCount: -1 }).limit(10),
   ]);
 
   res.json({ bestSellers, combos, bebidasTop });

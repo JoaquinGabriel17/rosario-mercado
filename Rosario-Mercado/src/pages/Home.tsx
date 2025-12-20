@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import BestProductsCarousel from "../components/products/BestProductsCarousel";
-import Loading from "../components/ui/Loading";
 import Alert from "../components/ui/Alert";
 import type { ProductsInfo } from "../types/product";
 import { useTicketsStore } from "../store/ticketsStore";
@@ -71,7 +70,7 @@ function Home() {
 
     return (
       <div>
-        {loading && <Loading></Loading>}
+        {loading && <h2>Cargando productos...</h2>}
         {alert && <Alert
           open={alert.open}
           message={alert.message}
