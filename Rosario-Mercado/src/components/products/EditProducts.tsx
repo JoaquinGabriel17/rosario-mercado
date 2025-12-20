@@ -3,9 +3,11 @@ import { Button } from "../ui/Button";
 import { useUserStore } from "../../store/userStore";
 import Loading from "../ui/Loading";
 import Alert from "../ui/Alert";
+import { useParams } from "react-router-dom";
 
 
-export default function EditProducts({ productId, onBack }:{ productId: string, onBack: () => void; } ) {
+export default function EditProducts() {
+  const { productId } = useParams();
     const [loading, setLoading] = useState(true);
     const [selectedProduct, setSelectedProduct] = useState<any>(null);
     const user = useUserStore((state) => state.user);
@@ -153,7 +155,6 @@ return;
   const handleCloseAlert = () => {
     if(alert.type === "success"){
       setAlert({ ...alert, open: false }); 
-      onBack();
       return;
     }
     setAlert({ ...alert, open: false });

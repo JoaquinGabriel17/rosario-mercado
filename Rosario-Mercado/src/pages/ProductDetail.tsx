@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import type { ProductResponse } from "../types/product";
 import Loading from "../components/ui/Loading";
 import CopyInfoButton from "../utils/CopyInfoButton";
+import { Button } from "../components/ui/Button";
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL
 const formatCurrency = (value: number) =>
@@ -64,6 +65,7 @@ export const ProductDetails: React.FC = () => {
   if (error) {
     return (
       <div className="max-w-4xl mx-auto p-6">
+        <Button onClick={() => navigate(-1)}>Volver</Button>
         { loading && <Loading></Loading>}
         <div className="bg-red-50 border border-red-200 text-red-700 p-4 rounded">
           <p className="font-medium">Error</p>
@@ -88,7 +90,8 @@ export const ProductDetails: React.FC = () => {
   const { product, user } = data;
 
   return (
-    <div className="max-w-5xl mx-auto p-6 space-y-8">
+    <div className="max-w-5xl mx-auto p-6 space-y-8 relative">
+      {loading && <Loading/>}
       {/* Producto */}
       <section className="bg-white shadow rounded-lg overflow-hidden">
         <div className="md:flex">

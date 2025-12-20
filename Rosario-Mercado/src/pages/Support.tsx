@@ -1,36 +1,24 @@
-import { useState } from "react";
 import { useUserStore } from "../store/userStore";
 import { Button } from "../components/ui/Button";
-import CreateTicket from "../components/support/CreateTicket";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useTicketsStore } from "../store/ticketsStore";
 
 export default function Support(){
 
-    const [activeView, setActiveView] = useState<"menu" | "create" | "view" >("menu");
-    const { view } = useParams<{ view: "create" | "view" }>();
-    if(view) setActiveView(view)
-    const navigate = useNavigate();
+  const navigate = useNavigate();
   const user = useUserStore((state) => state.user);
   const { openTickets } = useTicketsStore();
 
-      const back = () => setActiveView("menu");
     
     
       return (
-        <div className="">
-
-          {activeView === "menu" && <Button className="left-0" onClick={ () => navigate("/dashboard")}>Volver</Button>}
-            
-    
-          {/* ---------- MENU PRINCIPAL ---------- */}
-          {activeView === "menu" && (
+        <div className="">    
             <div className="flex flex-col items-center">
               
                 <h1 className="text-3xl m-6">Soporte - Asistencia</h1>
                 <Button
                     className=""
-                    onClick={() => setActiveView("create")}    
+                    onClick={() => navigate("/support/create")}    
                 >Abrir una nueva solicitud</Button>
                 <Button
                     onClick={() => navigate("/support/tickets")}
@@ -41,19 +29,7 @@ export default function Support(){
                 >{openTickets.length > 0 && user?.role === "admin" ?  "Ver todos los tickets 🚨" : "Ver todos los tickets"}</Button>
                 }
             </div>
-          )}
-    
-          {/* ---------- CREAR Ticket ---------- */}
-          {activeView === "create" && (
-            <>
-              <div className="flex justify-start pl-2">
-                <Button onClick={back}>Volver</Button>
-              </div>
-    
-              <CreateTicket />
-            </>
-          )}
-    
+
         </div>
       );
     }
