@@ -12,25 +12,43 @@ function Navbar() {
 
     return (
         <nav className='bg-[#FFFFFF] flex justify-between items-center p-4 text-[#1E293B] border-b-4 border-b-[#2563EB]' >
+            <button
+                onClick={() => navigate(-1)}
+                className="flex items-center hover:text-gray-900 rounded bg-blue-600 p-4 text-white"
+            >
+                {/* Flecha SVG */}
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5 mr-1"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                >
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+                </svg>
+                {/* Texto opcional */}
+                <span className="text-sm font-medium">Volver</span>
+            </button>
             <Button
                 onClick={() => navigate('/')}
             >Inicio</Button>
             {user ? (
                 <Button
-                onClick={() => navigate('/dashboard')}
+                    onClick={() => navigate('/dashboard')}
                 >
-                    {openTickets.length > 0 && user?.role === "admin" ?  "Mi cuenta  🚨" : "Mi cuenta"}
+                    {openTickets.length > 0 && user?.role === "admin" ? "Mi cuenta  🚨" : "Mi cuenta"}
                 </Button>
             )
-            :
-            (
-                <Button
-                onClick={() => navigate('/auth')}
-            >Iniciar sesión</Button>
-            )
-        }
-            
-            
+                :
+                (
+                    <Button
+                        onClick={() => navigate('/auth')}
+                    >Iniciar sesión</Button>
+                )
+            }
+
+
         </nav>
     )
 }

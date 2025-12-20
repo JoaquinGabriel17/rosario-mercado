@@ -2,13 +2,16 @@ import { useEffect, useState } from "react";
 import { Card, CardContent } from "../ui/Card";
 import { Button } from "../ui/Button";
 import { motion } from "framer-motion";
+import { useNavigate, useParams } from "react-router-dom";
 
     const API_URL = import.meta.env.VITE_BACKEND_URL;
 
-export default function UserProducts({ userId, onChangeViewToEdit }: { userId: string, onChangeViewToEdit: (view: string) => void; }) {
+export default function UserProducts() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const { userId } = useParams();
+  const navigate = useNavigate();
 
   const fetchProducts = async () => {
     try {
@@ -45,7 +48,8 @@ export default function UserProducts({ userId, onChangeViewToEdit }: { userId: s
       {products.length === 0 ? (
         <p className="text-center text-gray-600">No tenés productos creados aún.</p>
       ) : (
-        products.map((product: any) => (
+        <div>
+        {products.map((product: any) => (
           <motion.div
             key={product._id}
             initial={{ opacity: 0, scale: 0.95 }}
@@ -73,12 +77,13 @@ export default function UserProducts({ userId, onChangeViewToEdit }: { userId: s
                     </div>
                   
 
-                  <Button onClick={() => onChangeViewToEdit(product._id)}>Editar</Button>
+                  <Button onClick={() => navigate(`/products/edit/${product._id}`)}>Editar</Button>
                 </div>
               </CardContent>
             </Card>
           </motion.div>
-        ))
+        ))}
+        </div>
       )}
     </div>
   );

@@ -1,10 +1,9 @@
 // src/components/Profile.tsx
 import { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import Loading from '../ui/Loading';
 import { useUserStore } from '../../store/userStore';
 import CopyInfoButton from '../../utils/CopyInfoButton';
-import { Button } from '../ui/Button';
 
 type User = {
   _id: string;
@@ -27,7 +26,6 @@ export default function Profile() {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const userLog = useUserStore((state) => state.user);
-  const navigate = useNavigate()
 
 
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
@@ -94,37 +92,21 @@ export default function Profile() {
 
   return (
     <div className="max-w-3xl mx-auto pb-4 px-6 bg-white shadow-sm rounded-md">
-      <Button className="top-0 left-0" onClick={() => navigate(-1)}>Volver</Button>
     {loading && <Loading></Loading>}
-      <header className="flex items-center justify-between mb-6 text-center">
-        <div className='text-center'>
-          <h1 className=" text-center text-2xl font-semibold text-gray-800">{user.name}</h1>
-        </div>
+      <header className="flex items-center mb-6 text-center">
+          <h1 className="w-full text-center text-2xl font-semibold text-gray-800">{user.name}</h1>
       </header>
 
       <section className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-        <div className="p-4 border rounded bg-gray-50">
+        {/* <div className="p-4 border rounded bg-gray-50">
           <p className="text-xs text-gray-500">Email</p>
           <p className="text-sm text-gray-800 break-all">{user.email}</p>
         </div>
+        */}
 
         <div className="p-4 border rounded bg-gray-50">
           <p className="text-xs text-gray-500">Teléfono</p>
           <p className="text-sm text-gray-800">{user.phoneNumber ?? '—'}</p>
-        </div>
-
-        <div className="p-4 border rounded bg-gray-50">
-          <p className="text-xs text-gray-500">Disponibilidad WhatsApp</p>
-          <p className={`text-sm font-medium ${user.whatsappAvailable ? 'text-green-600' : 'text-gray-600'}`}>
-            {user.whatsappAvailable ? 'Disponible' : 'No disponible'}
-          </p>
-        </div>
-
-        <div className="p-4 border rounded bg-gray-50">
-          <p className="text-xs text-gray-500">Delivery</p>
-          <p className={`text-sm font-medium ${user.delivery ? 'text-green-600' : 'text-gray-600'}`}>
-            {user.delivery ? 'Ofrece delivery' : 'No ofrece delivery'}
-          </p>
         </div>
         <div className="flex flex-col sm:flex-row gap-3">
                     {user.phoneNumber && (
@@ -141,6 +123,21 @@ export default function Profile() {
                       </a>
                     )}
                   </div>
+
+        <div className="p-4 border rounded bg-gray-50">
+          <p className="text-xs text-gray-500">Disponibilidad WhatsApp</p>
+          <p className={`text-sm font-medium ${user.whatsappAvailable ? 'text-green-600' : 'text-gray-600'}`}>
+            {user.whatsappAvailable ? 'Disponible' : 'No disponible'}
+          </p>
+        </div>
+
+        <div className="p-4 border rounded bg-gray-50">
+          <p className="text-xs text-gray-500">Delivery</p>
+          <p className={`text-sm font-medium ${user.delivery ? 'text-green-600' : 'text-gray-600'}`}>
+            {user.delivery ? 'Ofrece delivery' : 'No ofrece delivery'}
+          </p>
+        </div>
+        
       </section>
 
       <section className="mb-6">
