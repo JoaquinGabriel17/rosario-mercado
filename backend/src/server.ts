@@ -8,7 +8,7 @@ import userRoutes from "./routes/user.routes";
 import productRoutes from "./routes/product.routes";
 import ticketRoutes from "./routes/tickets.routes"
 
-
+import { MercadoPagoConfig, Preference } from 'mercadopago';
 
 
 
@@ -25,3 +25,5 @@ app.listen(process.env.PORT, () => {
   connectDB();
   console.log(`Servidor corriendo en puerto ${process.env.PORT}`);
 });
+
+const client = new MercadoPagoConfig({ accessToken: process.env.ACCESS_TOKEN as string});
