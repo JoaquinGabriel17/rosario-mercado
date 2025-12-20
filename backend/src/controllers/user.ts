@@ -186,7 +186,7 @@ export const forgotPassword = async (req: Request, res: Response) => {
     const user = await User.findOne({ email });
 
     if (!user) {
-      return res.status(404).json({ message: "Si el email existe, recibirás un correo para restablecer la contraseña1" });
+      return res.status(404).json({ message: "Si el email existe, recibirás un correo para restablecer la contraseña" });
     }
 
     // Crear token temporal (15 minutos)
