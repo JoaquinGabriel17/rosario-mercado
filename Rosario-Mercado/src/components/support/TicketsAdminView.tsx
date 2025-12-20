@@ -7,7 +7,6 @@ import Loading from '../ui/Loading';
 import { TicketsArraySchema } from '../../types/support';
 import type { Ticket } from '../../types/support';
 import { TicketItem } from '../../types/ticketItem';
-import { Button } from '../ui/Button';
 
 
 
@@ -53,9 +52,6 @@ export const TicketsAdminView: React.FC = () => {
   if (error) {
     return (
       <div className="max-w-2xl mx-auto mt-8 p-4 bg-red-50 text-red-700 rounded-lg">
-        <Button
-        onClick={() => navigate("/support")}
-      >Volver</Button>
         <p>{error}</p>
         <button
           onClick={fetchTickets}
@@ -72,9 +68,6 @@ export const TicketsAdminView: React.FC = () => {
   return (
     <div className="max-w-2xl mx-auto mt-2">
       {loading && <Loading/>}
-      <Button
-        onClick={() => navigate(-1)}
-      >Volver</Button>
       {tickets.length ? 
       <>
       <ul className="divide-y divide-gray-200 rounded-lg shadow bg-white">
