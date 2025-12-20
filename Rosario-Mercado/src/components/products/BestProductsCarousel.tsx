@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { Product } from "../../types/product";
 import { useNavigate } from "react-router-dom";
+import { Button } from "../ui/Button";
 
 export default function BestProductsCarousel({ products }: { products: Array<Product> }) {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -36,6 +37,7 @@ export default function BestProductsCarousel({ products }: { products: Array<Pro
         >
           ◀
         </button>
+        <Button onClick={() => navigate(`/products/${products[currentIndex]._id}`)} >Ver producto</Button>
         <button
           onClick={nextSlide}
           className="w-15 h-15 flex items-center justify-center rounded-full bg-blue-500 text-white shadow-md hover:bg-black/40 transition active:scale-95"
