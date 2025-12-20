@@ -4,8 +4,6 @@ import Product from "../models/Product";
 import User from "../models/User";
 import mongoose from "mongoose";
 import cloudinary from "../config/cloudinary";
-import { uploadToCloudinary } from "../utils/cloudinary";
-
 
 
 
