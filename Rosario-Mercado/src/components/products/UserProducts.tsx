@@ -70,12 +70,14 @@ export default function UserProducts() {
                     />
                   )}
                     <div className="flex flex-row justify-around">
-                        <div className="flex flex-col">
+                        <div className="flex flex-col gap-1">
                         <h2 className="text-lg font-semibold">{product.title}</h2>
                         <p className="text-xs text-blue-600 uppercase font-bold">{product.category}</p>
-                        {product.description && <p className="text-gray-600 text-sm">{product.description}</p>}
                         </div>
-                        <p className="font-semibold">${product.price}</p>
+                        <div className="flex flex-col text-center gap-1">
+                          <p className="font-semibold">${product.price}</p>
+                          <p className={product.stock <= 5 ? "text-red-500" : "text-black"}>Stock: {product.stock}</p>
+                        </div>
                     </div>
                   
 

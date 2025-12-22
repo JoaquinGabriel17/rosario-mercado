@@ -212,7 +212,7 @@ export const ProductDetails: React.FC = () => {
           )}
         </div>
         <div className="flex justify-center mt-4">
-          <Button onClick={() => navigate(`/products/user/${user.id}`)}>Ver todos los productos del usuario</Button>
+          <Button onClick={() => navigate(`/products/user/${user._id}`)}>Ver todos los productos del usuario</Button>
         </div>
       </section>
     </div>

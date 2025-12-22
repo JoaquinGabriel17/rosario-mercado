@@ -140,12 +140,13 @@ export const editProductById = async (req: AuthRequest, res: Response) => {
     
 
         // 2. Actualizar campos comunes si fueron enviados
-    const { title, description, price, category}= req.body;
+    const { title, description, price, category, stock}= req.body;
 
     if (title) product.title = title;
     if (description) product.description = description;
     if (price) product.price = price;
     if (category) product.category = category;
+    if(stock) product.stock = stock
 
     const updatedProduct =  await product.save();
 

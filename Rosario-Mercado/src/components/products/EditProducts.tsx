@@ -8,14 +8,14 @@ import { useParams } from "react-router-dom";
 
 export default function EditProducts() {
   const { productId } = useParams();
-    const [loading, setLoading] = useState(true);
-    const [selectedProduct, setSelectedProduct] = useState<any>(null);
-    const user = useUserStore((state) => state.user);
-    const [alert, setAlert] = useState({
-  open: false,
-  message: "",
-  type: "info" as "info" | "success" | "error",
-});
+  const [loading, setLoading] = useState(true);
+  const [selectedProduct, setSelectedProduct] = useState<any>(null);
+  const user = useUserStore((state) => state.user);
+  const [alert, setAlert] = useState({
+    open: false,
+    message: "",
+    type: "info" as "info" | "success" | "error",
+  });
 
 
   const [formData, setFormData] = useState({
@@ -31,16 +31,16 @@ export default function EditProducts() {
 
   const fetchProductToEdit = async () => {
     try {
-        setLoading(true)
-        if(!user){ 
-          setLoading(false)
-          setAlert({
-  open: true,
-  message: "Usuario no identificado",
-  type: "error",
-});
-          ; return;
-        }
+      setLoading(true)
+      if (!user) {
+        setLoading(false)
+        setAlert({
+          open: true,
+          message: "Usuario no identificado",
+          type: "error",
+        });
+        ; return;
+      }
       const res = await fetch(`${API_BASE}/products/${productId}`, {
         headers: { Authorization: `Bearer ${user.token}` },
       });
@@ -48,42 +48,41 @@ export default function EditProducts() {
       if (!res.ok) {
         setLoading(false)
         setAlert({
-  open: true,
-  message: "Error al cargar producto para editar",
-  type: "error",
-});
-console.log(res)
-return;
+          open: true,
+          message: "Error al cargar producto para editar",
+          type: "error",
+        });
+        console.log(res)
+        return;
       }
       const data = await res.json();
-
-      setSelectedProduct(data);
+      setSelectedProduct(data.product);
     } catch (err) {
       setLoading(false)
 
       setAlert({
-  open: true,
-  message: "Error al cargar producto para editar",
-  type: "error",
-});
-console.log(err)
+        open: true,
+        message: "Error al cargar producto para editar",
+        type: "error",
+      });
+      console.log(err)
     }
-    finally{
-        setLoading(false)
+    finally {
+      setLoading(false)
     }
   };
 
   useEffect(() => {
     if (productId) {
-      
+
       fetchProductToEdit();
     } else {
       setLoading(false)
       setAlert({
-  open: true,
-  message: "Error al cargar producto para editar",
-  type: "error",
-});
+        open: true,
+        message: "Error al cargar producto para editar",
+        type: "error",
+      });
       return
     }
   }, []);
@@ -91,7 +90,7 @@ console.log(err)
   const handleChange = (e: any) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
-   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
       ...formData,
       image: e.target.files ? e.target.files[0] : null,
@@ -103,24 +102,25 @@ console.log(err)
     e.preventDefault();
     try {
       setLoading(true)
-        if(!user){ 
-          setLoading(false)
-      setAlert({
-  open: true,
-  message: "Usuario no identificado",
-  type: "error",
-});
- return;}
+      if (!user) {
+        setLoading(false)
+        setAlert({
+          open: true,
+          message: "Usuario no identificado",
+          type: "error",
+        });
+        return;
+      }
 
-    if(!formData.stock && !formData.title && !formData.description && !formData.price && !formData.category && !formData.image){
-       setLoading(false)
-      setAlert({
-  open: true,
-  message: "Debe modificar al menos un campo",
-  type: "error",
-});
-return;
-    }
+      if (!formData.stock && !formData.title && !formData.description && !formData.price && !formData.category && !formData.image) {
+        setLoading(false)
+        setAlert({
+          open: true,
+          message: "Debe modificar al menos un campo",
+          type: "error",
+        });
+        return;
+      }
 
       const res = await fetch(`${API_BASE}/products/${productId}`, {
         method: "PUT",
@@ -131,30 +131,45 @@ return;
         body: JSON.stringify(formData),
       });
 
-      if (!res.ok) throw new Error("Error al actualizar producto");
+      if (!res.ok) {
+        setAlert({
+        open: true,
+        message: "Error al actualizar el producto",
+        type: "error",
+      });
+      return;
+      }
       setLoading(false)
       setAlert({
-  open: true,
-  message: "Producto actualizado correctamente",
-  type: "success",
-});
+        open: true,
+        message: "Producto actualizado correctamente",
+        type: "success",
+      });
+      setFormData({
+    title: "",
+    description: "",
+    price: "",
+    category: "",
+    image: null as File | null,
+    stock: "",
+  });
     } catch (err) {
       setLoading(false)
       console.log(err)
       setAlert({
-  open: true,
-  message: "Error al actualizar producto",
-  type: "error",
-});
+        open: true,
+        message: "Error al actualizar producto",
+        type: "error",
+      });
     }
-    finally{
+    finally {
       setLoading(false)
     }
   };
 
   const handleCloseAlert = () => {
-    if(alert.type === "success"){
-      setAlert({ ...alert, open: false }); 
+    if (alert.type === "success") {
+      setAlert({ ...alert, open: false });
       return;
     }
     setAlert({ ...alert, open: false });
