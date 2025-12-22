@@ -1,9 +1,10 @@
 // src/components/Profile.tsx
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import Loading from '../ui/Loading';
 import { useUserStore } from '../../store/userStore';
 import CopyInfoButton from '../../utils/CopyInfoButton';
+import { Button } from '../ui/Button';
 
 type User = {
   _id: string;
@@ -26,6 +27,7 @@ export default function Profile() {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const userLog = useUserStore((state) => state.user);
+  const navigate = useNavigate();
 
 
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
@@ -181,6 +183,9 @@ export default function Profile() {
           )}
         </div>
       </section>
+      <div className='w-full mt-4 flex items-center content-center justify-center'>
+        <Button onClick={() => navigate(`/products/user/${id}`)} >Ver todos los productos del usuario</Button>
+      </div>
     </div>
   );
 }

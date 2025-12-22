@@ -3,10 +3,12 @@ import { Card, CardContent } from "../ui/Card";
 import { Button } from "../ui/Button";
 import { motion } from "framer-motion";
 import { useNavigate, useParams } from "react-router-dom";
+import { useUserStore } from "../../store/userStore";
 
     const API_URL = import.meta.env.VITE_BACKEND_URL;
 
 export default function UserProducts() {
+  const user = useUserStore((state) => state.user);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -56,8 +58,8 @@ export default function UserProducts() {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.2 }}
           >
-            <Card className="rounded-2xl shadow-md p-3">
-              <CardContent className="p-0">
+            <Card className="rounded-2xl shadow-md p-3 m-4">
+              <CardContent className="p-2 ">
 
                 <div className="flex flex-col gap-2">
                     {product.imageUrl && product.imageUrl.length > 0 && (
@@ -77,7 +79,10 @@ export default function UserProducts() {
                     </div>
                   
 
-                  <Button onClick={() => navigate(`/products/edit/${product._id}`)}>Editar</Button>
+                  { user?.id === userId &&
+                    <Button onClick={() => navigate(`/products/edit/${product._id}`)}>Editar</Button>
+                  }
+                  <Button onClick={() => navigate(`/products/${product._id}`)} >Ver detalle de producto</Button>
                 </div>
               </CardContent>
             </Card>
