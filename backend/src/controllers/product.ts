@@ -218,13 +218,13 @@ export const getProductById = async (req: AuthRequest, res: Response) => {
 // OBTENER PRODUCTOS ORDENADOS DESC. POR VENTAS
 export const getProductsToHome = async (req: Request, res: Response) => {
   try {
-    const [bestSellers, combos, bebidasTop] = await Promise.all([
-    Product.find({stock: { $gt: 0 }}).sort({ soldCount: -1 }).limit(10),
+    const [comidas, combos, bebidasTop] = await Promise.all([
+    Product.find({ category: "comidas" ,stock: { $gt: 0 }}).sort({ soldCount: -1 }).limit(10),
     Product.find({ category: "combos",stock: { $gt: 0 } }).sort({ soldCount: -1 }).limit(10),
     Product.find({ category: "bebidas", stock: { $gt: 0 } }).sort({ soldCount: -1 }).limit(10),
   ]);
 
-  res.json({ bestSellers, combos, bebidasTop });
+  res.json({ comidas, combos, bebidasTop });
   } catch (error) {
     res.status(500).json({ message: error || "Error al obtener productos" });
   }
