@@ -65,7 +65,6 @@ export const ProductDetails: React.FC = () => {
   if (error) {
     return (
       <div className="max-w-4xl mx-auto p-6">
-        <Button onClick={() => navigate(-1)}>Volver</Button>
         { loading && <Loading></Loading>}
         <div className="bg-red-50 border border-red-200 text-red-700 p-4 rounded">
           <p className="font-medium">Error</p>
@@ -196,7 +195,7 @@ export const ProductDetails: React.FC = () => {
               href={user.facebookUrl}
               target="_blank"
               rel="noreferrer"
-              className="text-blue-600 hover:underline"
+              className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm"
             >
               Facebook
             </a>
@@ -206,11 +205,14 @@ export const ProductDetails: React.FC = () => {
               href={user.instagramUrl}
               target="_blank"
               rel="noreferrer"
-              className="text-pink-600 hover:underline"
+              className="inline-flex items-center px-4 py-2 bg-pink-500 text-white rounded hover:bg-pink-600 text-sm"
             >
               Instagram
             </a>
           )}
+        </div>
+        <div className="flex justify-center mt-4">
+          <Button onClick={() => navigate(`/products/user/${user._id}`)}>Ver todos los productos del usuario</Button>
         </div>
       </section>
     </div>

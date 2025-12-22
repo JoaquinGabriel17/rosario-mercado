@@ -3,10 +3,12 @@ import { Card, CardContent } from "../ui/Card";
 import { Button } from "../ui/Button";
 import { motion } from "framer-motion";
 import { useNavigate, useParams } from "react-router-dom";
+import { useUserStore } from "../../store/userStore";
 
     const API_URL = import.meta.env.VITE_BACKEND_URL;
 
 export default function UserProducts() {
+  const user = useUserStore((state) => state.user);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -56,8 +58,8 @@ export default function UserProducts() {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.2 }}
           >
-            <Card className="rounded-2xl shadow-md p-3">
-              <CardContent className="p-0">
+            <Card className="rounded-2xl shadow-md p-3 m-4">
+              <CardContent className="p-2 ">
 
                 <div className="flex flex-col gap-2">
                     {product.imageUrl && product.imageUrl.length > 0 && (
@@ -68,16 +70,21 @@ export default function UserProducts() {
                     />
                   )}
                     <div className="flex flex-row justify-around">
-                        <div className="flex flex-col">
+                        <div className="flex flex-col gap-1">
                         <h2 className="text-lg font-semibold">{product.title}</h2>
                         <p className="text-xs text-blue-600 uppercase font-bold">{product.category}</p>
-                        {product.description && <p className="text-gray-600 text-sm">{product.description}</p>}
                         </div>
-                        <p className="font-semibold">${product.price}</p>
+                        <div className="flex flex-col text-center gap-1">
+                          <p className="font-semibold">${product.price}</p>
+                          <p className={product.stock <= 5 ? "text-red-500" : "text-black"}>Stock: {product.stock}</p>
+                        </div>
                     </div>
                   
 
-                  <Button onClick={() => navigate(`/products/edit/${product._id}`)}>Editar</Button>
+                  { user?.id === userId &&
+                    <Button onClick={() => navigate(`/products/edit/${product._id}`)}>Editar</Button>
+                  }
+                  <Button onClick={() => navigate(`/products/${product._id}`)} >Ver detalle de producto</Button>
                 </div>
               </CardContent>
             </Card>

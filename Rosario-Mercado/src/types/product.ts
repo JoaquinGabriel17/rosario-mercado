@@ -23,7 +23,7 @@ export interface ProductResponse {
 }
 
 export interface ProductsInfo {
-  bestSellers: Product[];
+  comidas: Product[];
   combos: Product[];
   bebidasTop: Product[];
 }

@@ -140,12 +140,13 @@ export const editProductById = async (req: AuthRequest, res: Response) => {
     
 
         // 2. Actualizar campos comunes si fueron enviados
-    const { title, description, price, category}= req.body;
+    const { title, description, price, category, stock}= req.body;
 
     if (title) product.title = title;
     if (description) product.description = description;
     if (price) product.price = price;
     if (category) product.category = category;
+    if(stock) product.stock = stock
 
     const updatedProduct =  await product.save();
 
@@ -218,13 +219,13 @@ export const getProductById = async (req: AuthRequest, res: Response) => {
 // OBTENER PRODUCTOS ORDENADOS DESC. POR VENTAS
 export const getProductsToHome = async (req: Request, res: Response) => {
   try {
-    const [bestSellers, combos, bebidasTop] = await Promise.all([
-    Product.find({stock: { $gt: 0 }}).sort({ soldCount: -1 }).limit(10),
+    const [comidas, combos, bebidasTop] = await Promise.all([
+    Product.find({ category: "comidas" ,stock: { $gt: 0 }}).sort({ soldCount: -1 }).limit(10),
     Product.find({ category: "combos",stock: { $gt: 0 } }).sort({ soldCount: -1 }).limit(10),
     Product.find({ category: "bebidas", stock: { $gt: 0 } }).sort({ soldCount: -1 }).limit(10),
   ]);
 
-  res.json({ bestSellers, combos, bebidasTop });
+  res.json({ comidas, combos, bebidasTop });
   } catch (error) {
     res.status(500).json({ message: error || "Error al obtener productos" });
   }

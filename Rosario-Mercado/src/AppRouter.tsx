@@ -37,7 +37,6 @@ const AppRouter = () => {
 
         {/* Menú principal */}
         <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/user/edit" element={<EditAccount />} />
 
         {/* Soporte - Ayuda */}
         <Route path="/support" element={<Support />} />
@@ -60,6 +59,7 @@ const AppRouter = () => {
         {/* Usuarios - Autenticación */}
         <Route path="/auth" element={<Auth />} />
         <Route path="/users/:id" element={<Profile />} />
+        <Route path="/user/edit" element={<EditAccount />} />
       </Route>
 
 
