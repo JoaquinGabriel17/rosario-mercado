@@ -37,7 +37,7 @@ export const CopyInfoButton: React.FC<Props> = ({ phoneNumber, textInButton }) =
     <button
       type="button"
       onClick={() => copyToClipboard(phoneNumber)}
-      className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 text-center"
+      className="cursor-pointer px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 text-center"
       aria-label={`Copiar número ${phoneNumber}`}
     >
       {copied ? "Copiado" : textInButton}

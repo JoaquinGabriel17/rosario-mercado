@@ -75,6 +75,8 @@ export default function Profile() {
   if (error) {
     return (
       <div className="max-w-3xl mx-auto p-6">
+            {loading && <Loading></Loading>}
+
         <div className="bg-red-50 border border-red-200 text-red-700 p-4 rounded">
           {error}
         </div>
@@ -85,7 +87,7 @@ export default function Profile() {
   if (!user) {
     return (
       <div className="max-w-3xl mx-auto p-6">
-        <div className="text-gray-600">No hay datos para mostrar.</div>
+    {loading && <Loading></Loading>}
       </div>
     );
   }
@@ -117,7 +119,7 @@ export default function Profile() {
                         href={`https://wa.me/${user.phoneNumber}`}
                         target="_blank"
                         rel="noreferrer"
-                        className="px-4 py-2 border bg-green-600 text-white rounded hover:bg-green-700 text-center"
+                        className="flex items-center px-4 py-2 border bg-green-600 text-white rounded hover:bg-green-700 text-center"
                       >
                         WhatsApp
                       </a>
