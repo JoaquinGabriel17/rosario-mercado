@@ -13,7 +13,7 @@ export const createProduct = async (req: AuthRequest, res: Response) => {
     //haz un tipo para imageData
 
 
-    const { title, description, price, category, stock, soldCount } = req.body;
+    const { title, description, price, category, totalStock, soldCount } = req.body;
 
     if (!title || !price || !category) {
       return res.status(400).json({ message: "Faltan datos obligatorios" });
@@ -47,7 +47,8 @@ export const createProduct = async (req: AuthRequest, res: Response) => {
       imageUrl: imageData.imageUrl,
       imageId:  imageData.imageId, 
       userId: req.user.id,
-      stock: stock ?? 0,
+      totalStock: totalStock ?? 0,
+      reservedStock: 0,
       soldCount: soldCount ?? 0
     });
 
@@ -217,9 +218,9 @@ export const getProductById = async (req: AuthRequest, res: Response) => {
 export const getProductsToHome = async (req: Request, res: Response) => {
   try {
     const [bestSellers, combos, bebidasTop] = await Promise.all([
-    Product.find({stock: { $gt: 0 }}).sort({ soldCount: -1 }).limit(10),
-    Product.find({ category: "combos",stock: { $gt: 0 } }).sort({ soldCount: -1 }).limit(10),
-    Product.find({ category: "bebidas", stock: { $gt: 0 } }).sort({ soldCount: -1 }).limit(10),
+    Product.find({totalStock: { $gt: 0 }}).sort({ soldCount: -1 }).limit(10),
+    Product.find({ category: "combos",totalStock: { $gt: 0 } }).sort({ soldCount: -1 }).limit(10),
+    Product.find({ category: "bebidas", totalStock: { $gt: 0 } }).sort({ soldCount: -1 }).limit(10),
   ]);
 
   res.json({ bestSellers, combos, bebidasTop });

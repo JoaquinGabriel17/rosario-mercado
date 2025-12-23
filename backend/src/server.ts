@@ -7,6 +7,7 @@ import { connectDB } from "./config/db";
 import userRoutes from "./routes/user.routes";
 import productRoutes from "./routes/product.routes";
 import ticketRoutes from "./routes/tickets.routes"
+import orderRoutes from "./orders/order.routes"
 
 import { MercadoPagoConfig } from 'mercadopago';
 
@@ -21,7 +22,8 @@ export const client = new MercadoPagoConfig({ accessToken: process.env.ACCESS_TO
 // Rutas
 app.use("/users", userRoutes);
 app.use("/products", productRoutes);
-app.use("/tickets", ticketRoutes)
+app.use("/tickets", ticketRoutes);
+app.use("/orders", orderRoutes);
 
 app.listen(process.env.PORT, () => {
   connectDB();

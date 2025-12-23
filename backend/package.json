@@ -14,10 +14,12 @@
   "dependencies": {
     "@types/express": "^5.0.6",
     "bcryptjs": "^3.0.3",
+    "bullmq": "^5.66.2",
     "cloudinary": "^2.8.0",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^5.2.1",
+    "ioredis": "^5.8.2",
     "jsonwebtoken": "^9.0.3",
     "mercadopago": "^2.11.0",
     "mongoose": "^9.0.1",

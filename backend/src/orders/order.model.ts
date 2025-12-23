@@ -1,10 +1,15 @@
 import { Schema, model, Types, Document } from "mongoose";
 
 export type OrderStatus =
-  | "pending"
+  | "draft"
+  | "pending_payment"
   | "paid"
+  | "rejected"
+  | "shipped"
+  | "completed"
   | "failed"
-  | "cancelled";
+  | "cancelled"
+  | "expired";
 
 export interface IOrderItem {
   productId: Types.ObjectId;
@@ -22,6 +27,7 @@ export interface IOrder extends Document {
   paymentId?: string;
   createdAt: Date;
   updatedAt: Date;
+  expiresAt: Date;
 }
 
 const OrderItemSchema = new Schema<IOrderItem>(
@@ -67,18 +73,21 @@ const OrderSchema = new Schema<IOrder>(
     },
     status: {
       type: String,
-      enum: ["pending", "paid", "failed", "cancelled"],
-      default: "pending",
+      enum: ["pending_payment", "draft", "rejected", "shipped", "completed" ,"paid", "failed", "cancelled", "expired"],
+      default: "draft",
     },
     paymentProvider: {
       type: String,
-      enum: ["mercadopago"],
-      required: true,
+      enum: ["mercadopago"]
     },
     paymentId: {
       type: String,
       index: true,
     },
+    expiresAt:{
+      type: Date,
+      required: true,
+    }
   },
   {
     timestamps: true,
