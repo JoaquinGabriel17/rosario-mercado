@@ -3,19 +3,22 @@ import { Button } from "../ui/Button";
 import { useUserStore } from "../../store/userStore";
 import Loading from "../ui/Loading";
 import Alert from "../ui/Alert";
-import type { ProductForm } from "../../types/product";
+import { useParams } from "react-router-dom";
 
 
-export default function EditProducts({ productId, onBack }: { productId: string, onBack: () => void; }) {
-  const [loading, setLoading] = useState(true);
-  const [selectedProduct, setSelectedProduct] = useState<any>(null);
-  const user = useUserStore((state) => state.user);
-  const [alert, setAlert] = useState({
-    open: false,
-    message: "",
-    type: "info" as "info" | "success" | "error",
-  });
-  const [formData, setFormData] = useState<ProductForm>({
+export default function EditProducts() {
+  const { productId } = useParams();
+    const [loading, setLoading] = useState(true);
+    const [selectedProduct, setSelectedProduct] = useState<any>(null);
+    const user = useUserStore((state) => state.user);
+    const [alert, setAlert] = useState({
+  open: false,
+  message: "",
+  type: "info" as "info" | "success" | "error",
+});
+
+
+  const [formData, setFormData] = useState({
     title: "",
     description: "",
     price: "",
@@ -143,9 +146,8 @@ export default function EditProducts({ productId, onBack }: { productId: string,
   };
 
   const handleCloseAlert = () => {
-    if (alert.type === "success") {
-      setAlert({ ...alert, open: false });
-      onBack();
+    if(alert.type === "success"){
+      setAlert({ ...alert, open: false }); 
       return;
     }
     setAlert({ ...alert, open: false });
