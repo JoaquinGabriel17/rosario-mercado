@@ -3,21 +3,12 @@ import { useUserStore } from "../../store/userStore";
 import Loading from "../ui/Loading";
 import Alert from "../ui/Alert";
 import { Button } from "../ui/Button";
+import type { ProductForm } from "../../types/product";
 
-    const backendUrl = import.meta.env.VITE_BACKEND_URL;
-
-interface ProductForm {
-  title: string;
-  description: string;
-  price: number | "";
-  category: string;
-  image?: File | null;
-  stock: number | "0";
-}
-
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 export default function CreateProduct() {
-    const user = useUserStore((state) => state.user);
+  const user = useUserStore((state) => state.user);
 
   const [form, setForm] = useState<ProductForm>({
     title: "",
@@ -25,14 +16,14 @@ export default function CreateProduct() {
     price: "",
     category: "",
     image: null,
-    stock: "0"
+    totalStock: "0"
   });
 
   const [errors, setErrors] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false)
-  const [ alert, setAlert] = useState({
-    open: false, 
-    message: "", 
+  const [alert, setAlert] = useState({
+    open: false,
+    message: "",
     type: "info" as "info" | "success" | "error",
   })
 
@@ -60,47 +51,44 @@ export default function CreateProduct() {
     if (!form.title || !form.price || !form.category || !form.image) {
       setLoading(false)
       setAlert({
-  open: true,
-  message: "Debe completar todos los campos obligatorios *",
-  type: "error",
-});
+        open: true,
+        message: "Debe completar todos los campos obligatorios *",
+        type: "error",
+      });
       return;
     }
 
     const formData = new FormData();
     formData.append("title", form.title);
-    if(form.description) formData.append("description", form.description);
+    if (form.description) formData.append("description", form.description);
     formData.append("price", form.price.toString());
     formData.append("category", form.category);
-    formData.append("image", form.image); 
-    formData.append("stock", form.stock.toString());
-
-
-
+    formData.append("image", form.image);
+    formData.append("totalStock", form.totalStock.toString());
     setErrors("");
 
     const res = await fetch(`${backendUrl}/products`, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${user?.token}`, 
-      // NO agregar Content-Type, fetch lo hace solo cuando hay FormData
-    },
-    body: formData,
-  });
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${user?.token}`,
+        // NO agregar Content-Type, fetch lo hace solo cuando hay FormData
+      },
+      body: formData,
+    });
 
-  const data = await res.json();
-    
+    const data = await res.json();
+
     if (!res.ok) {
-    console.log("Error:", data.message);
+      console.log("Error:", data.message);
+      setLoading(false)
+      return;
+    }
     setLoading(false)
-    return;
-  }
-  setLoading(false)
-  setAlert({
-  open: true,
-  message: "Producto creado con éxito",
-  type: "success",
-});
+    setAlert({
+      open: true,
+      message: "Producto creado con éxito",
+      type: "success",
+    });
 
     // Reset form
     setForm({
@@ -109,13 +97,11 @@ export default function CreateProduct() {
       price: "",
       category: "",
       image: null,
-      stock: "0",
+      totalStock: "0",
     });
-    
+
   };
   
-
-
   return (
     
     <div className="p-4 text-left">
@@ -180,8 +166,8 @@ export default function CreateProduct() {
           <label className="font-medium">Stock</label>
           <input
             type="number"
-            name="stock"
-            value={form.stock}
+            name="totalStock"
+            value={form.totalStock}
             onChange={handleChange}
             placeholder="Ej: 10"
             className="w-full p-2 border rounded-lg"   

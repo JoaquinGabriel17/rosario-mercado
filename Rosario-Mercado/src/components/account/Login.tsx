@@ -68,9 +68,10 @@ setAlert({
         }
         else{
            setLoading(false)
+           console.log(data)
 setAlert({
   open: true,
-  message: "Error al iniciar sesión",
+  message: data.message,
   type: "error",
 });
 return;

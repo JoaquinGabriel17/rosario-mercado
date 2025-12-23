@@ -23,7 +23,16 @@ export interface ProductResponse {
 }
 
 export interface ProductsInfo {
-  bestSellers: Product[];
+  comidas: Product[];
   combos: Product[];
-  bebidasTop: Product[];
+  bebidas: Product[];
+}
+
+export interface ProductForm {
+  title: string;
+  description: string;
+  price: number | "";
+  category: string;
+  image?: File | null;
+  totalStock: number | "0";
 }
