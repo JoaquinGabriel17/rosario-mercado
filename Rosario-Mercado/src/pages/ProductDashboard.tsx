@@ -16,7 +16,7 @@ function ProductDashboard() {
         <Button onClick={() => navigate('/products/create')}>➕ Crear producto</Button>
         <Button onClick={() => navigate(`/products/user/${user?.id}`)}>📦 Ver productos</Button>
         <Button onClick={() => navigate(`/products/user/${user?.id}`)}>✏️ Editar producto</Button>
-        <Button onClick={() => navigate('/products/delete')}>🗑️ Eliminar producto</Button>
+        <Button className="bg-red-700" onClick={() => navigate('/products/delete')}>🗑️ Eliminar producto</Button>
       </div>
     </div>
   );
