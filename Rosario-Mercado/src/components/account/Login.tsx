@@ -11,15 +11,15 @@ function Login() {
         password: ""
     });
     const [loading, setLoading] = useState<boolean>(false)
- const [alert, setAlert] = useState({
-  open: false,
-  message: "",
-  type: "info" as "info" | "success" | "error",
-});
+    const [alert, setAlert] = useState({
+        open: false,
+        message: "",
+        type: "info" as "info" | "success" | "error",
+    });
 
     const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
-    const setUser = useUserStore((state) => state.setUser); 
+    const setUser = useUserStore((state) => state.setUser);
     const navigate = useNavigate();
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -30,64 +30,64 @@ function Login() {
         try {
             setLoading(true)
             e.preventDefault();
-        if(!form.email || !form.password) {
-            setLoading(false)
-setAlert({
-  open: true,
-  message: "Faltan datos obligatorios",
-  type: "error",
-});
-            return;
-        }
-        
-        const res = await fetch(`${backendUrl}/users/login`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(form)
-        });
+            if (!form.email || !form.password) {
+                setLoading(false)
+                setAlert({
+                    open: true,
+                    message: "Faltan datos obligatorios",
+                    type: "error",
+                });
+                return;
+            }
 
-        const data = await res.json();
-
-        if (res.ok) {
-            setUser({
-                id: data.user.id,
-                email: data.user.email,
-                name: data.user.name,
-                token: data.token,
-                whatsappAvailable: data.user.whatsappAvailable,
-                delivery: data.user.delivery,
-                phoneNumber: data.user.phoneNumber || undefined,
-                businessHours: data.user.businessHours || undefined,
-                address: data.user.address || undefined,
-                facebookUrl: data.user.facebookUrl || undefined,
-                instagramUrl: data.user.instagramUrl || undefined,
-                role: data.user.role || "user",
+            const res = await fetch(`${backendUrl}/users/login`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(form)
             });
-            setLoading(false)
-            navigate("/");
-        }
-        else{
-           setLoading(false)
-setAlert({
-  open: true,
-  message: "Error al iniciar sesión",
-  type: "error",
-});
-return;
-        }
+            
+            const data = await res.json();
+console.log(data);
+            if (res.ok) {
+                setUser({
+                    id: data.user._id,
+                    email: data.user.email,
+                    name: data.user.name,
+                    token: data.token,
+                    whatsappAvailable: data.user.whatsappAvailable,
+                    delivery: data.user.delivery,
+                    phoneNumber: data.user.phoneNumber || undefined,
+                    businessHours: data.user.businessHours || undefined,
+                    address: data.user.address || undefined,
+                    facebookUrl: data.user.facebookUrl || undefined,
+                    instagramUrl: data.user.instagramUrl || undefined,
+                    role: data.user.role || "user",
+                });
+                setLoading(false)
+                navigate("/");
+            }
+            else {
+                setLoading(false)
+                setAlert({
+                    open: true,
+                    message: "Error al iniciar sesión",
+                    type: "error",
+                });
+                return;
+            }
         } catch (error) {
             setLoading(false)
-setAlert({
-  open: true,
-  message: "Error al iniciar sesión",
-  type: "error",
-});
-return;
+            setAlert({
+                open: true,
+                message: "Error al iniciar sesión",
+                type: "error",
+            });
+            return;
         }
-        finally{
+        finally {
             setLoading(false);
         }
-        
+
     };
 
     
