@@ -4,9 +4,9 @@ import express from "express";
 import cors from "cors";
 
 import { connectDB } from "./config/db";
-import userRoutes from "./routes/user.routes";
-import productRoutes from "./routes/product.routes";
-import ticketRoutes from "./routes/tickets.routes"
+import userRoutes from "./users/user.routes";
+import productRoutes from "./products/product.routes";
+import ticketRoutes from "./tickets/tickets.routes"
 import orderRoutes from "./orders/order.routes"
 
 import { MercadoPagoConfig } from 'mercadopago';

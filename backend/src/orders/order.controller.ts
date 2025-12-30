@@ -1,7 +1,7 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import { Types } from "mongoose";
 import { Order } from "./order.model";
-import Product from "../models/Product";
+import Product from "../products/Product.model";
 import { AuthRequest } from "../middlewares/auth";
 import { orderExpirationQueue } from "../queues/orderExpiration.queue";
 import mongoose from "mongoose";
@@ -102,7 +102,7 @@ export const createOrder = async (req: AuthRequest, res: Response) => {
 
     // 6️⃣ Programar expiración
     await orderExpirationQueue.add(
-      "expire-order",
+      "order-expiration", 
       { orderId: order[0]?._id.toString() },
       {
         delay: expiresAt.getTime() - Date.now(),

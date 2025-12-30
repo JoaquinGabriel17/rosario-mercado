@@ -7,7 +7,7 @@ import {
   deleteProductById,
   getProductById,
   getProductsToHome
-} from "../controllers/product";
+} from "./product.controller";
 import { upload }  from "../middlewares/multer";
 
 const router = Router();

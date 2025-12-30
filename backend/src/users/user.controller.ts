@@ -1,98 +1,55 @@
 import { Request, Response } from "express";
-import User from "../models/User";
+import User from "./User.model";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { AuthRequest } from "../middlewares/auth";
 import sendEmail from "../utils/sendEmail"; // función que envía correo
 import mongoose from "mongoose";
 import { resend } from "../config/resend";
+import { registerUser, loginUser, updateUserInfo } from "./user.service";
+import { AppError } from "../utils/appError";
+import { catchAsync } from "../utils/catchAsync";
 
 
 // CREAR USUARIO
-export const register = async (req: Request, res: Response) => {
-  try {
-    const { name, password, email, phoneNumber, businessHours, address, whatsappAvailable, delivery, facebookUrl, instagramUrl } = req.body;
+export const register = catchAsync(async (req: Request, res: Response) => {
+  const { name, password, email } = req.body;
 
-    if(!name || !password || !email) {
-      return res.status(400).json({ message: "Faltan datos obligatorios" });
-    }
-
-    const userExists = await User.findOne({ name });
-    if (userExists) {
-      return res.status(400).json({ message: "El nombre de usuario ya existe" });
-    }
-
-    const emailExists = await User.findOne({ email });
-    if (emailExists) {
-      return res.status(400).json({ message: "El email ya está registrado" });
-    }
-
-    const hashed = await bcrypt.hash(password, 10);
-
-    const newUser = await User.create({
-      email, name, password: hashed,
-      phoneNumber: phoneNumber || undefined,
-      businessHours: businessHours || undefined,
-      address: address || undefined,
-      whatsappAvailable: whatsappAvailable ?? false,
-      delivery: delivery ?? false,
-      facebookUrl: facebookUrl ?? undefined,
-      instagramUrl: instagramUrl ?? undefined
-    });
-
-    return res.json({
-      message: "Usuario creado correctamente",
-      user: { id: newUser._id, email:newUser.email, name: newUser.name }
-    });
-  } catch (error) {
-    res.status(500).json({ message: "Error al crear usuario", error });
+  // Validación básica (Capa Web)
+  if (!name || !password || !email) {
+    throw new AppError("Faltan datos obligatorios", 400);
   }
-};
+
+  const newUser = await registerUser(req.body);
+
+  res.status(201).json({
+    message: "Usuario creado correctamente",
+    user: newUser,
+  });
+});
 
 // INICIAR SESION
-export const login = async (req: Request, res: Response) => {
-  try {
+export const login = catchAsync( async (req: Request, res: Response) => {
     const { email, password } = req.body;
 
     if(!email || !password) {
-      return res.status(400).json({ message: "Faltan datos obligatorios" });
-    }
+      throw new AppError("Faltan datos obligatorios", 400 );
+    };
     
-    const user = await User.findOne({ email });
-    if (!user) return res.status(404).json({ message: "Usuario no encontrado" });
+    const user = await loginUser(req.body);
 
-    const valid = await bcrypt.compare(password, user.password);
-    if (!valid) return res.status(400).json({ message: "Password incorrecto" });
-    const token = jwt.sign(
-      { id: user._id, email: user.email, name: user.name },
-      process.env.JWT_SECRET!,
-      { expiresIn: "7d" }
-    );
-
-    return res.json({
+    return res.status(200).json({
       message: "Login correcto",
-      token,
-      user: { id: user._id, email: user.email, name: user.name,
-        phoneNumber: user.phoneNumber,
-        businessHours: user.businessHours,
-        address: user.address,
-        whatsappAvailable: user.whatsappAvailable,
-        delivery: user.delivery,
-        facebookUrl: user.facebookUrl,
-        instagramUrl: user.instagramUrl,
-        role: user.role,
-      }
+      token: user.token,
+      user: user.user,
     });
-  } catch (error) {
-    res.status(500).json({ message: "Error inesperado al hacer login", error });
-  }
-};
+});
+
 
 // ACTUALIZAR INFORMACIÓN DE USUARIO
-export const updateInfo = async (req: AuthRequest, res: Response) => {
-  try {
+export const updateInfo = catchAsync( async (req: AuthRequest, res: Response) => {
+  
     const userId = req.user.id;
-
 
     // Campos permitidos
     const allowedFields = [
@@ -118,61 +75,14 @@ export const updateInfo = async (req: AuthRequest, res: Response) => {
     });
 
     // Si no se envió ningún campo válido → error
-    if (Object.keys(updates).length === 0) {
-      return res.status(400).json({
-        message: "No se envió ningún campo válido para actualizar",
-      });
-    }
+    if (Object.keys(updates).length === 0) throw new AppError("No se envió ningún campo válido para actualizar", 400);
 
-    // Validar email duplicado
-if (updates.email) {
-  const emailExists = await User.findOne({
-    email: updates.email,
-    _id: { $ne: userId }, // excluir al usuario actual
-  });
-
-  if (emailExists) {
-    return res.status(400).json({
-      message: "El email ingresado ya está registrado"
+    const updateUser = await updateUserInfo(userId, updates);
+    res.status(200).json({
+      message: "Información de usuario actualizada correctamente",
+      user: updateUserInfo,
     });
-  }
-}
-
-// Validar nombre duplicado
-if (updates.name) {
-  const nameExists = await User.findOne({
-    name: updates.name,
-    _id: { $ne: userId }, // excluir al usuario actual
-  });
-
-  if (nameExists) {
-    return res.status(400).json({
-      message: "El nombre ingresado ya está registrado"
-    });
-  }
-}
-
-    const updatedUser = await User.findByIdAndUpdate(userId, updates, {
-      new: true,
-    });
-
-    if (!updatedUser) {
-      return res.status(404).json({ message: "Usuario no encontrado" });
-    }
-
-    return res.status(200).json({
-      message: "Usuario actualizado correctamente",
-      user: updatedUser,
-    });
-
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({
-      message: "Error al actualizar el usuario",
-      error: error
-    });
-  }
-}
+});
 
 // ENVIAR EMAIL PARA CAMBIO DE CONTRASEÑA
 export const forgotPassword = async (req: Request, res: Response) => {

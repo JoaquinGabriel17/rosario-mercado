@@ -2,7 +2,7 @@ import { Worker } from "bullmq";
 import mongoose from "mongoose";
 import { redisConnection } from "../lib/redis";
 import { Order } from "../orders/order.model";
-import Product from "../models/Product";
+import Product from "../products/Product.model";
 import { connectDB } from "../config/db";
 
 (async () => {
@@ -23,11 +23,13 @@ import { connectDB } from "../config/db";
         const order = await Order.findById(orderId).session(session);
 
         if (!order) {
+          console.log("⚠️ Orden no encontrada:", orderId);
           await session.commitTransaction();
           return;
         }
 
         if (order.status !== "pending_payment") {
+          console.log("⚠️ Orden no pendiente de pago:", orderId);
           await session.commitTransaction();
           return;
         }

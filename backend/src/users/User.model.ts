@@ -7,8 +7,8 @@ export interface IUser extends Document {
   phoneNumber?: string;
   businessHours?: string;     // horario de atención
   address?: string;           // dirección
-  whatsappAvailable?: boolean;
-  delivery?: boolean;
+  whatsappAvailable: boolean;
+  delivery: boolean;
   isSeller: boolean;
   facebookUrl?: string;
   instagramUrl?: string;
@@ -26,8 +26,8 @@ const userSchema = new Schema<IUser>(
     businessHours: { type: String },       // horario de atención
     address: { type: String },
 
-    whatsappAvailable: { type: Boolean, default: false },
-    delivery: { type: Boolean, default: false },
+    whatsappAvailable: { type: Boolean, default: false, required: true },
+    delivery: { type: Boolean, default: false, required: true},
     isSeller: { type: Boolean, default: false, required: true},
     facebookUrl: { type: String },
     instagramUrl: { type: String },
