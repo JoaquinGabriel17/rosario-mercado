@@ -13,5 +13,13 @@ export class ProductDAL {
       },
       { new: true }
     );
-  }
-}
+  };
+  // incrementar stock
+async incrementStock(productId: string, quantity: number) {
+  return await Product.findByIdAndUpdate(
+    productId,
+    { $inc: { stock: quantity } },
+    { new: true }
+  );
+};
+};

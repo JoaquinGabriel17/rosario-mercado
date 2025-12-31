@@ -14,8 +14,9 @@ export const createOrder = catchAsync(async (req: Request, res: Response) => {
   const newOrder = await OrderService.createOrder(items);
 
   return res.status(201).json({
-    message: "Orden creada correctamente",
-    order: newOrder,
+    message: "Orden generada. Redirigiendo a pago...",
+    orderId: newOrder.order._id,
+    init_point: newOrder.init_point // El frontend usará este link
   });
 });
 
@@ -33,7 +34,7 @@ export const getOrderById = catchAsync(async (req: Request, res: Response) => {
 // MARCAR COMO PAGADA
 export const markAsPaid = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
-  
+
   if(!id) throw new AppError("Id de orden requerido", 400);
 
   const updatedOrder = await OrderService.updateStatus(id, "paid");
@@ -42,4 +43,23 @@ export const markAsPaid = catchAsync(async (req: Request, res: Response) => {
     message: "Orden pagada con éxito",
     order: updatedOrder,
   });
+});
+
+// WEBHOOK DE MERCADO PAGO
+export const receiveWebhook = catchAsync(async (req: Request, res: Response) => {
+  const { query } = req;
+
+  // Mercado Pago envía notificaciones de varios tipos. Nos interesa 'payment'.
+  const topic = query.topic || query.type;
+
+  if (topic === "payment") {
+    const paymentId = query.id || query["data.id"];
+    
+    if (paymentId) {
+      await OrderService.handleWebhook(paymentId as string);
+    }
+  }
+
+  // Siempre respondemos 200 o 201 a Mercado Pago para que deje de reintentar
+  return res.status(200).send("OK");
 });

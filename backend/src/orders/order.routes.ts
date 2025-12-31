@@ -7,5 +7,6 @@ const router = Router();
 router.post("/", OrderController.createOrder);
 router.get("/:id", OrderController.getOrderById);
 router.patch("/:id/pay", OrderController.markAsPaid);
+router.post("/webhook", OrderController.receiveWebhook);
 
 export default router;

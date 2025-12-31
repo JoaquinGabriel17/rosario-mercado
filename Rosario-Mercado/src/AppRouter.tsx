@@ -60,6 +60,11 @@ const AppRouter = () => {
         <Route path="/auth" element={<Auth />} />
         <Route path="/users/:id" element={<Profile />} />
         <Route path="/user/edit" element={<EditAccount />} />
+        
+        {/* Pedidos */}
+        <Route path="/orders/payment/success" element={<h1>Orden completada</h1>} />
+        <Route path="/orders/payment/failure" element={<h1>Fallo al completar la orden</h1>} />
+        <Route path="/orders/payment/pending" element={<h1>Orden pendiente de pago</h1>} />
       </Route>
 
 
