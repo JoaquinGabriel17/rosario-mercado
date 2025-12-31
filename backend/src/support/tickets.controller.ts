@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
-import { Ticket } from "../models/Ticket";
-import { Message } from "../models/Message";
-import User from "../models/User";
+import { Ticket } from "./Ticket.model";
+import { Message } from "./Message.model";
+import User from "../users/User.model";
 import mongoose from "mongoose";
 import { AuthRequest } from "../middlewares/auth";
 

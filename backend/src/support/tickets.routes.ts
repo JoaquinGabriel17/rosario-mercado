@@ -6,7 +6,7 @@ import {
   addMessageToTicket,
   updateTicketStatus,
   getAllTickets
-} from "../controllers/tickets";
+} from "./tickets.controller";
 import { auth } from "../middlewares/auth";
 
 const router = Router();
