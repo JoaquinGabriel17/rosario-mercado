@@ -1,5 +1,5 @@
 import * as UserDAL from "./user.DAL";
-import { AppError } from "../utils/appError";
+import { AppError } from "../utils/AppError";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { resend } from "../config/resend";

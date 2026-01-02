@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { AuthRequest } from "../middlewares/auth";
-import Product from "./Product.module";
+import Product from "./Product.model";
 import User from "../users/User.model";
 import mongoose from "mongoose";
 import cloudinary from "../config/cloudinary";

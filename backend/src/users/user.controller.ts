@@ -3,7 +3,7 @@ import User from "./User.model";
 import { AuthRequest } from "../middlewares/auth";
 import mongoose from "mongoose";
 import { catchAsync } from "../utils/catchAsync";
-import { AppError } from "../utils/appError";
+import { AppError } from "../utils/AppError";
 import * as UserService from "./user.service";
 
 
