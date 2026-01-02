@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import type { ProductResponse } from "../types/product";
-import Loading from "../components/ui/Loading";
-import CopyInfoButton from "../utils/CopyInfoButton";
-import { Button } from "../components/ui/Button";
+import type { ProductResponse } from "../../types/product";
+import Loading from "../ui/Loading";
+import CopyInfoButton from "../../utils/CopyInfoButton";
+import { Button } from "../ui/Button";
+import { useCartStore } from "../../store/cartStore";
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL
 const formatCurrency = (value: number) =>
@@ -15,6 +16,7 @@ export const ProductDetails: React.FC = () => {
   const [data, setData] = useState<ProductResponse | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const addToCart = useCartStore((state) => state.addItem);
 
   useEffect(() => {
     if (!productId) {
@@ -83,7 +85,11 @@ export const ProductDetails: React.FC = () => {
   }
 
   if (!data) {
-    return null;
+    return (
+      <>
+      {loading && <Loading/>}
+      </>
+    )
   }
 
   const { product, user } = data;
@@ -123,18 +129,24 @@ export const ProductDetails: React.FC = () => {
                 <p>{product.stock}</p>
               </div>
             </div>
-            <p className="p-2 text-center">Abajo tienes información del vendedor para contactarlo para comprar el producto.</p>
-            {/*
-            
             <div className="mt-6 flex items-center gap-3">
               <button className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
                 Comprar
               </button>
-              <button className="px-4 py-2 border border-gray-300 rounded hover:bg-gray-50">
+              <button className="px-4 py-2 border border-gray-300 rounded hover:bg-gray-50"
+                onClick={() => addToCart({
+                  id: productId!,
+                  name: product.title,
+                  price: product.price,
+                  image: product.imageUrl,
+                  availableStock: product.stock,
+                  sellerId: user._id
+                })}
+              >
                 Agregar al carrito
               </button>
             </div>
-            */}
+            
           </div>
         </div>
       </section>

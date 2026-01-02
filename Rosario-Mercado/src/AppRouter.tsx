@@ -1,15 +1,15 @@
 import { Routes, Route } from "react-router-dom";
 import Home from "./pages/Home.tsx";
 import MainLayout from "./layouts/MainLayout";
-import Auth from "./pages/Auth";
-import ProductDashboard from "./pages/ProductDashboard.tsx";
-import Dashboard from "./pages/Dashboard.tsx";
-import Shop from "./pages/Shop.tsx";
+import Auth from "./components/account/Auth";
+import ProductDashboard from "./components/products/ProductDashboard.tsx";
+import Dashboard from "./components/account/Dashboard.tsx";
+import Shop from "./components/account/Shop.tsx";
 import ResetPassword from "./components/account/ResetPassword.tsx";
 import ForgotPassword from "./components/account/ForgotPassword.tsx";
 import Profile from "./components/account/Profile.tsx";
-import ProductDetails from "./pages/ProductDetail.tsx";
-import Support from "./pages/Support.tsx";
+import ProductDetails from "./components/products/ProductDetail.tsx";
+import Support from "./components/support/Support.tsx";
 import Chat from "./components/support/Chat.tsx";
 import ViewAllTickets from "./components/support/ViewAllTickets.tsx";
 import TicketsAdminView from "./components/support/TicketsAdminView.tsx";
@@ -20,6 +20,7 @@ import CreateProduct from "./components/products/CreateProduct.tsx";
 import UserProducts from "./components/products/UserProducts.tsx";
 import EditProducts from "./components/products/EditProducts.tsx";
 import DeleteProduct from "./components/products/DeleteProduct.tsx";
+import { CartPage } from "./components/orders/CartDetail.tsx";
 /*import { useUserStore } from "./store/userStore.ts";
 const user = useUserStore((state) => state.user);*/
 
@@ -62,6 +63,7 @@ const AppRouter = () => {
         <Route path="/user/edit" element={<EditAccount />} />
         
         {/* Pedidos */}
+        <Route path="/cart/detail" element={ <CartPage/> } />
         <Route path="/orders/payment/success" element={<h1>Orden completada</h1>} />
         <Route path="/orders/payment/failure" element={<h1>Fallo al completar la orden</h1>} />
         <Route path="/orders/payment/pending" element={<h1>Orden pendiente de pago</h1>} />
