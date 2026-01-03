@@ -2,16 +2,20 @@ import { Request, Response } from "express";
 import { catchAsync } from "../utils/catchAsync";
 import { AppError } from "../utils/AppError";
 import * as OrderService from "./order.service";
+import { AuthRequest } from "../middlewares/auth";
 
 // CREAR ORDEN
-export const createOrder = catchAsync(async (req: Request, res: Response) => {
+export const createOrder = catchAsync(async (req: AuthRequest, res: Response) => {
   const { items } = req.body;
+  const userId = req.user?.id;
+
+  if(!userId) throw new AppError("Usuario no autenticado", 401);
 
   if (!items || !Array.isArray(items) || items.length === 0) {
     throw new AppError("Debes incluir al menos un producto en la orden", 400);
   }
 
-  const newOrder = await OrderService.createOrder(items);
+  const newOrder = await OrderService.createOrder(items, userId);
 
   return res.status(201).json({
     message: "Orden generada. Redirigiendo a pago...",
@@ -62,4 +66,16 @@ export const receiveWebhook = catchAsync(async (req: Request, res: Response) => 
 
   // Siempre respondemos 200 o 201 a Mercado Pago para que deje de reintentar
   return res.status(200).send("OK");
+});
+
+// OBTENER TODAS LAS ORDENES POR ID DE USUARIO
+export const getOrdersByUserId = catchAsync(async (req: AuthRequest, res: Response) => {
+  const userId = req.user?.id;
+  console.log(userId);
+
+  if (!userId) throw new AppError("ID de usuario requerido", 400);
+
+  const orders = await OrderService.getOrdersByUserId(userId);
+
+  return res.status(200).json(orders);
 });

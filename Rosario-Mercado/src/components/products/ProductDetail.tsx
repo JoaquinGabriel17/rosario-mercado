@@ -5,6 +5,7 @@ import Loading from "../ui/Loading";
 import CopyInfoButton from "../../utils/CopyInfoButton";
 import { Button } from "../ui/Button";
 import { useCartStore } from "../../store/cartStore";
+//import { useUserStore } from "../../store/userStore";
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL
 const formatCurrency = (value: number) =>
@@ -17,6 +18,7 @@ export const ProductDetails: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const addToCart = useCartStore((state) => state.addItem);
+  //const currentUser = useUserStore((state) => state.user);
 
   useEffect(() => {
     if (!productId) {
@@ -129,6 +131,7 @@ export const ProductDetails: React.FC = () => {
                 <p>{product.stock}</p>
               </div>
             </div>
+            
             <div className="mt-6 flex items-center gap-3">
               <button className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
                 Comprar

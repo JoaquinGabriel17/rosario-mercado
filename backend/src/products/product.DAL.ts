@@ -22,4 +22,14 @@ async incrementStock(productId: string, quantity: number) {
     { new: true }
   );
 };
+
+// INCREMENTAR CONTADOR DE VENTAS
+async incrementSoldCount(productId: string, quantity: number) {
+  return await Product.findByIdAndUpdate(
+    productId,
+    { $inc: { soldCount: quantity } },
+    { new: true }
+  );
 };
+};
+

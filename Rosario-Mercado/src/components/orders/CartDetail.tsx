@@ -57,8 +57,15 @@ export const CartPage: React.FC = () => {
     window.history.back(); 
   };
 
-    const createOrderAndPay = async () => {
-        
+  const createOrderAndPay = async () => {
+        if(!user){
+          setAlert({
+            type: "error",
+            open: true,
+            message: "Debes iniciar sesión para crear un pedido",
+          });
+          return;
+        }
   try {
     setLoading(true);
     // 1️⃣ Validación obligatoria
@@ -78,7 +85,7 @@ export const CartPage: React.FC = () => {
       {
         headers: {
           "Content-Type": "application/json",
-          "Bearer": `Bearer ${user?.token}`,
+          "Authorization": `Bearer ${user?.token}`,
         },
       }
     );
@@ -93,6 +100,7 @@ export const CartPage: React.FC = () => {
         type: "success",
     });
       window.open(init_point, "_blank");
+      clearCart();
     } else {
         setAlert({
         open: true,

@@ -11,6 +11,7 @@ export interface OrderDocument {
   expiresAt: Date;
   createdAt: Date;
   _id: Types.ObjectId;
+  userId: Types.ObjectId;
 }
 
 const OrderSchema = new Schema<OrderDocument>(
@@ -34,6 +35,7 @@ const OrderSchema = new Schema<OrderDocument>(
         },
       },
     ],
+    userId: { type: Schema.Types.ObjectId, required: true, index: true },
     expiresAt: {
       type: Date,
       required: true,
