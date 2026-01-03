@@ -69,7 +69,7 @@ function Home() {
   }, []);
 
     return (
-      <div>
+      <div className="mb-25">
         {loading && <h2>Cargando productos...</h2>}
         {alert && <Alert
           open={alert.open}

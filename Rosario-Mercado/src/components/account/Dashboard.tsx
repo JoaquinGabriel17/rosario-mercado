@@ -1,7 +1,7 @@
-import { useUserStore } from "../store/userStore";
+import { useUserStore } from "../../store/userStore";
 import { useNavigate } from "react-router-dom";
-import { Button } from "../components/ui/Button";
-
+import { Button } from "../ui/Button";
+import { useCartStore } from "../../store/cartStore";
 
 
 export default function Dashboard () {
@@ -10,8 +10,13 @@ export default function Dashboard () {
     const user = useUserStore((state) => state.user);
     const logout = useUserStore((state) => state.logout);
     const navigate = useNavigate();
+    const cleanCart = useCartStore((state) => state.clearCart);
 
-
+  const handleLogout = () => {
+    logout();
+    cleanCart();
+    navigate('/');
+  }
 
     return(
       <div className="text-center">
@@ -48,7 +53,7 @@ export default function Dashboard () {
 
         <Button
           className="bg-red-600"
-          onClick={() => { logout(); navigate('/') }}
+          onClick={() => handleLogout()}
         >Cerrar sesión</Button>
 
 

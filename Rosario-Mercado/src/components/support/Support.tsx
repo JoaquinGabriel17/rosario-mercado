@@ -1,7 +1,7 @@
-import { useUserStore } from "../store/userStore";
-import { Button } from "../components/ui/Button";
+import { useUserStore } from "../../store/userStore";
+import { Button } from "../ui/Button";
 import { useNavigate } from "react-router-dom";
-import { useTicketsStore } from "../store/ticketsStore";
+import { useTicketsStore } from "../../store/ticketsStore";
 
 export default function Support(){
 

@@ -30,9 +30,7 @@ function Navbar() {
                 {/* Texto opcional */}
                 <span className="text-sm font-medium">Volver</span>
             </button>
-            <Button
-                onClick={() => navigate('/')}
-            >Inicio</Button>
+            <h1 className="text-3xl font-bold">Agora</h1>
             {user ? (
                 <Button
                     onClick={() => navigate('/dashboard')}
