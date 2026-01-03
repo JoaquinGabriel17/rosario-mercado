@@ -4,6 +4,7 @@ import { ProductDAL } from "../products/product.DAL";
 import { mpPreference, client } from "../config/mercadopago";
 import { Payment } from "mercadopago";
 import Schema from "mongoose";
+import { Notification } from "../notifications/notification.model";
 
 const orderDal = new OrderDAL();
 const productDal = new ProductDAL();
@@ -12,7 +13,7 @@ const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
 export const createOrder = async (items: any[], userId: Schema.Types.ObjectId) => {
   const expiresAt = new Date();
   // Tiempo de expiración de la orden: 10 minutos
-  expiresAt.setMinutes(expiresAt.getMinutes() + 10);
+  expiresAt.setMinutes(expiresAt.getMinutes() + 1);
 
   const itemsForMercadoPago: any[] = [];
 
@@ -94,11 +95,7 @@ export const createOrder = async (items: any[], userId: Schema.Types.ObjectId) =
     init_point: response.init_point,
     preferenceId: response.id
   };
-/** } catch (error: any) {
-  // ESTO TE DIRÁ EXACTAMENTE QUÉ CAMPO FALLA
-  console.error("Error detallado de Mercado Pago:", error.api_response?.data || error);
-  throw new AppError("Error al crear la preferencia de pago", 400);
-}*/
+
 };
 
 export const getOrder = async (id: string) => {
@@ -110,7 +107,16 @@ export const getOrder = async (id: string) => {
 export const updateStatus = async (id: string, status: "paid" | "expired") => {
   const updatedOrder = await orderDal.update(id, { status });
   if (!updatedOrder) throw new AppError("No se pudo actualizar la orden", 404);
-  return updatedOrder;
+
+  const newNotif = await Notification.create({
+    user: updatedOrder.userId,
+    title: 'Actualización de pedido',
+    message: `Tu pedido ahora está en estado: ${status}`,
+    link: `/orders/detail/${id}`
+  });
+
+
+  return {order: updatedOrder, notification: newNotif};
 };
 
 export const handleWebhook = async (paymentId: string) => {
