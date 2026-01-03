@@ -135,7 +135,7 @@ export const ProductDetails: React.FC = () => {
               </button>
               <button className="px-4 py-2 border border-gray-300 rounded hover:bg-gray-50"
                 onClick={() => addToCart({
-                  id: productId!,
+                  productId: productId!,
                   name: product.title,
                   price: product.price,
                   image: product.imageUrl,

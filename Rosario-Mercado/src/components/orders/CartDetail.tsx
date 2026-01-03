@@ -1,6 +1,18 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useCartStore } from '../../store/cartStore';
 import { useNavigate } from 'react-router-dom';
+import Alert from '../ui/Alert';
+import Loading from '../ui/Loading';
+import axios from 'axios';
+import { useUserStore } from '../../store/userStore';
+
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
+
+interface CreateOrderResponse {
+  message: string;
+  orderId: string;
+  init_point: string;
+}
 
 // Iconos (SVG inline para no depender de librerías)
 const TrashIcon = () => (
@@ -28,14 +40,80 @@ const ChevronLeftIcon = () => (
 );
 
 export const CartPage: React.FC = () => {
-  const { items, addItem, decreaseItem, removeItem, clearCart, getTotalPrice } = useCartStore();
-  const totalPrice = getTotalPrice();
-  const navigate = useNavigate();
+    const { items, addItem, decreaseItem, removeItem, clearCart, getTotalPrice } = useCartStore();
+    const totalPrice = getTotalPrice();
+    const navigate = useNavigate();
+    const [loading, setLoading] = useState<boolean>(false);
+    const [alert, setAlert] = useState({
+        open: false,
+        message: "",
+        type: "info" as "info" | "success" | "error",
+    });
+    const user = useUserStore((state) => state.user);
+
 
   // Función simulada para "Volver atrás" (dependerá de tu routing: react-router-dom, wouter, etc.)
   const handleGoBack = () => {
     window.history.back(); 
   };
+
+    const createOrderAndPay = async () => {
+        
+  try {
+    setLoading(true);
+    // 1️⃣ Validación obligatoria
+    if (!items || items.length === 0) {
+      setAlert({
+        open: true,
+        message: "El carrito está vacío",
+        type: "error",
+      });
+      return;    
+    }
+
+    // 2️⃣ Request al backend
+    const response = await axios.post<CreateOrderResponse>(
+      `${backendUrl}/orders/`,
+      { items },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          "Bearer": `Bearer ${user?.token}`,
+        },
+      }
+    );
+
+    const { init_point } = response.data;
+
+    // 3️⃣ Redirección al checkout
+    if (init_point) {
+        setAlert({
+        open: true,
+        message: `Se creó el pedido correctamente, serás redirigido al pago. Puedes acceder al mismo desde este link: ${init_point}`,
+        type: "success",
+    });
+      window.open(init_point, "_blank");
+    } else {
+        setAlert({
+        open: true,
+        message: "No se recibió el link de pago",
+        type: "error",
+    });
+    }
+
+  } catch (error: any) {
+    console.error("Error al crear la orden:", error);
+
+    setAlert({
+        open: true,
+        message: "Ocurrió un error inesperado al crear la orden",
+        type: "error",
+    });
+  }
+  finally{
+    setLoading(false);
+  }
+};
 
   // VISTA: Carrito Vacío
   if (items.length === 0) {
@@ -58,6 +136,12 @@ export const CartPage: React.FC = () => {
   // VISTA: Carrito con Productos
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
+        {loading && <Loading />}
+        {alert && <Alert
+  open={alert.open}
+  message={alert.message}
+  type={alert.type}
+  onClose={() => setAlert({ ...alert, open: false })}/>}
       
       {/* HEADER FIJO */}
       <header className="sticky top-0 bg-white shadow-sm z-40 px-4 py-4 flex items-center justify-between">
@@ -78,11 +162,11 @@ export const CartPage: React.FC = () => {
         {/* pb-[200px] es importante para que el último item no quede tapado por el footer de checkout y el footer de navegación */}
         
         {items.map((item: any) => (
-          <div key={item.id} className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex gap-4 animate-in fade-in slide-in-from-bottom-4 duration-300">
+          <div key={item.productId} className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex gap-4 animate-in fade-in slide-in-from-bottom-4 duration-300">
             
             {/* Imagen del producto (placeholder si no hay) */}
             <div className="w-20 h-20 bg-gray-100 rounded-xl shrink-0 overflow-hidden"
-                onClick={() => navigate(`/products/${item.id}`)}
+                onClick={() => navigate(`/products/${item.productId}`)}
             >
                {item.image ? (
                  <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
@@ -94,10 +178,10 @@ export const CartPage: React.FC = () => {
             {/* Info y Controles */}
             <div className="flex-1 flex flex-col justify-between">
               <div className="flex justify-between items-start">
-                <h3 onClick={() => navigate(`/products/${item.id}`)}
+                <h3 onClick={() => navigate(`/products/${item.productId}`)}
                  className="text-gray-800 font-semibold line-clamp-2 leading-tight">{item.name}</h3>
                 <button 
-                  onClick={() => removeItem(item.id)}
+                  onClick={() => removeItem(item.productId)}
                   className="text-gray-400 hover:text-blue-500 p-1 -mt-1 -mr-1"
                 >
                   <TrashIcon />
@@ -110,7 +194,7 @@ export const CartPage: React.FC = () => {
                 {/* Controles de Cantidad */}
                 <div className="flex items-center bg-gray-50 rounded-lg border border-gray-200">
                   <button 
-                    onClick={() => decreaseItem(item.id)}
+                    onClick={() => decreaseItem(item.productId)}
                     className="w-8 h-8 flex items-center justify-center text-gray-600 hover:bg-gray-200 rounded-l-lg active:bg-gray-300"
                   >
                     <MinusIcon />
@@ -136,7 +220,9 @@ export const CartPage: React.FC = () => {
                 <span className="text-gray-500">Total a pagar</span>
                 <span className="text-2xl font-bold text-gray-900">${totalPrice.toFixed(2)}</span>
             </div>
-            <button className="w-full bg-green-600 text-white py-3.5 rounded-xl font-bold text-lg shadow-lg hover:bg-green-700 active:scale-[0.98] transition-all">
+            <button 
+                onClick={() => createOrderAndPay()}
+            className="w-full bg-green-600 text-white py-3.5 rounded-xl font-bold text-lg shadow-lg hover:bg-green-700 active:scale-[0.98] transition-all">
                 Finalizar Compra
             </button>
         </div>

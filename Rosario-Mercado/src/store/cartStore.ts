@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 
 export interface Product {
-  id: string;
+  productId: string;
   name: string;
   price: number;
   availableStock: number;
@@ -32,8 +32,7 @@ export const useCartStore = create<CartState>()(
       currentSellerId: null,
 
       addItem: (product) => {
-        const { items, currentSellerId } = get();
-        console.log(items);
+        const { currentSellerId } = get();
         // 1. VALIDACIÓN DE SELLER:
         // Si ya hay productos y el seller del nuevo producto es diferente al actual
         if (currentSellerId && product.sellerId !== currentSellerId) {
@@ -42,7 +41,7 @@ export const useCartStore = create<CartState>()(
         }
 
         set((state) => {
-          const existingItem = state.items.find((item) => item.id === product.id);
+          const existingItem = state.items.find((item) => item.productId === product.productId);
 
           // 2. VALIDACIÓN DE STOCK (Producto existente)
           if (existingItem) {
@@ -52,7 +51,7 @@ export const useCartStore = create<CartState>()(
 
             return {
               items: state.items.map((item) =>
-                item.id === product.id
+                item.productId === product.productId
                   ? { ...item, quantity: item.quantity + 1 }
                   : item
               ),
@@ -74,21 +73,22 @@ export const useCartStore = create<CartState>()(
 
       decreaseItem: (productId) => {
         set((state) => {
-          const existingItem = state.items.find((item) => item.id === productId);
+          const existingItem = state.items.find((item) => item.productId === productId);
+          console.log(existingItem, productId)
           if (!existingItem) return { items: state.items };
 
           if (existingItem.quantity === 1) {
-            const newItems = state.items.filter((item) => item.id !== productId);
+            const newItems = state.items.filter((item) => item.productId !== productId);
             return { 
               items: newItems,
               // Si el carrito queda vacío, reseteamos el sellerId
               currentSellerId: newItems.length === 0 ? null : state.currentSellerId 
             };
           }
-
+          
           return {
             items: state.items.map((item) =>
-              item.id === productId
+              item.productId === productId
                 ? { ...item, quantity: item.quantity - 1 }
                 : item
             ),
@@ -98,7 +98,7 @@ export const useCartStore = create<CartState>()(
 
       removeItem: (productId) => {
         set((state) => {
-          const newItems = state.items.filter((item) => item.id !== productId);
+          const newItems = state.items.filter((item) => item.productId !== productId);
           return {
             items: newItems,
             // Si el carrito queda vacío, reseteamos el sellerId
