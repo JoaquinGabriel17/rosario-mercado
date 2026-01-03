@@ -3,12 +3,13 @@ import { AppError } from "../utils/AppError";
 import { ProductDAL } from "../products/product.DAL";
 import { mpPreference, client } from "../config/mercadopago";
 import { Payment } from "mercadopago";
+import Schema from "mongoose";
 
 const orderDal = new OrderDAL();
 const productDal = new ProductDAL();
 const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
 
-export const createOrder = async (items: any[]) => {
+export const createOrder = async (items: any[], userId: Schema.Types.ObjectId) => {
   const expiresAt = new Date();
   // Tiempo de expiración de la orden: 10 minutos
   expiresAt.setMinutes(expiresAt.getMinutes() + 10);
@@ -44,6 +45,7 @@ export const createOrder = async (items: any[]) => {
     items,
     expiresAt,
     status: "pending_payment",
+    userId
   });
   // 4. Crear la Preferencia en Mercado Pago
   /*
@@ -70,9 +72,9 @@ export const createOrder = async (items: any[]) => {
 
   */
  // 4. Crear la Preferencia en Mercado Pago
- console.log(`${frontendUrl}/orders/payment/success`)
  if(!frontendUrl) throw new AppError("url mal definida", 500);
-try {
+/*try {*/
+
   const response = await mpPreference.create({
     body: {
       items: itemsForMercadoPago,
@@ -92,11 +94,11 @@ try {
     init_point: response.init_point,
     preferenceId: response.id
   };
-} catch (error: any) {
+/** } catch (error: any) {
   // ESTO TE DIRÁ EXACTAMENTE QUÉ CAMPO FALLA
   console.error("Error detallado de Mercado Pago:", error.api_response?.data || error);
   throw new AppError("Error al crear la preferencia de pago", 400);
-}
+}*/
 };
 
 export const getOrder = async (id: string) => {
@@ -126,6 +128,7 @@ export const handleWebhook = async (paymentId: string) => {
   // 3. Si el pago fue aprobado, actualizamos nuestra base de datos
   if (status === "approved") {
     await orderDal.update(orderId, { status: "paid" });
+    await orderDal.increaseSoldCount(orderId);
     // Aquí podrías disparar otras acciones: enviar mail, imprimir ticket, etc.
   } 
   
@@ -143,4 +146,14 @@ export const handleWebhook = async (paymentId: string) => {
   }
 
   return { orderId, status };
+};
+
+// OBTENER PEDIDOS POR ID DE USUARIO
+export const getOrdersByUserId = async (userId: string) => {
+  if(!userId) throw new AppError("ID de usuario requerido", 400);
+
+  const orders = await orderDal.findByUserId(userId.toString());
+
+  if(!orders) throw new AppError(`No se encontraron órdenes para este usuario ${userId}`, 404);
+  return orders;
 };

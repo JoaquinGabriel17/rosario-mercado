@@ -11,12 +11,17 @@ import { startExpireOrdersJob } from "./orderExpiration/expireOrders.job";
 import orderRoutes from "./orders/order.routes";
 
 
+const port = Number(process.env.PORT ?? 4000);
 
 
+//process.env.PORT as any ||
 
 const app = express();
-app.use(cors());
+app.use(cors({
+  origin: "*"
+}));
 app.use(express.json());
+
 
 // Rutas
 app.use("/users", userRoutes);
@@ -24,8 +29,8 @@ app.use("/products", productRoutes);
 app.use("/tickets", ticketRoutes);
 app.use("/orders", orderRoutes);
 
-app.listen(process.env.PORT, () => {
+app.listen(port, "0.0.0.0", () => {
   connectDB();
   startExpireOrdersJob();
-  console.log(`Servidor corriendo en puerto ${process.env.PORT}`);
+  console.log(`Servidor corriendo en puerto ${port}`);
 });
