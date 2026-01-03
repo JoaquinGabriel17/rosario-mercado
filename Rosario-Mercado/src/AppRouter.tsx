@@ -21,6 +21,9 @@ import UserProducts from "./components/products/UserProducts.tsx";
 import EditProducts from "./components/products/EditProducts.tsx";
 import DeleteProduct from "./components/products/DeleteProduct.tsx";
 import { CartPage } from "./components/orders/CartDetail.tsx";
+import OrdersList from "./components/orders/OrdersList.tsx";
+import OrderDetail from "./components/orders/OrderDetail.tsx";
+
 /*import { useUserStore } from "./store/userStore.ts";
 const user = useUserStore((state) => state.user);*/
 
@@ -67,6 +70,8 @@ const AppRouter = () => {
         <Route path="/orders/payment/success" element={<h1>Orden completada</h1>} />
         <Route path="/orders/payment/failure" element={<h1>Fallo al completar la orden</h1>} />
         <Route path="/orders/payment/pending" element={<h1>Orden pendiente de pago</h1>} />
+        <Route path="/orders/user" element={ <OrdersList/>} />
+        <Route path="/orders/detail/:id" element={ <OrderDetail/> } />
       </Route>
 
 

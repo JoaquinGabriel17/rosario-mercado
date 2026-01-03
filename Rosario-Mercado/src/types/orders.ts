@@ -1,0 +1,26 @@
+export interface Product {
+  _id: string;
+  title: string;
+  description: string;
+  price: number;
+  category: string;
+  imageUrl: string;
+  stock: number;
+}
+
+export interface OrderItem {
+  _id: string;
+  productId: Product;
+  quantity: number;
+}
+
+export interface Order {
+  _id: string;
+  status: "pending_payment" | "paid" | "expired" | "rejected" | "cancelled";
+  items: OrderItem[];
+  userId: string;
+  expiresAt: string;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+}

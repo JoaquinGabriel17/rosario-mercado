@@ -71,7 +71,6 @@ export const receiveWebhook = catchAsync(async (req: Request, res: Response) => 
 // OBTENER TODAS LAS ORDENES POR ID DE USUARIO
 export const getOrdersByUserId = catchAsync(async (req: AuthRequest, res: Response) => {
   const userId = req.user?.id;
-  console.log(userId);
 
   if (!userId) throw new AppError("ID de usuario requerido", 400);
 
