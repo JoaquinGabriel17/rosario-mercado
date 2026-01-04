@@ -33,7 +33,6 @@ export const ProductDetails: React.FC = () => {
         setLoading(true);
         setError(null);
 
-        // Ajustá la URL base según tu backend
         const res = await fetch(`${backendUrl}/products/${productId}`, {
           method: "GET",
           headers: { "Content-Type": "application/json" },
@@ -65,12 +64,12 @@ export const ProductDetails: React.FC = () => {
     return () => controller.abort();
   }, [productId]);
 
-  
+
 
   if (error) {
     return (
       <div className="max-w-4xl mx-auto p-6">
-        { loading && <Loading></Loading>}
+        {loading && <Loading></Loading>}
         <div className="bg-red-50 border border-red-200 text-red-700 p-4 rounded">
           <p className="font-medium">Error</p>
           <p className="mt-2">{error}</p>
@@ -90,7 +89,7 @@ export const ProductDetails: React.FC = () => {
   if (!data) {
     return (
       <>
-      {loading && <Loading/>}
+        {loading && <Loading />}
       </>
     )
   }
@@ -99,7 +98,7 @@ export const ProductDetails: React.FC = () => {
 
   return (
     <div className="max-w-5xl mx-auto p-6 space-y-8 relative">
-      {loading && <Loading/>}
+      {loading && <Loading />}
       {/* Producto */}
       <section className="bg-white shadow rounded-lg overflow-hidden">
         <div className="md:flex">
@@ -132,43 +131,45 @@ export const ProductDetails: React.FC = () => {
                 <p>{product.stock}</p>
               </div>
             </div>
-            
-            { (!currentUser || currentUser.id !== user._id) && (
+
+            {(!currentUser || currentUser.id !== user._id) && (
               <div className="mt-6 flex items-center gap-3">
-              <button className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-              onClick={() => {addToCart({
-                  productId: productId!,
-                  name: product.title,
-                  price: product.price,
-                  image: product.imageUrl,
-                  availableStock: product.stock,
-                  sellerId: user._id
-                }); 
-                navigate('/cart/detail')}}
-              >
-                Comprar
-              </button>
-              <button className="px-4 py-2 border border-gray-300 rounded hover:bg-gray-50"
-                onClick={() => addToCart({
-                  productId: productId!,
-                  name: product.title,
-                  price: product.price,
-                  image: product.imageUrl,
-                  availableStock: product.stock,
-                  sellerId: user._id
-                })}
-              >
-                Agregar al carrito
-              </button>
-            </div>
+                <button className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                  onClick={() => {
+                    addToCart({
+                      productId: productId!,
+                      name: product.title,
+                      price: product.price,
+                      image: product.imageUrl,
+                      availableStock: product.stock,
+                      sellerId: user._id
+                    });
+                    navigate('/cart/detail')
+                  }}
+                >
+                  Comprar
+                </button>
+                <button className="px-4 py-2 border border-gray-300 rounded hover:bg-gray-50"
+                  onClick={() => addToCart({
+                    productId: productId!,
+                    name: product.title,
+                    price: product.price,
+                    image: product.imageUrl,
+                    availableStock: product.stock,
+                    sellerId: user._id
+                  })}
+                >
+                  Agregar al carrito
+                </button>
+              </div>
             )}
             {currentUser && currentUser.id === user._id && (
               <div className="mt-6">
                 <Button onClick={() => navigate(`/products/edit/${productId}`)}>Editar producto</Button>
               </div>
             )}
-            
-            
+
+
           </div>
         </div>
       </section>

@@ -21,24 +21,24 @@ export const createProduct = async (req: AuthRequest, res: Response) => {
       return res.status(400).json({ message: "Faltan datos obligatorios" });
     }
 
-    
+
     // Si viene archivo → subir a Cloudinary con await
     if (!req.file) {
       return res.status(400).json({ message: "No se envió una imagen para crear el producto" });
     }
 
-      const imageData = await new Promise<{ imageUrl: string; imageId: string }>((resolve, reject) => {
-        const uploadStream = cloudinary.uploader.upload_stream(
-          { folder: "products" },
-          (error, result) => {
-            if (error) return reject(error);
-            resolve({imageUrl: result!.secure_url, imageId: result!.public_id});
-          }
-        );
+    const imageData = await new Promise<{ imageUrl: string; imageId: string }>((resolve, reject) => {
+      const uploadStream = cloudinary.uploader.upload_stream(
+        { folder: "products" },
+        (error, result) => {
+          if (error) return reject(error);
+          resolve({ imageUrl: result!.secure_url, imageId: result!.public_id });
+        }
+      );
 
-        uploadStream.end(req.file!.buffer);
-      });
-    
+      uploadStream.end(req.file!.buffer);
+    });
+
 
 
     const newProduct = await Product.create({
@@ -47,7 +47,7 @@ export const createProduct = async (req: AuthRequest, res: Response) => {
       price,
       category,
       imageUrl: imageData.imageUrl,
-      imageId:  imageData.imageId, 
+      imageId: imageData.imageId,
       userId: req.user.id,
       stock: stock ?? 0,
       soldCount: soldCount ?? 0
@@ -66,7 +66,7 @@ export const createProduct = async (req: AuthRequest, res: Response) => {
 // OBTENER PRODUCTOS POR ID DE USUARIO
 export const getProductsByUserId = async (req: AuthRequest, res: Response) => {
   try {
-    const {userId} = req.params;
+    const { userId } = req.params;
 
     if (!userId) return res.status(400).json({ message: "Falta el ID de usuario" });
 
@@ -75,7 +75,7 @@ export const getProductsByUserId = async (req: AuthRequest, res: Response) => {
         message: "El formato de userId es inválido"
       });
     }
-    
+
     const findUser = await User.findById(userId);
     if (!findUser) return res.status(404).json({ message: "No se encontró un usuario con el ID proporcionado" });
 
@@ -90,22 +90,22 @@ export const getProductsByUserId = async (req: AuthRequest, res: Response) => {
 export const editProductById = async (req: AuthRequest, res: Response) => {
   try {
     const uploadToCloudinary = (fileBuffer: Buffer): Promise<any> => {
-  return new Promise((resolve, reject) => {
-    const stream = cloudinary.uploader.upload_stream(
-      { folder: "productos" },
-      (error, result) => {
-        if (error) reject(error);
-        else resolve(result);
-      }
-    );
+      return new Promise((resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream(
+          { folder: "productos" },
+          (error, result) => {
+            if (error) reject(error);
+            else resolve(result);
+          }
+        );
 
-    stream.end(fileBuffer);
-  });
-};
+        stream.end(fileBuffer);
+      });
+    };
 
 
     const { productId } = req.params;
-    if(!productId){
+    if (!productId) {
       return res.status(400).json({ message: "No se envió el ID del producto" });
     }
     if (!mongoose.Types.ObjectId.isValid(productId)) {
@@ -121,37 +121,37 @@ export const editProductById = async (req: AuthRequest, res: Response) => {
     }
 
 
- // 1. Si viene una nueva imagen
+    // 1. Si viene una nueva imagen
     if (req.file) {
-  console.log("Nueva imagen recibida");
+      console.log("Nueva imagen recibida");
 
-  // Subir buffer en vez de req.file.path
-  const uploadResult = await uploadToCloudinary(req.file.buffer);
+      // Subir buffer en vez de req.file.path
+      const uploadResult = await uploadToCloudinary(req.file.buffer);
 
-  // Eliminar imagen vieja si existe
-  if (product.imageUrl) {
-    await cloudinary.uploader.destroy(product.imageId);
-  }
+      // Eliminar imagen vieja si existe
+      if (product.imageUrl) {
+        await cloudinary.uploader.destroy(product.imageId);
+      }
 
-  product.imageUrl = uploadResult.secure_url;
-  product.imageId = uploadResult.public_id;
-}
+      product.imageUrl = uploadResult.secure_url;
+      product.imageId = uploadResult.public_id;
+    }
 
-    
 
-        // 2. Actualizar campos comunes si fueron enviados
-    const { title, description, price, category, stock}= req.body;
+
+    // 2. Actualizar campos comunes si fueron enviados
+    const { title, description, price, category, stock } = req.body;
 
     if (title) product.title = title;
     if (description) product.description = description;
     if (price) product.price = price;
     if (category) product.category = category;
-    if(stock) product.stock = stock
+    if (stock) product.stock = stock
 
-    const updatedProduct =  await product.save();
+    const updatedProduct = await product.save();
 
-    
-    res.json({message: "producto actualizado correctamente", updatedProduct});
+
+    res.json({ message: "producto actualizado correctamente", updatedProduct });
 
   } catch (error) {
     res.status(500).json({ message: error || "Error al obtener productos" });
@@ -163,7 +163,7 @@ export const editProductById = async (req: AuthRequest, res: Response) => {
 export const deleteProductById = async (req: AuthRequest, res: Response) => {
   try {
     const { productId } = req.params;
-    if(!productId){
+    if (!productId) {
       return res.status(400).json({ message: "No se envió el ID del producto" });
     }
 
@@ -190,7 +190,7 @@ export const deleteProductById = async (req: AuthRequest, res: Response) => {
 export const getProductById = async (req: AuthRequest, res: Response) => {
   try {
     const { productId } = req.params
-    if(!productId){
+    if (!productId) {
       return res.status(400).json({ message: "No se envió el ID del producto" });
     }
 
@@ -203,13 +203,13 @@ export const getProductById = async (req: AuthRequest, res: Response) => {
     }
 
     const userProduct = await User.findById(product.userId).select('-password -__v');
-    if(!userProduct){
+    if (!userProduct) {
       await Product.findByIdAndDelete(productId);
-      return res.status(400).json({ message: "El usuario que creó el producto fue eliminado."})
+      return res.status(400).json({ message: "El usuario que creó el producto fue eliminado." })
     };
-    
 
-    res.json({product: product, user: userProduct})
+
+    res.json({ product: product, user: userProduct })
 
   } catch (error) {
     res.status(500).json({ message: error || "Error al obtener productos" });
@@ -220,12 +220,12 @@ export const getProductById = async (req: AuthRequest, res: Response) => {
 export const getProductsToHome = async (req: Request, res: Response) => {
   try {
     const [comidas, combos, bebidasTop] = await Promise.all([
-    Product.find({ category: "comidas" ,stock: { $gt: 0 }}).sort({ soldCount: -1 }).limit(10),
-    Product.find({ category: "combos",stock: { $gt: 0 } }).sort({ soldCount: -1 }).limit(10),
-    Product.find({ category: "bebidas", stock: { $gt: 0 } }).sort({ soldCount: -1 }).limit(10),
-  ]);
+      Product.find({ category: "comidas", stock: { $gt: 0 } }).sort({ soldCount: -1 }).limit(10),
+      Product.find({ category: "combos", stock: { $gt: 0 } }).sort({ soldCount: -1 }).limit(10),
+      Product.find({ category: "bebidas", stock: { $gt: 0 } }).sort({ soldCount: -1 }).limit(10),
+    ]);
 
-  res.json({ comidas, combos, bebidasTop });
+    res.json({ comidas, combos, bebidasTop });
   } catch (error) {
     res.status(500).json({ message: error || "Error al obtener productos" });
   }

@@ -11,7 +11,7 @@ function Navbar() {
     const navigate = useNavigate();
 
     return (
-        <nav className='bg-[#FFFFFF] flex justify-between items-center p-4 text-[#1E293B] border-b-4 border-b-[#2563EB]' >
+        <nav className='bg-[#FFFFFF] flex justify-between items-center p-4 text-[#1E293B] rounded-b-3xl border-b-2 border-b-blue-600 mb-2' >
             <button
                 onClick={() => navigate(-1)}
                 className="flex items-center hover:text-gray-900 rounded bg-blue-600 p-4 text-white"

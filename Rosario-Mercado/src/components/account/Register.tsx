@@ -9,82 +9,76 @@ type RegisterErrors = {
     password?: string;
 };
 
-
-
-function Register( { onChange }: { onChange: () => void } ) {
-
+function Register({ onChange }: { onChange: () => void }) {
     const [loading, setLoading] = useState<boolean>(false)
- const [alert, setAlert] = useState({
-  open: false,
-  message: "",
-  type: "info" as "info" | "success" | "error",
-});
-
+    const [alert, setAlert] = useState({
+        open: false,
+        message: "",
+        type: "info" as "info" | "success" | "error",
+    });
     const backendUrl = import.meta.env.VITE_BACKEND_URL;
     const [errors, setErrors] = useState<RegisterErrors>({});
-    
     const [form, setForm] = useState({
         name: "",
         email: "",
         password: ""
     });
 
-    const handleChange =  (e: React.ChangeEvent<HTMLInputElement>) => {
-
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const updated = { ...form, [e.target.name]: e.target.value };
         setForm(updated);
         setErrors(validateRegister(updated));
     };
 
+    // Manejar el envío del formulario
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
-        
         const validation = validateRegister(form);
 
-    if (Object.keys(validation).length > 0) {
-        setErrors(validation);
-        setLoading(false)
-        return; // ❌ no enviar si hay errores
-    }
+        if (Object.keys(validation).length > 0) {
+            setErrors(validation);
+            setLoading(false)
+            return; // ❌ no enviar si hay errores
+        }
         const res = await fetch(`${backendUrl}/users/register`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(form)
         });
-        if(res.ok){
+        if (res.ok) {
             setLoading(false)
-setAlert({
-  open: true,
-  message: "Usuario creado con éxito",
-  type: "success",
-});
+            setAlert({
+                open: true,
+                message: "Usuario creado con éxito",
+                type: "success",
+            });
             setForm({ name: "", email: "", password: "" });
             setErrors({});
             onChange();
         }
-        else{
+        else {
             const data = await res.json();
             setLoading(false)
-setAlert({
-  open: true,
-  message: `Error al crear usuario: ${data.message}`,
-  type: "error",
-});
+            setAlert({
+                open: true,
+                message: `Error al crear usuario: ${data.message}`,
+                type: "error",
+            });
         }
 
     };
 
     return (
         <div className="w-full flex justify-center mt-10">
-             {loading && <Loading></Loading>}
-    {alert && <Alert
-  open={alert.open}
-  message={alert.message}
-  type={alert.type}
-  onClose={() => setAlert({ ...alert, open: false })}/>}
-            <form 
-                onSubmit={handleSubmit} 
+            {loading && <Loading></Loading>}
+            {alert && <Alert
+                open={alert.open}
+                message={alert.message}
+                type={alert.type}
+                onClose={() => setAlert({ ...alert, open: false })} />}
+            <form
+                onSubmit={handleSubmit}
                 className="flex flex-col gap-4 p-6 rounded-xl shadow-md w-80"
             >
                 <h2 className="text-xl font-bold text-center">Crear cuenta</h2>
@@ -110,7 +104,7 @@ setAlert({
                     onChange={handleChange}
                     className="border p-2 rounded"
                 />
-                 {errors.email && (
+                {errors.email && (
                     <p className="text-red-500 text-sm">{errors.email}</p>
                 )}
 
@@ -127,7 +121,7 @@ setAlert({
                     <p className="text-red-500 text-sm">{errors.password}</p>
                 )}
 
-                <button 
+                <button
                     type="submit"
                     className="bg-green-600 text-white py-2 rounded hover:bg-green-700"
                 >

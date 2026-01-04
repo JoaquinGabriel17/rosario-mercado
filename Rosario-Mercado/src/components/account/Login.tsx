@@ -16,9 +16,7 @@ function Login() {
         message: "",
         type: "info" as "info" | "success" | "error",
     });
-
     const backendUrl = import.meta.env.VITE_BACKEND_URL;
-
     const setUser = useUserStore((state) => state.setUser);
     const navigate = useNavigate();
 
@@ -26,6 +24,7 @@ function Login() {
         setForm({ ...form, [e.target.name]: e.target.value });
     };
 
+    // Manejar el envío del formulario
     const handleSubmit = async (e: React.FormEvent) => {
         try {
             setLoading(true)
@@ -45,9 +44,9 @@ function Login() {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(form)
             });
-            
+
             const data = await res.json();
-console.log(data);
+            console.log(data);
             if (res.ok) {
                 setUser({
                     id: data.user._id,
@@ -90,18 +89,18 @@ console.log(data);
 
     };
 
-    
+
 
     return (
         <div className="w-full flex flex-col items-center justify-center mt-10">
             {loading && <Loading></Loading>}
-    {alert && <Alert
-  open={alert.open}
-  message={alert.message}
-  type={alert.type}
-  onClose={() => setAlert({ ...alert, open: false })}/>}
-            <form 
-                onSubmit={handleSubmit} 
+            {alert && <Alert
+                open={alert.open}
+                message={alert.message}
+                type={alert.type}
+                onClose={() => setAlert({ ...alert, open: false })} />}
+            <form
+                onSubmit={handleSubmit}
                 className="flex flex-col gap-4 p-6 rounded-xl shadow-md w-80"
             >
                 <h2 className="text-xl font-bold text-center">Iniciar sesión</h2>
@@ -126,15 +125,15 @@ console.log(data);
                     required
                 />
 
-                <Button 
+                <Button
                     type="submit"
                     onClick={handleSubmit}
                 >
                     Entrar
                 </Button>
             </form>
-            <a className="mt-8 cursor-pointer text-blue-700"
-            onClick={() => navigate("/forgot-password")}
+            <a className="mt-8 cursor-pointer text-blue-700 text-center underline"
+                onClick={() => navigate("/forgot-password")}
             >¿Olvidaste tu contraseña? Haz click aquí para restablecerla.</a>
         </div>
     );

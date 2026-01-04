@@ -12,7 +12,6 @@ export default function CreateTicket() {
     description: '',
   });
   const user = useUserStore((state) => state.user);
-
   const [errors, setErrors] = useState<Partial<TicketFormData>>({});
   const [loading, setLoading] = useState<boolean>(false)
   const [alert, setAlert] = useState({
@@ -22,13 +21,6 @@ export default function CreateTicket() {
   });
 
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
-
-  /*setLoading(false)
-  setAlert({
-    open: true,
-    message: "Producto creado con éxito",
-    type: "success",
-  });*/
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;

@@ -3,21 +3,12 @@ import { useUserStore } from "../../store/userStore";
 import Loading from "../ui/Loading";
 import Alert from "../ui/Alert";
 import { Button } from "../ui/Button";
+import type { ProductForm } from "../../types/product";
 
-    const backendUrl = import.meta.env.VITE_BACKEND_URL;
-
-interface ProductForm {
-  title: string;
-  description: string;
-  price: number | "";
-  category: string;
-  image?: File | null;
-  stock: number | "0";
-}
-
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 export default function CreateProduct() {
-    const user = useUserStore((state) => state.user);
+  const user = useUserStore((state) => state.user);
 
   const [form, setForm] = useState<ProductForm>({
     title: "",
@@ -30,12 +21,13 @@ export default function CreateProduct() {
 
   const [errors, setErrors] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false)
-  const [ alert, setAlert] = useState({
-    open: false, 
-    message: "", 
+  const [alert, setAlert] = useState({
+    open: false,
+    message: "",
     type: "info" as "info" | "success" | "error",
   })
 
+  // Manejo de cambios en los inputs
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
 
@@ -45,6 +37,7 @@ export default function CreateProduct() {
     });
   };
 
+  // Manejo de cambios en los inputs de archivo
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({
       ...form,
@@ -52,6 +45,7 @@ export default function CreateProduct() {
     });
   };
 
+    // Manejo de envío del formulario
   const handleSubmit = async (e: React.FormEvent) => {
     setLoading(true)
     e.preventDefault();
@@ -60,47 +54,44 @@ export default function CreateProduct() {
     if (!form.title || !form.price || !form.category || !form.image) {
       setLoading(false)
       setAlert({
-  open: true,
-  message: "Debe completar todos los campos obligatorios *",
-  type: "error",
-});
+        open: true,
+        message: "Debe completar todos los campos obligatorios *",
+        type: "error",
+      });
       return;
-    }
+    };
 
     const formData = new FormData();
     formData.append("title", form.title);
-    if(form.description) formData.append("description", form.description);
+    if (form.description) formData.append("description", form.description);
     formData.append("price", form.price.toString());
     formData.append("category", form.category);
-    formData.append("image", form.image); 
+    formData.append("image", form.image);
     formData.append("stock", form.stock.toString());
-
-
-
     setErrors("");
 
     const res = await fetch(`${backendUrl}/products`, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${user?.token}`, 
-      // NO agregar Content-Type, fetch lo hace solo cuando hay FormData
-    },
-    body: formData,
-  });
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${user?.token}`,
+        // NO agregar Content-Type, fetch lo hace solo cuando hay FormData
+      },
+      body: formData,
+    });
 
-  const data = await res.json();
-    
+    const data = await res.json();
+
     if (!res.ok) {
-    console.log("Error:", data.message);
+      console.log("Error:", data.message);
+      setLoading(false)
+      return;
+    }
     setLoading(false)
-    return;
-  }
-  setLoading(false)
-  setAlert({
-  open: true,
-  message: "Producto creado con éxito",
-  type: "success",
-});
+    setAlert({
+      open: true,
+      message: "Producto creado con éxito",
+      type: "success",
+    });
 
     // Reset form
     setForm({
@@ -111,20 +102,17 @@ export default function CreateProduct() {
       image: null,
       stock: "0",
     });
-    
+
   };
-  
-
-
   return (
-    
+
     <div className="p-4 text-left">
-    {loading && <Loading></Loading>}
-    {alert && <Alert
-  open={alert.open}
-  message={alert.message}
-  type={alert.type}
-  onClose={() => setAlert({ ...alert, open: false })}/>}
+      {loading && <Loading></Loading>}
+      {alert && <Alert
+        open={alert.open}
+        message={alert.message}
+        type={alert.type}
+        onClose={() => setAlert({ ...alert, open: false })} />}
 
       <h2 className="text-xl font-semibold mb-4 text-center">Crear Producto</h2>
 
@@ -184,8 +172,8 @@ export default function CreateProduct() {
             value={form.stock}
             onChange={handleChange}
             placeholder="Ej: 10"
-            className="w-full p-2 border rounded-lg"   
-            min="0"        
+            className="w-full p-2 border rounded-lg"
+            min="0"
           ></input>
         </div>
 

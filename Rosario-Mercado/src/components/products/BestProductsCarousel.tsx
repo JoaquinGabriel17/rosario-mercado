@@ -37,7 +37,7 @@ export default function BestProductsCarousel({ products }: { products: Array<Pro
         >
           ◀
         </button>
-        <Button onClick={() => navigate(`/products/${products[currentIndex]._id}`)} >Ver producto</Button>
+        <Button  onClick={() => navigate(`/products/${products[currentIndex]._id}`)} >Ver producto</Button>
         <button
           onClick={nextSlide}
           className="w-15 h-15 flex items-center justify-center rounded-full bg-blue-500 text-white shadow-md hover:bg-black/40 transition active:scale-95"
@@ -51,9 +51,8 @@ export default function BestProductsCarousel({ products }: { products: Array<Pro
         {products.map((_, i) => (
           <span
             key={i}
-            className={`w-3 h-3 rounded-full transition-all duration-300 ${
-              i === currentIndex ? "bg-blue-600 scale-110" : "bg-gray-400"
-            }`}
+            className={`w-3 h-3 rounded-full transition-all duration-300 ${i === currentIndex ? "bg-blue-600 scale-110" : "bg-gray-400"
+              }`}
           ></span>
         ))}
       </div>

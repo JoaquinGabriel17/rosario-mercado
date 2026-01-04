@@ -16,6 +16,7 @@ export interface Notification {
 interface NotificationStore {
   notifications: Notification[];
   setNotifications: (notifications: Notification[]) => void;
+  markAllAsRead: () => void;
   clearNotifications: () => void;
 }
 
@@ -23,4 +24,11 @@ export const useNotificationStore = create<NotificationStore>((set) => ({
   notifications: [],
   setNotifications: (data) => set({ notifications: data }),
   clearNotifications: () => set({ notifications: [] }),
+  markAllAsRead: () =>
+    set((state) => ({
+      notifications: state.notifications.map((notification) => ({
+        ...notification,
+        read: true,
+      })),
+    })),
 }));

@@ -39,5 +39,9 @@ export class OrderDAL {
       return;
     };
     throw new Error("Orden no encontrada para aumentar el contador de ventas");
+  };
+
+  async getByIdWithProductsInfo(id: string): Promise<OrderDocument | null> {
+    return await Order.findById(id).populate("items.productId");
   }
 }

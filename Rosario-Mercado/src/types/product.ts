@@ -27,3 +27,12 @@ export interface ProductsInfo {
   combos: Product[];
   bebidasTop: Product[];
 }
+
+export interface ProductForm {
+  title: string;
+  description: string;
+  price: number | "";
+  category: string;
+  image?: File | null;
+  stock: number | "0";
+}
