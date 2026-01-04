@@ -7,6 +7,7 @@ import toast, {Toaster} from "react-hot-toast";
 import { useUserStore } from "../store/userStore";
 import axios from "axios";
 import { useNotificationStore } from "../store/notificationsStore";
+import { playNotificationSound } from "../utils/playNotificationSound";
 
 
 
@@ -51,6 +52,8 @@ const MainLayout = () => {
 
       // 2. Escuchar notificaciones
       socket.on('new_notification', (notification) => {
+        // Reproducir sonido de notificación
+        playNotificationSound();
         // A. Mostrar Toast (Popup visual bonito)
         setCurrentNotification(notification);
         toast(notification.message, {
@@ -72,7 +75,7 @@ const MainLayout = () => {
   return (
     <>
       <Navbar />
-      { currentNotification && <a onClick={() => navigate(currentNotification.link)} target="_blank"> <Toaster position="top-right"/> </a>}
+      { currentNotification && <a onClick={() => navigate(currentNotification.link)} target="_blank"> <Toaster position="top-center" /> </a>}
       <div className="mb-20">
       <Outlet />
       </div>
