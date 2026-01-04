@@ -25,7 +25,7 @@ export default function Chat() {
   const [ticketStatus, setTicketStatus] = useState<string>("")
 
   useEffect(() => {
-    const fetchMessages = async () => {
+    const fetchMessages = async () => { // Obtener los mensajes del ticket al montar componente
       try {
         setLoading(true);
         setError(null);
@@ -60,7 +60,7 @@ export default function Chat() {
     };
 
     try {
-      const res = await axios.post(`${backendUrl}/tickets/${ticketId}/messages`, JSON.stringify({ message: newMessage, status: (user?.role === "user" ? "open" : ticketStatus ) }), {
+      const res = await axios.post(`${backendUrl}/tickets/${ticketId}/messages`, JSON.stringify({ message: newMessage, status: (user?.role === "user" ? "open" : ticketStatus) }), {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${user?.token}`
@@ -88,43 +88,41 @@ export default function Chat() {
   if (error) return <p className="text-center text-red-500 mt-4">{error}</p>;
 
   return (
-      <div className="flex flex-col h-dvh max-w-2xl mx-auto bg-white shadow rounded">
-          {alert && <Alert
-              open={alert.open}
-              message={alert.message}
-              type={alert.type}
-              onClose={() => setAlert({ ...alert, open: false })} />}
-          <div className='bg-white w-full border-b-2 px-2 flex flex-row justify-between'>
-              
-              <Button onClick={() => navigate(-1)} >Volver</Button>
-              {user?.role === 'admin' && <Button onClick={() => setIsOpen(!isOpen)}>{ticketStatus}</Button>}
-              
-              
-          </div>
-          
-          <div className="flex-1 overflow-y-auto p-4 space-y-3">
-            {isOpen && 
-                <ul className='absolute z-999 bg-white border rounded p-6 text-center right-2 top-20'>
-                  <li onClick={() => handleChangeStatus("closed")} className='border-blue-600 border-2 p-2 rounded w-full mt-1 cursor-pointer'>Cerrado</li>
-                  <li onClick={() => handleChangeStatus("open")} className='border-blue-600 border-2 p-2 rounded w-full mt-1 cursor-pointer'>Abierto</li>
-                  <li onClick={() => handleChangeStatus("in_progress")} className='border-blue-600 border-2 p-2 rounded w-full mt-1 cursor-pointer'>En progreso</li>
-                </ul>
-              }
+    <div className="flex flex-col h-dvh max-w-2xl mx-auto bg-white shadow rounded">
+      {alert && <Alert
+        open={alert.open}
+        message={alert.message}
+        type={alert.type}
+        onClose={() => setAlert({ ...alert, open: false })} />}
+      <div className='bg-white w-full border-b-2 px-2 flex flex-row justify-between'>
+
+        <Button onClick={() => navigate(-1)} >Volver</Button>
+        {user?.role === 'admin' && <Button onClick={() => setIsOpen(!isOpen)}>{ticketStatus}</Button>}
+
+
+      </div>
+
+      <div className="flex-1 overflow-y-auto p-4 space-y-3">
+        {isOpen &&
+          <ul className='absolute z-999 bg-white border rounded p-6 text-center right-2 top-20'>
+            <li onClick={() => handleChangeStatus("closed")} className='border-blue-600 border-2 p-2 rounded w-full mt-1 cursor-pointer'>Cerrado</li>
+            <li onClick={() => handleChangeStatus("open")} className='border-blue-600 border-2 p-2 rounded w-full mt-1 cursor-pointer'>Abierto</li>
+            <li onClick={() => handleChangeStatus("in_progress")} className='border-blue-600 border-2 p-2 rounded w-full mt-1 cursor-pointer'>En progreso</li>
+          </ul>
+        }
 
         {!messages.length && <p className='text-center text-2xl'>Aún no hay mensajes en el ticket</p>}
         {messages.map(msg => (
           <div
             key={msg._id}
-            className={`flex ${
-              msg.senderId === 'admin' ? 'justify-start' : 'justify-end'
-            }`}
+            className={`flex ${msg.senderId === 'admin' ? 'justify-start' : 'justify-end'
+              }`}
           >
             <div
-              className={`px-4 py-2 rounded-lg max-w-xs wrap-break-words ${
-                msg.senderId === 'admin'
+              className={`px-4 py-2 rounded-lg max-w-xs wrap-break-words ${msg.senderId === 'admin'
                   ? 'bg-gray-200 text-gray-800'
                   : 'bg-green-500 text-white'
-              }`}
+                }`}
             >
               <p>{msg.message}</p>
               <span className="text-xs text-gray-500 block mt-1">

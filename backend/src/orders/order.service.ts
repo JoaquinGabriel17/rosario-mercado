@@ -74,13 +74,15 @@ export const createOrder = async (items: any[], userId: Schema.Types.ObjectId) =
 
 };
 
+// OBTENER ORDEN POR ID
 export const getOrder = async (id: string) => {
   // Buscar orden
-  const order = await orderDal.findById(id);
+  const order = await orderDal.getByIdWithProductsInfo(id);
   if (!order) throw new AppError("La orden solicitada no existe", 404);
   return order;
 };
 
+// ACTUALIZAR ESTADO DE LA ORDEN
 export const updateStatus = async (id: string, status: "paid" | "expired") => {
   // Actualizar el estado de la orden
   const updatedOrder = await orderDal.update(id, { status });
@@ -88,6 +90,7 @@ export const updateStatus = async (id: string, status: "paid" | "expired") => {
   return updatedOrder;
 };
 
+// MANEJAR WEBHOOK DE MERCADO PAGO
 export const handleWebhook = async (paymentId: string) => {
   const payment = new Payment(client);
 

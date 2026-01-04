@@ -8,45 +8,42 @@ import { useNavigate } from "react-router-dom";
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
-
-
 const ResetPassword = () => {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams();
   const token = searchParams.get("token");
   const [loading, setLoading] = useState<boolean>(false)
- const [alert, setAlert] = useState({
-  open: false,
-  message: "",
-  type: "info" as "info" | "success" | "error",
-});
-
-
+  const [alert, setAlert] = useState({
+    open: false,
+    message: "",
+    type: "info" as "info" | "success" | "error",
+  });
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("")
 
+  // Manejar el envío del formulario
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     setLoading(true)
 
-    if(!password || !confirmPassword) {
-        setLoading(false)
-        setAlert({
-  open: true,
-  message: "Debe completar todos los campos para continuar",
-  type: "error",
-});
-return;
+    if (!password || !confirmPassword) {
+      setLoading(false)
+      setAlert({
+        open: true,
+        message: "Debe completar todos los campos para continuar",
+        type: "error",
+      });
+      return;
     }
 
-    if(password !== confirmPassword){
-        setLoading(false)
-        setAlert({
-            open: true,
-            message: "Las contraseñas ingresadas no coinciden, deben coincidir",
-            type: "error"
-        })
-        return;
+    if (password !== confirmPassword) {
+      setLoading(false)
+      setAlert({
+        open: true,
+        message: "Las contraseñas ingresadas no coinciden, deben coincidir",
+        type: "error"
+      })
+      return;
     }
 
     const res = await fetch(`${backendUrl}/users/resetPassword`, {
@@ -56,40 +53,40 @@ return;
     });
     const data = await res.json();
     console.log(data);
-    if(res.ok){
-        setLoading(false)
-        setAlert({
-            open: true,
-            message: "Contraseña actualizada correctamente",
-            type: "success"
-        })
-        navigate("/auth")
+    if (res.ok) {
+      setLoading(false)
+      setAlert({
+        open: true,
+        message: "Contraseña actualizada correctamente",
+        type: "success"
+      })
+      navigate("/auth")
     }
-    else{
-        setLoading(false)
-        setAlert({
-            open: true,
-            message: `Error al actualizar contraseña: ${data.message}`,
-            type: "error"
-        })
-        
+    else {
+      setLoading(false)
+      setAlert({
+        open: true,
+        message: `Error al actualizar contraseña: ${data.message}`,
+        type: "error"
+      })
+
     }
-    
+
   };
 
   if (!token) return <h2>Token inválido</h2>;
   return (
     <div className="flex flex-col items-center mt-20">
-        
-  {loading && <Loading></Loading>}
-    {alert && <Alert
-  open={alert.open}
-  message={alert.message}
-  type={alert.type}
-  onClose={() => setAlert({ ...alert, open: false })}/>}
+
+      {loading && <Loading></Loading>}
+      {alert && <Alert
+        open={alert.open}
+        message={alert.message}
+        type={alert.type}
+        onClose={() => setAlert({ ...alert, open: false })} />}
       <h1 className="text-2xl">Restablecer contraseña</h1>
 
-      <form 
+      <form
         className="flex flex-col gap-4 p-6 rounded-xl shadow-md w-80"
         onSubmit={handleSubmit}>
         <input

@@ -5,21 +5,9 @@ import Loading from '../ui/Loading';
 import { useUserStore } from '../../store/userStore';
 import CopyInfoButton from '../../utils/CopyInfoButton';
 import { Button } from '../ui/Button';
+import type { ProfileUser as User }  from '../../types/user';
 
-type User = {
-  _id: string;
-  name: string;
-  email: string;
-  whatsappAvailable?: boolean;
-  delivery?: boolean;
-  isSeller?: boolean;
-  createdAt?: string;
-  updatedAt?: string;
-  businessHours?: string;
-  phoneNumber?: string;
-  facebookUrl?: string;
-  instagramUrl?: string;
-};
+
 
 export default function Profile() {
   const { id } = useParams<{ id: string }>();
@@ -28,8 +16,6 @@ export default function Profile() {
   const [error, setError] = useState<string | null>(null);
   const userLog = useUserStore((state) => state.user);
   const navigate = useNavigate();
-
-
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
   useEffect(() => {
@@ -42,6 +28,7 @@ export default function Profile() {
     const controller = new AbortController();
     const signal = controller.signal;
 
+    // Obtener los datos del usuario
     async function fetchUser() {
       setLoading(true);
       setError(null);
@@ -77,7 +64,7 @@ export default function Profile() {
   if (error) {
     return (
       <div className="max-w-3xl mx-auto p-6">
-            {loading && <Loading></Loading>}
+        {loading && <Loading></Loading>}
 
         <div className="bg-red-50 border border-red-200 text-red-700 p-4 rounded">
           {error}
@@ -89,16 +76,16 @@ export default function Profile() {
   if (!user) {
     return (
       <div className="max-w-3xl mx-auto p-6">
-    {loading && <Loading></Loading>}
+        {loading && <Loading></Loading>}
       </div>
     );
   }
 
   return (
     <div className="max-w-3xl mx-auto pb-4 px-6 bg-white shadow-sm rounded-md">
-    {loading && <Loading></Loading>}
+      {loading && <Loading></Loading>}
       <header className="flex items-center mb-6 text-center">
-          <h1 className="w-full text-center text-2xl font-semibold text-gray-800">{user.name}</h1>
+        <h1 className="w-full text-center text-2xl font-semibold text-gray-800">{user.name}</h1>
       </header>
 
       <section className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
@@ -112,21 +99,21 @@ export default function Profile() {
           <p className="text-xs text-gray-500">Teléfono</p>
           <p className="text-sm text-gray-800">{user.phoneNumber ?? '—'}</p>
         </div>
-        <div className="flex flex-col sm:flex-row gap-3">
-                    {user.phoneNumber && (
-                      <CopyInfoButton phoneNumber={user.phoneNumber} textInButton="Copiar número de teléfono" />
-                    )}
-                    {user.whatsappAvailable && user.phoneNumber && (
-                      <a
-                        href={`https://wa.me/${user.phoneNumber}`}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="flex items-center px-4 py-2 border bg-green-600 text-white rounded hover:bg-green-700 text-center"
-                      >
-                        WhatsApp
-                      </a>
-                    )}
-                  </div>
+        <div className="flex flex-col sm:flex-row gap-3 text-center">
+          {user.phoneNumber && (
+            <CopyInfoButton phoneNumber={user.phoneNumber} textInButton="Copiar número de teléfono" />
+          )}
+          {user.whatsappAvailable && user.phoneNumber && (
+            <a
+              href={`https://wa.me/${user.phoneNumber}`}
+              target="_blank"
+              rel="noreferrer"
+              className="flex items-center px-4 py-2 border bg-green-600 text-white rounded hover:bg-green-700 text-center"
+            >
+              WhatsApp
+            </a>
+          )}
+        </div>
 
         <div className="p-4 border rounded bg-gray-50">
           <p className="text-xs text-gray-500">Disponibilidad WhatsApp</p>
@@ -141,7 +128,7 @@ export default function Profile() {
             {user.delivery ? 'Ofrece delivery' : 'No ofrece delivery'}
           </p>
         </div>
-        
+
       </section>
 
       <section className="mb-6">

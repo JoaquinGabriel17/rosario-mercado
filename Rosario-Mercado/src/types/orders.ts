@@ -24,3 +24,9 @@ export interface Order {
   updatedAt: string;
   __v: number;
 }
+
+export interface CreateOrderResponse {
+  message: string;
+  orderId: string;
+  init_point: string;
+}
