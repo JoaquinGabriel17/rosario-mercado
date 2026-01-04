@@ -11,5 +11,13 @@ const notificationDAL = new NotificationDAL();
 export const findByUserId = catchAsync( async (req: AuthRequest, res: Response) => {
     const userId = req.user.id;
 
-    res.status(200).json(await notificationDAL.findByUserId(userId));
+    res.status(200).json((await notificationDAL.findByUserId(userId)).slice(0, 30));
+});
+
+export const markAllAsRead = catchAsync( async (req: AuthRequest, res: Response) => {
+    const userId = req.user.id;
+
+    await notificationDAL.markAllAsRead(userId);
+
+    res.status(200).json({ message: "Todas las notificaciones marcadas como leídas." });
 });

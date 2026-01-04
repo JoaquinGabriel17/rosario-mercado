@@ -1,16 +1,37 @@
 import { useNotificationStore } from '../../store/notificationsStore';
+import { useEffect } from 'react';
+import { useUserStore } from '../../store/userStore';
 
 const NotificationList = () => {
   // Obtenemos las notificaciones del store
   const notifications = useNotificationStore((state) => state.notifications);
-/*
+  const markAllAsRead = useNotificationStore((state) => state.markAllAsRead);
+  const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:4000";
+  const user = useUserStore((state) => state.user);
+
   useEffect(() => {
-    // Llamamos a la función del servicio al montar el componente
-    if (token) {
-      fetchAndSaveNotifications(token);
+    
+    markAllNotificationsAsReadOnServer();
+    markAllAsRead();
+    
+  }, []);
+
+  const markAllNotificationsAsReadOnServer = async () => {
+    try {
+      const response = await fetch(`${backendUrl}/notifications/mark-all-read`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${user?.token}`,
+        },
+      });
+      if (!response.ok) {
+        console.error('Error marking notifications as read on server');
+      }
+    } catch (error) {
+      console.error('Error marking notifications as read on server:', error);
     }
-  }, [token]);
-*/
+  };
 
   return (
     <div className="p-4 max-w-2xl mx-auto">

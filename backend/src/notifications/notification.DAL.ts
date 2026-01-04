@@ -7,5 +7,8 @@ export class NotificationDAL {
   async findByUserId(userId: string) {
     return await Notification.find({ user: userId }).sort({ createdAt: -1 });
   };
+  async markAllAsRead(userId: string) {
+    return await Notification.updateMany({ user: userId, read: false }, { read: true });
+  };
 };
 
