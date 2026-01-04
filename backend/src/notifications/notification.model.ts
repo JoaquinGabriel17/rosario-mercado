@@ -7,7 +7,7 @@ const NotificationSchema = new mongoose.Schema({
   message: { type: String, required: true },
   read: { type: Boolean, default: false },
   type: { type: String, enum: ['order_status', 'promo', 'system'], default: 'order_status' },
-  link: { type: String }, // Por si quieres redirigir al clic (ej: al detalle del pedido)
+  link: { type: String },
 }, { timestamps: true });
 
 export const Notification = mongoose.model('Notification', NotificationSchema);

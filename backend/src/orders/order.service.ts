@@ -4,7 +4,7 @@ import { ProductDAL } from "../products/product.DAL";
 import { mpPreference, client } from "../config/mercadopago";
 import { Payment } from "mercadopago";
 import Schema from "mongoose";
-import { Notification } from "../notifications/notification.model";
+import { sendNotification } from "../utils/sendNotification";
 
 const orderDal = new OrderDAL();
 const productDal = new ProductDAL();
@@ -48,33 +48,9 @@ export const createOrder = async (items: any[], userId: Schema.Types.ObjectId) =
     status: "pending_payment",
     userId
   });
-  // 4. Crear la Preferencia en Mercado Pago
-  /*
-  const response = await mpPreference.create({
-    body: {
-      items: itemsForMercadoPago,
-      back_urls: {
-        success: `${frontendUrl}/orders/payment/success`,
-        failure: `${frontendUrl}/orders/payment/failure`,
-        pending: `${frontendUrl}/orders/payment/pending`,
-      },
-      auto_return: "approved",
-      external_reference: newOrder._id.toString(), // Guardamos el ID de la orden para identificarla luego
-      notification_url: "https://pvgj8rdd-4000.brs.devtunnels.ms/orders/webhook", // Muy importante para recibir el pago
-    }
-  });
-
-  // Retornamos la orden y el init_point (el link al que el usuario debe ir)
-  return {
-    order: newOrder,
-    init_point: response.init_point, // Link de Checkout Pro
-    preferenceId: response.id
-  };
-
-  */
+  
  // 4. Crear la Preferencia en Mercado Pago
  if(!frontendUrl) throw new AppError("url mal definida", 500);
-/*try {*/
 
   const response = await mpPreference.create({
     body: {
@@ -99,24 +75,17 @@ export const createOrder = async (items: any[], userId: Schema.Types.ObjectId) =
 };
 
 export const getOrder = async (id: string) => {
+  // Buscar orden
   const order = await orderDal.findById(id);
   if (!order) throw new AppError("La orden solicitada no existe", 404);
   return order;
 };
 
 export const updateStatus = async (id: string, status: "paid" | "expired") => {
+  // Actualizar el estado de la orden
   const updatedOrder = await orderDal.update(id, { status });
   if (!updatedOrder) throw new AppError("No se pudo actualizar la orden", 404);
-
-  const newNotif = await Notification.create({
-    user: updatedOrder.userId,
-    title: 'Actualización de pedido',
-    message: `Tu pedido ahora está en estado: ${status}`,
-    link: `/orders/detail/${id}`
-  });
-
-
-  return {order: updatedOrder, notification: newNotif};
+  return updatedOrder;
 };
 
 export const handleWebhook = async (paymentId: string) => {
@@ -129,18 +98,26 @@ export const handleWebhook = async (paymentId: string) => {
   const orderId = paymentInfo.external_reference;
   const status = paymentInfo.status;
 
+  const order = await orderDal.findById(orderId!);
+  if(!order) throw new AppError(`La orden ${orderId} no fue encontrada`, 404);
+
   if (!orderId) throw new AppError("No se encontró la referencia de la orden", 400);
 
   // 3. Si el pago fue aprobado, actualizamos nuestra base de datos
   if (status === "approved") {
-    await orderDal.update(orderId, { status: "paid" });
-    await orderDal.increaseSoldCount(orderId);
-    // Aquí podrías disparar otras acciones: enviar mail, imprimir ticket, etc.
+    await orderDal.update(orderId, { status: "paid" }); // Actualizamos el estado de la orden
+    await orderDal.increaseSoldCount(orderId); // Aumentamos el contador de ventas de los productos
+    await sendNotification({ // Creamos y enviamos una notificación de pago exitoso
+      user: order.userId,
+      title: 'Pago exitoso',
+      message: `Tu orden con ID ${orderId} ha sido pagada exitosamente. Ponte en contacto con el vendedor para consultar sobre el envío.`,
+      link: `/orders/detail/${orderId}`
+    });
   } 
   
-  // 4. (Opcional) Si el pago fue rechazado o cancelado, se devuelve el stock
+  // 4. Si el pago fue rechazado o cancelado, se devuelve el stock y se actualiza el estado del pedido
   else if (status === "rejected" || status === "cancelled") {
-    const order = await orderDal.findById(orderId);
+    
     if (order) {
       await Promise.all(
         order.items.map(async (item) => {

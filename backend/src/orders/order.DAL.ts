@@ -12,7 +12,7 @@ export class OrderDAL {
   }
 
   async findById(id: string): Promise<OrderDocument | null> {
-    return await Order.findById(id).populate("items.productId");
+    return await Order.findById(id);
   }
 
   async findAll(filter: QueryFilter<OrderDocument> = {}): Promise<OrderDocument[]> {
