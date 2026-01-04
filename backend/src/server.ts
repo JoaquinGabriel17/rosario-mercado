@@ -2,13 +2,15 @@ import dotenv from "dotenv";
 dotenv.config();
 import express from "express";
 import cors from "cors";
-
+import http from "http";
+import { initSocket } from "./config/socket";
 import { connectDB } from "./config/db";
 import userRoutes from "./users/user.routes";
 import productRoutes from "./products/product.routes";
 import ticketRoutes from "./support/tickets.routes"
 import { startExpireOrdersJob } from "./orderExpiration/expireOrders.job";
 import orderRoutes from "./orders/order.routes";
+import notificationRoutes from "./notifications/notification.routes";
 
 
 const port = Number(process.env.PORT ?? 4000);
@@ -22,14 +24,20 @@ app.use(cors({
 }));
 app.use(express.json());
 
+const server = http.createServer(app);
+
+initSocket(server);
+
+
 
 // Rutas
 app.use("/users", userRoutes);
 app.use("/products", productRoutes);
 app.use("/tickets", ticketRoutes);
 app.use("/orders", orderRoutes);
+app.use("/notifications", notificationRoutes);
 
-app.listen(port, "0.0.0.0", () => {
+server.listen(port, "0.0.0.0", () => {
   connectDB();
   startExpireOrdersJob();
   console.log(`Servidor corriendo en puerto ${port}`);

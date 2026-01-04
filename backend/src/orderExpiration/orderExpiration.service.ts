@@ -1,22 +1,32 @@
-import { Order } from "../orders/order.model";
-import Product from "../products/Product.model";
 import { AppError } from "../utils/AppError";
+import { OrderDAL } from "../orders/order.DAL";
+import { ProductDAL } from "../products/product.DAL";
+import { sendNotification } from "../utils/sendNotification";
+
+const orderDal = new OrderDAL();
+const productDal = new ProductDAL();
 
 export async function expireOrder(orderId: string) {
-  const order = await Order.findOne({
-    _id: orderId,
-    status: "pending_payment",
-  });
+  
+  // Buscar la orden por ID
+  const order = await orderDal.findById(orderId);
 
-  if (!order) throw new AppError(`Order id ${orderId} not found or already processed`, 404);
+  if (!order) throw new AppError(`La orden ${orderId} no fue encontrada o ya fue procesada`, 404);
 
-  order.status = "expired";
-  await order.save();
+  // Actualizar el estado de la orden a expirada
+  await orderDal.update(orderId, { status: "expired" });
 
+  // Reponer el stock de los productos
   for (const item of order.items) {
-    await Product.updateOne(
-      { _id: item.productId },
-      { $inc: { stock: item.quantity } }
-    );
-  }
+    console.log('ASDKLJASDJKLJKLADSJKLDAS', item.productId.toString(), item.quantity);
+    await productDal.incrementStock(item.productId.toString(), item.quantity);
+  };
+
+  // Crear notificación en BD y enviar vía socket
+  await sendNotification({
+    user: order.userId,
+    title: 'Orden expirada',
+    message: `Tu orden con ID ${orderId} ha expirado por falta de pago.`,
+    link: `/orders/detail/${orderId}`
+  });
 }
