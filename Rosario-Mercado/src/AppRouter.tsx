@@ -23,6 +23,7 @@ import DeleteProduct from "./components/products/DeleteProduct.tsx";
 import { CartPage } from "./components/orders/CartDetail.tsx";
 import OrdersList from "./components/orders/OrdersList.tsx";
 import OrderDetail from "./components/orders/OrderDetail.tsx";
+import NotificationList from "./components/notifications/NotificationsList.tsx";
 
 /*import { useUserStore } from "./store/userStore.ts";
 const user = useUserStore((state) => state.user);*/
@@ -72,6 +73,9 @@ const AppRouter = () => {
         <Route path="/orders/payment/pending" element={<h1>Orden pendiente de pago</h1>} />
         <Route path="/orders/user" element={ <OrdersList/>} />
         <Route path="/orders/detail/:id" element={ <OrderDetail/> } />
+
+        {/* Notificaciones */}
+        <Route path="/notifications" element={<NotificationList />} />
       </Route>
 
 

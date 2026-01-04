@@ -2,7 +2,7 @@ import { useUserStore } from "../../store/userStore";
 import { useNavigate } from "react-router-dom";
 import { Button } from "../ui/Button";
 import { useCartStore } from "../../store/cartStore";
-
+import { useNotificationStore } from "../../store/notificationsStore";
 
 export default function Dashboard () {
     
@@ -11,10 +11,12 @@ export default function Dashboard () {
     const logout = useUserStore((state) => state.logout);
     const navigate = useNavigate();
     const cleanCart = useCartStore((state) => state.clearCart);
+    const clearNotifications = useNotificationStore((state) => state.clearNotifications);
 
   const handleLogout = () => {
     logout();
     cleanCart();
+    clearNotifications();
     navigate('/');
   }
 

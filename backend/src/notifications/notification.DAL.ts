@@ -5,7 +5,7 @@ export class NotificationDAL {
     return await Notification.create(notificationData);
   };
   async findByUserId(userId: string) {
-    return await Notification.find({ userId });
+    return await Notification.find({ user: userId }).sort({ createdAt: -1 });
   };
 };
 
