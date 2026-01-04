@@ -7,7 +7,6 @@ import { useNotificationStore } from '../store/notificationsStore';
 export const Footer: React.FC = () => {
   const user = useUserStore((state) => state.user);
   const notifications = useNotificationStore((state) => state.notifications);
-  console.log(notifications)
   const navigate = useNavigate();
 
   // Obtenemos el total de items del store
