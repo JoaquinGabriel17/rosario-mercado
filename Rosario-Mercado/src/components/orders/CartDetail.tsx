@@ -90,11 +90,6 @@ export const CartPage: React.FC = () => {
 
       // 3️⃣ establecer preferenceId para mostrar el botón de mercadoPago
       if (preferenceIdData) {
-        setAlert({
-          open: true,
-          message: `Se creó el pedido correctamente, Puedes acceder al pago desde el nuevo botón de MercadoPago`,
-          type: "success",
-        });
         setPreferenceId(preferenceIdData);
       };
     } catch (error: any) {
