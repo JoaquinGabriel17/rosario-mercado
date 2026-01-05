@@ -1,9 +1,13 @@
 import { useParams } from "react-router-dom";
 import React from "react"
+import { useCartStore } from "../../store/cartStore";
 
 export const PaymentStatus: React.FC = () => {
 
+    const {clearCart} = useCartStore();
+
     const { status } = useParams<{ status: string }>();
+    if(status === "success") clearCart();
 
     return(
         <div className="text-center text-3xl font-bold mt-20">

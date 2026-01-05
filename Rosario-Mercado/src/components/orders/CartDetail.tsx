@@ -229,6 +229,7 @@ export const CartPage: React.FC = () => {
           ) : (
             <div id="wallet_container" className="animate-in fade-in zoom-in duration-300">
               <Wallet 
+                key={preferenceId}
                 initialization={{ preferenceId: preferenceId }} 
               />
               <button 
