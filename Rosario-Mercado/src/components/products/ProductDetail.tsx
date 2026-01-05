@@ -52,6 +52,7 @@ export const ProductDetails: React.FC = () => {
 
         const json: ProductResponse = await res.json();
         setData(json);
+
       } catch (err: any) {
         if (err.name === "AbortError") return;
         setError("Ocurrió un error al conectar con el servidor.");
@@ -95,6 +96,7 @@ export const ProductDetails: React.FC = () => {
   }
 
   const { product, user } = data;
+  console.log(user, currentUser)
 
   return (
     <div className="max-w-5xl mx-auto p-6 space-y-8 relative">
@@ -132,7 +134,7 @@ export const ProductDetails: React.FC = () => {
               </div>
             </div>
 
-            {(!currentUser || currentUser.id !== user._id) && (
+            {(!currentUser || (currentUser.id !== user._id)) && (
               <div className="mt-6 flex items-center gap-3">
                 <button className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
                   onClick={() => {

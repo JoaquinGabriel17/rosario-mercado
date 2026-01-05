@@ -13,6 +13,6 @@ export const errorHandler = (err: any, req: Request, res: Response, next: NextFu
     status: "error",
     message: message,
     // Solo enviamos el stack en desarrollo
-    ...(process.env.NODE_ENV === "development" && { stack: err.stack })
+    //...(process.env.NODE_ENV === "development" && { stack: err.stack })
   });
 };

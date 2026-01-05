@@ -11,6 +11,7 @@ import ticketRoutes from "./support/tickets.routes"
 import { startExpireOrdersJob } from "./orderExpiration/expireOrders.job";
 import orderRoutes from "./orders/order.routes";
 import notificationRoutes from "./notifications/notification.routes";
+import { errorHandler } from "./middlewares/errorHandler";
 
 
 const port = Number(process.env.PORT ?? 4000);
@@ -37,8 +38,11 @@ app.use("/tickets", ticketRoutes);
 app.use("/orders", orderRoutes);
 app.use("/notifications", notificationRoutes);
 
+app.use(errorHandler);
+
 server.listen(port, "0.0.0.0", () => {
   connectDB();
   startExpireOrdersJob();
   console.log(`Servidor corriendo en puerto ${port}`);
 });
+

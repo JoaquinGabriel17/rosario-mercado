@@ -77,12 +77,14 @@ export const addMessageToTicket = async (req: AuthRequest, res: Response) => {
     await Ticket.findByIdAndUpdate(ticketId, { updatedAt: new Date() });
 
     // Enviar notificación al usuario que creó el ticket
+    if(req.user.id.toString() !== ticket.userId.toString()){
     await sendNotification({
       user: ticket.userId,
       title: `Nuevo mensaje en el ticket: ${ticket.title}`,
       message: `Hay un nuevo mensaje en tu ticket de soporte.`,
       link: `/tickets/${ticket._id}/chat`
     });
+  }
 
     res.status(201).json(newMessage);
   } catch (error) {
@@ -109,6 +111,15 @@ export const updateTicketStatus = async (req: AuthRequest, res: Response) => {
       { status },
       { new: true }
     );
+
+    if(updatedTicket && (user?._id.toString() !== updatedTicket?.userId.toString())){
+      await sendNotification({
+      user: updatedTicket?.userId,
+      title: `Se ha cambiado de estado el ticket: ${updatedTicket.title}`,
+      message: `El ticket ha sido actualizado a estado ${status}.`,
+      link: `/tickets/${updatedTicket._id}/chat`
+    });
+    }
 
     res.json(updatedTicket);
   } catch (error) {

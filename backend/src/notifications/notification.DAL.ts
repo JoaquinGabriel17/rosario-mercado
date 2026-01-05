@@ -10,5 +10,9 @@ export class NotificationDAL {
   async markAllAsRead(userId: string) {
     return await Notification.updateMany({ user: userId, read: false }, { read: true });
   };
+  async deleteTwoDaysLater(){
+    await Notification.deleteMany({
+      createdAt: { $lt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000) }});
+  }
 };
 

@@ -2,9 +2,11 @@ import { AppError } from "../utils/AppError";
 import { OrderDAL } from "../orders/order.DAL";
 import { ProductDAL } from "../products/product.DAL";
 import { sendNotification } from "../utils/sendNotification";
+import { NotificationDAL } from "../notifications/notification.DAL";
 
 const orderDal = new OrderDAL();
 const productDal = new ProductDAL();
+const notificationDal = new NotificationDAL();
 
 export async function expireOrder(orderId: string) {
   
@@ -18,7 +20,6 @@ export async function expireOrder(orderId: string) {
 
   // Reponer el stock de los productos
   for (const item of order.items) {
-    console.log('ASDKLJASDJKLJKLADSJKLDAS', item.productId.toString(), item.quantity);
     await productDal.incrementStock(item.productId.toString(), item.quantity);
   };
 
@@ -29,4 +30,7 @@ export async function expireOrder(orderId: string) {
     message: `Tu orden con ID ${orderId} ha expirado por falta de pago.`,
     link: `/orders/detail/${orderId}`
   });
+
+  // Eliminar las notificaciones con mas de 2 días de antigüedad
+  notificationDal.deleteTwoDaysLater();
 }
