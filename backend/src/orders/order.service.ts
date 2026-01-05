@@ -57,6 +57,7 @@ export const createOrder = async (items: any[], userId: Schema.Types.ObjectId) =
  // 4. Crear la Preferencia en Mercado Pago
  if(!frontendUrl) throw new AppError("url mal definida", 500);
 
+ try {
   const response = await mpPreference.create({
     body: {
       items: itemsForMercadoPago,
@@ -70,13 +71,16 @@ export const createOrder = async (items: any[], userId: Schema.Types.ObjectId) =
       notification_url: `${process.env.BACKEND_URL}/orders/webhook`,
     }
   });
-
   return {
     order: newOrder,
     init_point: response.init_point,
     preferenceId: response.id
   };
-
+ } catch (error) {
+  console.log(error);
+  throw new AppError('Error al crear la orden', 500);
+ }
+ 
 };
 
 // OBTENER ORDEN POR ID
