@@ -96,7 +96,6 @@ export const CartPage: React.FC = () => {
           type: "success",
         });
         setPreferenceId(preferenceIdData);
-        console.log(preferenceIdData)
       };
     } catch (error: any) {
       console.error("Error al crear la orden:", error);
@@ -227,7 +226,7 @@ export const CartPage: React.FC = () => {
               {loading ? "Procesando..." : "Finalizar Compra"}
             </button>
           ) : (
-            <div id="wallet_container" className="animate-in fade-in zoom-in duration-300">
+            <div key={preferenceId} id="wallet_container" className="animate-in fade-in zoom-in duration-300">
               <Wallet 
                 key={preferenceId}
                 initialization={{ preferenceId: preferenceId }} 
