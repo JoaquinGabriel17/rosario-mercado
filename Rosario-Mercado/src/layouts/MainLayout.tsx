@@ -19,12 +19,9 @@ const MainLayout = () => {
   const { setNotifications } = useNotificationStore();
   const notification = useNotificationStore((state) => state.notifications[0]);
   const [ currentNotification, setCurrentNotification ] =  useState<null | typeof notification>(null);
-
+  const addNotification = useNotificationStore((state) => state.addLastNotification);
 
   const getUserNotifications = async () => {
-    
-    
-
     try {
     const response = await axios.get(`${backendUrl}/notifications/user`, {
       headers: {
@@ -54,6 +51,7 @@ const MainLayout = () => {
       socket.on('new_notification', (notification) => {
         // Reproducir sonido de notificación
         playNotificationSound();
+        addNotification(notification);
         // A. Mostrar Toast (Popup visual bonito)
         setCurrentNotification(notification);
         toast(notification.message, {

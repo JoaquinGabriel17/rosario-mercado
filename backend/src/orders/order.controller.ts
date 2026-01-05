@@ -29,7 +29,8 @@ export const createOrder = catchAsync(async (req: AuthRequest, res: Response) =>
   return res.status(201).json({
     message: "Orden generada. Redirigiendo a pago...",
     orderId: newOrder.order._id,
-    init_point: newOrder.init_point // El frontend usará este link
+    init_point: newOrder.init_point, // El frontend usará este link
+    preferenceId: newOrder.preferenceId,
   });
 });
 

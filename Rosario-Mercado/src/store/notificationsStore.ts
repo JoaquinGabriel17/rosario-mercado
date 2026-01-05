@@ -18,6 +18,7 @@ interface NotificationStore {
   setNotifications: (notifications: Notification[]) => void;
   markAllAsRead: () => void;
   clearNotifications: () => void;
+  addLastNotification: (notification: Notification) => void;
 }
 
 export const useNotificationStore = create<NotificationStore>((set) => ({
@@ -31,4 +32,8 @@ export const useNotificationStore = create<NotificationStore>((set) => ({
         read: true,
       })),
     })),
+  addLastNotification: (notification) =>
+    set((state) => ({
+      notifications: [notification, ...state.notifications],
+      })),
 }));

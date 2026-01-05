@@ -40,5 +40,10 @@ async incrementSoldCount(productId: string, quantity: number) {
     { new: true }
   );
 };
+
+// BUSCAR POR ID
+async findById(productId: string){
+  return await Product.findById(productId);
+}
 };
 

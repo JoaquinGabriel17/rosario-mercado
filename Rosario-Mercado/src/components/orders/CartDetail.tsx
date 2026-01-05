@@ -6,8 +6,10 @@ import Loading from '../ui/Loading';
 import axios from 'axios';
 import { useUserStore } from '../../store/userStore';
 import type { CreateOrderResponse } from '../../types/orders';
+import { initMercadoPago, Wallet } from '@mercadopago/sdk-react';
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
+initMercadoPago(import.meta.env.VITE_PUBLIC_KEY, { locale: 'es-AR' }); // Inicializar MercadoPago
 
 // Iconos (SVG inline para no depender de librerías)
 const TrashIcon = () => (
@@ -42,6 +44,7 @@ export const CartPage: React.FC = () => {
     type: "info" as "info" | "success" | "error",
   });
   const user = useUserStore((state) => state.user);
+  const [preferenceId, setPreferenceId] = useState<string | null>(null);
 
 
   // Función para volver atrás
@@ -71,7 +74,7 @@ export const CartPage: React.FC = () => {
         return;
       }
 
-      // 2️⃣ Request al backend
+      // 2️⃣ Crear pedido y preferencia para obtener preferenceId
       const response = await axios.post<CreateOrderResponse>(
         `${backendUrl}/orders/`,
         { items },
@@ -83,31 +86,24 @@ export const CartPage: React.FC = () => {
         }
       );
 
-      const { init_point } = response.data;
+      const  preferenceIdData  = response.data.preferenceId;
 
-      // 3️⃣ Redirección al checkout
-      if (init_point) {
+      // 3️⃣ establecer preferenceId para mostrar el botón de mercadoPago
+      if (preferenceIdData) {
         setAlert({
           open: true,
-          message: `Se creó el pedido correctamente, serás redirigido al pago. Puedes acceder al mismo desde este link: ${init_point}`,
+          message: `Se creó el pedido correctamente, Puedes acceder al pago desde el nuevo botón de MercadoPago`,
           type: "success",
         });
-        window.open(init_point, "_blank");
-        clearCart();
-      } else {
-        setAlert({
-          open: true,
-          message: "No se recibió el link de pago",
-          type: "error",
-        });
-      }
-
+        setPreferenceId(preferenceIdData);
+        console.log(preferenceIdData)
+      };
     } catch (error: any) {
       console.error("Error al crear la orden:", error);
 
       setAlert({
         open: true,
-        message: "Ocurrió un error inesperado al crear la orden",
+        message: error.response.data.message || "Ocurrió un error inesperado al crear la orden:",
         type: "error",
       });
     }
@@ -214,18 +210,35 @@ export const CartPage: React.FC = () => {
         ))}
       </div>
 
-      {/* FOOTER DE CHECKOUT (Flotante sobre el Footer de Navegación) */}
+     {/* FOOTER DE CHECKOUT */}
       <div className="fixed bottom-20 left-0 w-full px-4 pb-2 pt-0 z-30">
         <div className="bg-white rounded-2xl shadow-[0_0_15px_rgba(0,0,0,0.1)] p-4 border border-gray-100">
           <div className="flex justify-between items-center mb-3">
             <span className="text-gray-500">Total a pagar</span>
             <span className="text-2xl font-bold text-gray-900">${totalPrice.toFixed(2)}</span>
           </div>
-          <button
-            onClick={() => createOrderAndPay()}
-            className="w-full bg-green-600 text-white py-3.5 rounded-xl font-bold text-lg shadow-lg hover:bg-green-700 active:scale-[0.98] transition-all">
-            Finalizar Compra
-          </button>
+
+          {/* 4. Lógica Condicional: Botón propio vs Botón MP */}
+          {!preferenceId ? (
+            <button
+              onClick={createOrderAndPay}
+              disabled={loading}
+              className="w-full bg-green-600 text-white py-3.5 rounded-xl font-bold text-lg shadow-lg hover:bg-green-700 transition-all">
+              {loading ? "Procesando..." : "Finalizar Compra"}
+            </button>
+          ) : (
+            <div id="wallet_container" className="animate-in fade-in zoom-in duration-300">
+              <Wallet 
+                initialization={{ preferenceId: preferenceId }} 
+              />
+              <button 
+                onClick={() => setPreferenceId(null)}
+                className="w-full text-center text-xs text-gray-400 mt-2 underline"
+              >
+                Cancelar y modificar carrito
+              </button>
+            </div>
+          )}
         </div>
       </div>
 

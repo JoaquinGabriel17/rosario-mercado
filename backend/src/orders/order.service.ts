@@ -13,7 +13,7 @@ const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
 export const createOrder = async (items: any[], userId: Schema.Types.ObjectId) => {
   const expiresAt = new Date();
   // Tiempo de expiración de la orden: 10 minutos
-  expiresAt.setMinutes(expiresAt.getMinutes() + 1);
+  expiresAt.setMinutes(expiresAt.getMinutes() + 10);
 
   const itemsForMercadoPago: any[] = [];
 
@@ -21,6 +21,11 @@ export const createOrder = async (items: any[], userId: Schema.Types.ObjectId) =
   // Usamos Promise.all para que las consultas se ejecuten en paralelo (más rápido)
   await Promise.all(
     items.map(async (item) => {
+      const productToBuy = await productDal.findById(item.productId);
+
+      if(!productToBuy) throw new AppError('Uno o mas productos no existentes', 404);
+      if(productToBuy.stock < item.quantity) throw new AppError(`Stock insuficiente para el producto: ${productToBuy.title}`, 400)
+
       const updatedProduct = await productDal.decrementStock(
         item.productId,
         item.quantity
@@ -56,13 +61,13 @@ export const createOrder = async (items: any[], userId: Schema.Types.ObjectId) =
     body: {
       items: itemsForMercadoPago,
       back_urls: {
-        success: `https://agora-six-rho.vercel.app/`,
-        failure: `https://agora-six-rho.vercel.app/`,
-        pending: `https://agora-six-rho.vercel.app/`,
+        success: `https://agora-six-rho.vercel.app/orders/payment/success`,
+        failure: `https://agora-six-rho.vercel.app/orders/payment/failure`,
+        pending: `https://agora-six-rho.vercel.app/orders/payment/pending`,
       },
       auto_return: "approved",
       external_reference: newOrder._id.toString(),
-      notification_url: "https://pvgj8rdd-4000.brs.devtunnels.ms/orders/webhook",
+      notification_url: `${process.env.BACKEND_URL}/orders/webhook`,
     }
   });
 
@@ -86,6 +91,14 @@ export const getOrder = async (id: string) => {
 export const updateStatus = async (id: string, status: "paid" | "expired") => {
   // Actualizar el estado de la orden
   const updatedOrder = await orderDal.update(id, { status });
+  // Enviar notificación al usuario sobre el cambio de estado
+  sendNotification({
+    user: updatedOrder?.userId,
+    title: `Estado de orden actualizado a ${status}`,
+    message: `Tu orden ha sido actualizada a estado ${status}.`,
+    link: `/orders/detail/${id}`
+  });
+
   if (!updatedOrder) throw new AppError("No se pudo actualizar la orden", 404);
   return updatedOrder;
 };
@@ -121,6 +134,13 @@ export const handleWebhook = async (paymentId: string) => {
   // 4. Si el pago fue rechazado o cancelado, se devuelve el stock y se actualiza el estado del pedido
   else if (status === "rejected" || status === "cancelled") {
     
+    await sendNotification({ // Creamos y enviamos una notificación de pago cancelado o rechazado
+      user: order.userId,
+      title: 'Pago cancelado o rechazado',
+      message: `El pago de tu orden con ID ${orderId} ha sido cancelado o rechazado. Por favor, intenta realizar el pago nuevamente si deseas completar tu compra.`,
+      link: `/orders/detail/${orderId}`
+    });
+
     if (order) {
       await Promise.all(
         order.items.map(async (item) => {

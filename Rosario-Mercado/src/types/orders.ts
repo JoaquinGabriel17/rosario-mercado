@@ -29,4 +29,5 @@ export interface CreateOrderResponse {
   message: string;
   orderId: string;
   init_point: string;
+  preferenceId: string;
 }
