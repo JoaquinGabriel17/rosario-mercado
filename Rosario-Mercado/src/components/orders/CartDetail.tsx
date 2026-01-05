@@ -90,13 +90,7 @@ export const CartPage: React.FC = () => {
 
       // 3️⃣ establecer preferenceId para mostrar el botón de mercadoPago
       if (preferenceIdData) {
-        setAlert({
-          open: true,
-          message: `Se creó el pedido correctamente, Puedes acceder al pago desde el nuevo botón de MercadoPago`,
-          type: "success",
-        });
         setPreferenceId(preferenceIdData);
-        console.log(preferenceIdData)
       };
     } catch (error: any) {
       console.error("Error al crear la orden:", error);
@@ -227,7 +221,7 @@ export const CartPage: React.FC = () => {
               {loading ? "Procesando..." : "Finalizar Compra"}
             </button>
           ) : (
-            <div id="wallet_container" className="animate-in fade-in zoom-in duration-300">
+            <div key={preferenceId} id="wallet_container" className="animate-in fade-in zoom-in duration-300">
               <Wallet 
                 key={preferenceId}
                 initialization={{ preferenceId: preferenceId }} 
