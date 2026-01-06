@@ -6,20 +6,21 @@ interface OrderItem {
 }
 
 export interface OrderDocument {
-  status: "pending_payment" | "paid" | "expired" | "rejected" | "cancelled";
+  status: "pending" | "completed" | "expired" | "cancelled";
   items: OrderItem[];
   expiresAt: Date;
   createdAt: Date;
   _id: Types.ObjectId;
-  userId: Types.ObjectId;
+  buyerId: Types.ObjectId;
+  sellerId: String;
 }
 
 const OrderSchema = new Schema<OrderDocument>(
   {
     status: {
       type: String,
-      enum: ["pending_payment", "paid", "expired", "rejected", "cancelled"],
-      default: "pending_payment",
+      enum: ["pending", "completed", "expired", "cancelled"],
+      default: "pending",
       index: true,
     },
     items: [
@@ -35,7 +36,8 @@ const OrderSchema = new Schema<OrderDocument>(
         },
       },
     ],
-    userId: { type: Schema.Types.ObjectId, required: true, index: true },
+    buyerId: { type: Schema.Types.ObjectId, required: true, index: true },
+    sellerId: { type: String, required: true, index: true },
     expiresAt: {
       type: Date,
       required: true,

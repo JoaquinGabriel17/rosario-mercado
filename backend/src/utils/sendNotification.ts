@@ -6,11 +6,11 @@ const notificationDal = new NotificationDAL();
 export async function sendNotification(notificationData: any) {
     try {
         // Crear notificación en BD
-        notificationDal.create(notificationData);
+        const newNotification = notificationDal.create(notificationData);
 
         // Emitir notificación en tiempo real vía Socket.io
         const io = getIO();
-        io.to(notificationData.user).emit('new_notification', notificationData);
+        io.to(notificationData.user).emit('new_notification', newNotification);
     } catch (error) {
         console.error("Error enviando socket:", error);
     }

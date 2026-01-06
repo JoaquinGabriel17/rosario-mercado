@@ -5,11 +5,8 @@ import Alert from '../ui/Alert';
 import Loading from '../ui/Loading';
 import axios from 'axios';
 import { useUserStore } from '../../store/userStore';
-import type { CreateOrderResponse } from '../../types/orders';
-import { initMercadoPago, Wallet } from '@mercadopago/sdk-react';
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
-initMercadoPago(import.meta.env.VITE_PUBLIC_KEY, { locale: 'es-AR' }); // Inicializar MercadoPago
 
 // Iconos (SVG inline para no depender de librerías)
 const TrashIcon = () => (
@@ -44,8 +41,6 @@ export const CartPage: React.FC = () => {
     type: "info" as "info" | "success" | "error",
   });
   const user = useUserStore((state) => state.user);
-  const [preferenceId, setPreferenceId] = useState<string | null>(null);
-
 
   // Función para volver atrás
   const handleGoBack = () => {
@@ -73,9 +68,8 @@ export const CartPage: React.FC = () => {
         });
         return;
       }
-
       // 2️⃣ Crear pedido y preferencia para obtener preferenceId
-      const response = await axios.post<CreateOrderResponse>(
+      await axios.post(
         `${backendUrl}/orders/`,
         { items },
         {
@@ -85,16 +79,9 @@ export const CartPage: React.FC = () => {
           },
         }
       );
-
-      const  preferenceIdData  = response.data.preferenceId;
-
-      // 3️⃣ establecer preferenceId para mostrar el botón de mercadoPago
-      if (preferenceIdData) {
-        setPreferenceId(preferenceIdData);
-      };
+      clearCart();
     } catch (error: any) {
       console.error("Error al crear la orden:", error);
-
       setAlert({
         open: true,
         message: error.response.data.message || "Ocurrió un error inesperado al crear la orden:",
@@ -211,29 +198,12 @@ export const CartPage: React.FC = () => {
             <span className="text-gray-500">Total a pagar</span>
             <span className="text-2xl font-bold text-gray-900">${totalPrice.toFixed(2)}</span>
           </div>
-
-          {/* 4. Lógica Condicional: Botón propio vs Botón MP */}
-          {!preferenceId ? (
             <button
               onClick={createOrderAndPay}
               disabled={loading}
               className="w-full bg-green-600 text-white py-3.5 rounded-xl font-bold text-lg shadow-lg hover:bg-green-700 transition-all">
               {loading ? "Procesando..." : "Finalizar Compra"}
             </button>
-          ) : (
-            <div key={preferenceId} id="wallet_container" className="animate-in fade-in zoom-in duration-300">
-              <Wallet 
-                key={preferenceId}
-                initialization={{ preferenceId: preferenceId }} 
-              />
-              <button 
-                onClick={() => setPreferenceId(null)}
-                className="w-full text-center text-xs text-gray-400 mt-2 underline"
-              >
-                Cancelar y modificar carrito
-              </button>
-            </div>
-          )}
         </div>
       </div>
 
