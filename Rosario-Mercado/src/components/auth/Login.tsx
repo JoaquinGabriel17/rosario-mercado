@@ -48,20 +48,7 @@ function Login() {
             const data = await res.json();
             console.log(data);
             if (res.ok) {
-                setUser({
-                    id: data.user._id,
-                    email: data.user.email,
-                    name: data.user.name,
-                    token: data.token,
-                    whatsappAvailable: data.user.whatsappAvailable,
-                    delivery: data.user.delivery,
-                    phoneNumber: data.user.phoneNumber || undefined,
-                    businessHours: data.user.businessHours || undefined,
-                    address: data.user.address || undefined,
-                    facebookUrl: data.user.facebookUrl || undefined,
-                    instagramUrl: data.user.instagramUrl || undefined,
-                    role: data.user.role || "user",
-                });
+                setUser(data);
                 setLoading(false)
                 navigate("/");
             }

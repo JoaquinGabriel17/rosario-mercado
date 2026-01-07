@@ -13,8 +13,8 @@ interface User {
   address?: string;
   whatsappAvailable: boolean;
   delivery: boolean;
-  instagramUrl: string;
-  facebookUrl: string;
+  instagramUrl?: string;
+  facebookUrl?: string;
   role: string;
 }
 

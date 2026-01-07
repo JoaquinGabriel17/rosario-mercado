@@ -30,7 +30,20 @@ export const login = catchAsync( async (req: Request, res: Response) => {
 
   const loguedUser = await UserService.loginUser(email, password);
   
-  return res.status(200).json(loguedUser); 
+  return res.status(200).json({
+  id: loguedUser.user._id,
+  name: loguedUser.user.name,
+  email: loguedUser.user.email,
+  token: loguedUser.token,
+  phoneNumber: loguedUser.user.phoneNumber,
+  businessHours: loguedUser.user.businessHours,
+  address: loguedUser.user.address,
+  whatsappAvailable: loguedUser.user.whatsappAvailable || false,
+  delivery: loguedUser.user.delivery || false,
+  instagramUrl: loguedUser.user.instagramUrl,
+  facebookUrl: loguedUser.user.facebookUrl,
+  role: loguedUser.user.role || 'user',
+}); 
 });
 
 // ACTUALIZAR INFORMACIÓN DE USUARIO

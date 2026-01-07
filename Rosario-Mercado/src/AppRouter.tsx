@@ -1,12 +1,12 @@
 import { Routes, Route } from "react-router-dom";
 import Home from "./pages/Home.tsx";
 import MainLayout from "./layouts/MainLayout";
-import Auth from "./components/account/Auth";
+import Auth from "./components/auth/Auth.tsx";
 import ProductDashboard from "./components/products/ProductDashboard.tsx";
 import Dashboard from "./components/account/Dashboard.tsx";
 import Shop from "./components/account/Shop.tsx";
-import ResetPassword from "./components/account/ResetPassword.tsx";
-import ForgotPassword from "./components/account/ForgotPassword.tsx";
+import ResetPassword from "./components/auth/ResetPassword.tsx";
+import ForgotPassword from "./components/auth/ForgotPassword.tsx";
 import Profile from "./components/account/Profile.tsx";
 import ProductDetails from "./components/products/ProductDetail.tsx";
 import Support from "./components/support/Support.tsx";
