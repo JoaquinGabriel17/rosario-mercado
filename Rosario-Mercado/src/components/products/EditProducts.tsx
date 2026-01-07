@@ -16,8 +16,6 @@ export default function EditProducts() {
     message: "",
     type: "info" as "info" | "success" | "error",
   });
-
-
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -29,6 +27,7 @@ export default function EditProducts() {
 
   const API_BASE = import.meta.env.VITE_BACKEND_URL;
 
+  // Función para obtener los datos del producto a editar
   const fetchProductToEdit = async () => {
     try {
       setLoading(true)
@@ -133,11 +132,11 @@ export default function EditProducts() {
 
       if (!res.ok) {
         setAlert({
-        open: true,
-        message: "Error al actualizar el producto",
-        type: "error",
-      });
-      return;
+          open: true,
+          message: "Error al actualizar el producto",
+          type: "error",
+        });
+        return;
       }
       setLoading(false)
       setAlert({
@@ -146,13 +145,13 @@ export default function EditProducts() {
         type: "success",
       });
       setFormData({
-    title: "",
-    description: "",
-    price: "",
-    category: "",
-    image: null as File | null,
-    stock: "",
-  });
+        title: "",
+        description: "",
+        price: "",
+        category: "",
+        image: null as File | null,
+        stock: "",
+      });
     } catch (err) {
       setLoading(false)
       console.log(err)
@@ -178,86 +177,86 @@ export default function EditProducts() {
 
   return (
     <div className="p-4">
-        {loading && <Loading></Loading>}
-    {alert && <Alert
-  open={alert.open}
-  message={alert.message}
-  type={alert.type}
-  onClose={handleCloseAlert}/>}
-  {selectedProduct && ( <>
-      <h2 className="text-xl font-bold mb-4">Editando producto {selectedProduct.title}</h2>
+      {loading && <Loading></Loading>}
+      {alert && <Alert
+        open={alert.open}
+        message={alert.message}
+        type={alert.type}
+        onClose={handleCloseAlert} />}
+      {selectedProduct && (<>
+        <h2 className="text-xl font-bold mb-4">Editando producto {selectedProduct.title}</h2>
 
-      <form className="grid gap-4" onSubmit={handleSubmit}>
-        <label className="font-medium m-0">Título</label>
-        <input
-          name="title"
-          className="border rounded-xl px-3 py-2"
-          placeholder={selectedProduct.title}
-          value={formData.title}
-          onChange={handleChange}
-          required
-        />
-        <label className="font-medium m-0">Descripción</label>
-        <textarea
-          name="description"
-          className="border rounded-xl px-3 py-2"
-          placeholder={selectedProduct.description}
-          value={formData.description}
-          onChange={handleChange}
-          required
-        />
-        <label className="font-medium m-0">Precio</label>
-        <input
-          name="price"
-          type="number"
-          className="border rounded-xl px-3 py-2"
-          placeholder={selectedProduct.price}
-          value={formData.price}
-          onChange={handleChange}
-          required
-          min="1"
-        />
-
-        <label className="font-medium m-0">Stock</label>
-        <input
-          name="stock"
-          type="number"
-          className="border rounded-xl px-3 py-2"
-          placeholder={selectedProduct.stock}
-          value={formData.stock}
-          onChange={handleChange}
-          required
-          min="0"
-        />
-        
-        <label className="font-medium">Categoría</label>
-        <h2 className="m-0 font-light">Cateogoría actual: {selectedProduct.category}</h2>
-        <select
-          name="category"
-          className="border rounded-xl px-3 py-2"
-          value={formData.category}
-          onChange={handleChange}
-          required
-        >
-          <option value="">Seleccionar categoría</option>
-          <option value="comidas">Comidas</option>
-          <option value="bebidas">Bebidas</option>
-        </select>
-
-        {/* Imagen */}
-        <div>
-          <label className="font-medium">Imagen</label>
+        <form className="grid gap-4" onSubmit={handleSubmit}>
+          <label className="font-medium m-0">Título</label>
           <input
-            type="file"
-            accept="image/*"
-            onChange={handleFileChange}
-            className="w-full p-2 border rounded-lg bg-white"
+            name="title"
+            className="border rounded-xl px-3 py-2"
+            placeholder={selectedProduct.title}
+            value={formData.title}
+            onChange={handleChange}
+            required
           />
-        </div>
+          <label className="font-medium m-0">Descripción</label>
+          <textarea
+            name="description"
+            className="border rounded-xl px-3 py-2"
+            placeholder={selectedProduct.description}
+            value={formData.description}
+            onChange={handleChange}
+            required
+          />
+          <label className="font-medium m-0">Precio</label>
+          <input
+            name="price"
+            type="number"
+            className="border rounded-xl px-3 py-2"
+            placeholder={selectedProduct.price}
+            value={formData.price}
+            onChange={handleChange}
+            required
+            min="1"
+          />
 
-        <Button onClick={handleSubmit} type="submit">Guardar cambios</Button>
-      </form>
-</>)}
+          <label className="font-medium m-0">Stock</label>
+          <input
+            name="stock"
+            type="number"
+            className="border rounded-xl px-3 py-2"
+            placeholder={selectedProduct.stock}
+            value={formData.stock}
+            onChange={handleChange}
+            required
+            min="0"
+          />
+
+          <label className="font-medium">Categoría</label>
+          <h2 className="m-0 font-light">Cateogoría actual: {selectedProduct.category}</h2>
+          <select
+            name="category"
+            className="border rounded-xl px-3 py-2"
+            value={formData.category}
+            onChange={handleChange}
+            required
+          >
+            <option value="">Seleccionar categoría</option>
+            <option value="comidas">Comidas</option>
+            <option value="bebidas">Bebidas</option>
+          </select>
+
+          {/* Imagen */}
+          <div>
+            <label className="font-medium">Imagen</label>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleFileChange}
+              className="w-full p-2 border rounded-lg bg-white"
+            />
+          </div>
+
+          <Button onClick={handleSubmit} type="submit">Guardar cambios</Button>
+        </form>
+      </>)}
     </div>
   );
 }

@@ -3,6 +3,7 @@ import { catchAsync } from "../utils/catchAsync";
 import { AppError } from "../utils/AppError";
 import * as OrderService from "./order.service";
 import { AuthRequest } from "../middlewares/auth";
+import { sendNotification } from "../utils/sendNotification";
 
 // CREAR ORDEN
 export const createOrder = catchAsync(async (req: AuthRequest, res: Response) => {
@@ -17,10 +18,19 @@ export const createOrder = catchAsync(async (req: AuthRequest, res: Response) =>
 
   const newOrder = await OrderService.createOrder(items, userId);
 
+  // Enviar notificación de orden creada
+  await sendNotification({
+    user: userId,
+    title: 'Orden creada',
+    message: `Tu orden con ID ${newOrder.order._id} ha sido creada exitosamente. Con este link puedes proceder al pago.`,
+    link: newOrder.init_point
+  });
+
   return res.status(201).json({
     message: "Orden generada. Redirigiendo a pago...",
     orderId: newOrder.order._id,
-    init_point: newOrder.init_point // El frontend usará este link
+    init_point: newOrder.init_point, // El frontend usará este link
+    preferenceId: newOrder.preferenceId,
   });
 });
 
@@ -41,6 +51,7 @@ export const markAsPaid = catchAsync(async (req: Request, res: Response) => {
 
   if(!id) throw new AppError("Id de orden requerido", 400);
 
+  // Actualizar el estado de la orden a 'paid'
   const updatedOrder = await OrderService.updateStatus(id, "paid");
 
   return res.status(200).json({
@@ -63,7 +74,6 @@ export const receiveWebhook = catchAsync(async (req: Request, res: Response) => 
       await OrderService.handleWebhook(paymentId as string);
     }
   }
-
   // Siempre respondemos 200 o 201 a Mercado Pago para que deje de reintentar
   return res.status(200).send("OK");
 });

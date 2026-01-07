@@ -25,17 +25,17 @@ interface UserState {
 }
 
 export const useUserStore = create<UserState>((set) => ({
-  user: sessionStorage.getItem("user")
-    ? JSON.parse(sessionStorage.getItem("user")!)
+  user: localStorage.getItem("user")
+    ? JSON.parse(localStorage.getItem("user")!)
     : null,
 
   setUser: (user) => {
-    sessionStorage.setItem("user", JSON.stringify(user));
+    localStorage.setItem("user", JSON.stringify(user));
     set({ user });
   },
 
   logout: () => {
-    sessionStorage.removeItem("user");
+    localStorage.removeItem("user");
     set({ user: null });
   }
 }));

@@ -6,8 +6,6 @@ import { Button } from "../ui/Button";
 import Alert from "../ui/Alert";
 import Loading from "../ui/Loading";
 
-
-
 export default function EditAccount() {
     const backendUrl = import.meta.env.VITE_BACKEND_URL
     const user = useUserStore((state) => state.user);
@@ -17,37 +15,31 @@ export default function EditAccount() {
         message: "",
         type: "info" as "info" | "success" | "error",
     });
-
-
     const [form, setForm] = useState<Partial<FormData>>({});
     const [error, setError] = useState("");
     const setUser = useUserStore((state) => state.setUser);
-
 
     const handleChange = (
         e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
     ) => {
         const target = e.target;
-
         const { name, value } = target;
-
         // Si es un input checkbox, tomamos target.checked
         const newValue =
             target instanceof HTMLInputElement && target.type === "checkbox"
                 ? target.checked
                 : value;
-
         setForm((prev) => ({
             ...prev,
             [name]: newValue,
         }));
     };
 
+    // guardar cambios
     const handleSubmit = async (e: React.FormEvent) => {
         try {
             e.preventDefault();
             setLoading(true)
-
             const validationError = validateEditAccountForm(form, editEnabled);
             if (validationError) {
                 setError(validationError);
@@ -68,8 +60,8 @@ export default function EditAccount() {
             const data = await response.json();
             console.log(data)
             if (response.ok) {
-                let currentToken:string = ""
-                if(user?.token) {currentToken = user?.token}
+                let currentToken: string = ""
+                if (user?.token) { currentToken = user?.token }
                 setLoading(false)
                 setAlert({
                     open: true,
@@ -102,7 +94,7 @@ export default function EditAccount() {
                     role: data.user.role || "user",
                 });
             }
-            else{
+            else {
                 setLoading(false);
                 setAlert({
                     open: true,
@@ -124,7 +116,7 @@ export default function EditAccount() {
 
     };
 
-    // === NUEVO: estado para checkboxes de edición ===
+    // ===  estado para checkboxes de edición ===
     const [editEnabled, setEditEnabled] = useState({
         name: false,
         email: false,
@@ -141,156 +133,156 @@ export default function EditAccount() {
         delete form[field]
     };
 
-  return (
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4 p-4 w-full max-w-md mx-auto">
-          {loading && <Loading></Loading>}
-          {alert && <Alert
-              open={alert.open}
-              message={alert.message}
-              type={alert.type}
-              onClose={() => setAlert({ ...alert, open: false })} />}
-          <h2 className="text-xl font-semibold text-center">Editar cuenta</h2>
-          { !user?.businessHours || !user?.phoneNumber ? 
-            <h3 className="border-2 border-red-500 p-2 rounded-2xl">Para usuarios vendedores recomendamos completar la información remarcada en rojo.</h3>
-          : ""}
-          {error && <p className="text-red-500 text-sm">{error}</p>}
+    return (
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4 p-4 w-full max-w-md mx-auto">
+            {loading && <Loading></Loading>}
+            {alert && <Alert
+                open={alert.open}
+                message={alert.message}
+                type={alert.type}
+                onClose={() => setAlert({ ...alert, open: false })} />}
+            <h2 className="text-xl font-semibold text-center">Editar cuenta</h2>
+            {!user?.businessHours || !user?.phoneNumber ?
+                <h3 className="border-2 border-red-500 p-2 rounded-2xl">Para usuarios vendedores recomendamos completar la información remarcada en rojo.</h3>
+                : ""}
+            {error && <p className="text-red-500 text-sm">{error}</p>}
 
-          <label className="flex items-center gap-2">
-              <input type="checkbox" checked={editEnabled.name} onChange={() => handleToggleEdit("name")} />
-              Editar nombre
-          </label>
-          <input
-              type="text"
-              value={form.name ?? ""}
-              name="name"
-              placeholder={user?.name}
-              onChange={handleChange}
-              className="border p-2 rounded"
-              disabled={!editEnabled.name}
-          />
-          <div className="w- border border-black"></div>
+            <label className="flex items-center gap-2">
+                <input type="checkbox" checked={editEnabled.name} onChange={() => handleToggleEdit("name")} />
+                Editar nombre
+            </label>
+            <input
+                type="text"
+                value={form.name ?? ""}
+                name="name"
+                placeholder={user?.name}
+                onChange={handleChange}
+                className="border p-2 rounded"
+                disabled={!editEnabled.name}
+            />
+            <div className="w- border border-black"></div>
 
-          <label className="flex items-center gap-2">
-              <input type="checkbox" checked={editEnabled.email} onChange={() => handleToggleEdit("email")} />
-              Editar email
-          </label>
-          <input
-              type="email"
-              name="email"
-              value={form.email ?? ""}
-              placeholder={user?.email}
-              onChange={handleChange}
-              className="border p-2 rounded"
-              disabled={!editEnabled.email}
-          />
-          <div className="w- border border-black"></div>
+            <label className="flex items-center gap-2">
+                <input type="checkbox" checked={editEnabled.email} onChange={() => handleToggleEdit("email")} />
+                Editar email
+            </label>
+            <input
+                type="email"
+                name="email"
+                value={form.email ?? ""}
+                placeholder={user?.email}
+                onChange={handleChange}
+                className="border p-2 rounded"
+                disabled={!editEnabled.email}
+            />
+            <div className="w- border border-black"></div>
 
-          <label className="flex items-center gap-2">
-              <input type="checkbox" 
-                
-                checked={editEnabled.phoneNumber} onChange={() => handleToggleEdit("phoneNumber")} />
-              Editar número de teléfono
-          </label>
-          <input
-              type="text"
-              name="phoneNumber"
-              className={user?.phoneNumber ? "border p-2 rounded" : "border-red-500 border p-2 rounded"}
-              value={form.phoneNumber ?? ""}
-              placeholder={user?.phoneNumber || "Número de eléfono"}
-              onChange={handleChange}
-              disabled={!editEnabled.phoneNumber}
-          />
-          <div className="w- border border-black"></div>
+            <label className="flex items-center gap-2">
+                <input type="checkbox"
 
-          <label className="flex items-center gap-2">
-              <input type="checkbox" 
-                checked={editEnabled.businessHours} onChange={() => handleToggleEdit("businessHours")} />
-              Editar horario de atención
-          </label>
-          <input
-              type="text"
-              name="businessHours"
-              value={form.businessHours ?? ""}
-              className={user?.businessHours ? "border p-2 rounded" : "border-red-500 border p-2 rounded"}
-              placeholder={user?.businessHours || "Horario de atención"}
-              onChange={handleChange}
-              disabled={!editEnabled.businessHours}
-          />
+                    checked={editEnabled.phoneNumber} onChange={() => handleToggleEdit("phoneNumber")} />
+                Editar número de teléfono
+            </label>
+            <input
+                type="text"
+                name="phoneNumber"
+                className={user?.phoneNumber ? "border p-2 rounded" : "border-red-500 border p-2 rounded"}
+                value={form.phoneNumber ?? ""}
+                placeholder={user?.phoneNumber || "Número de eléfono"}
+                onChange={handleChange}
+                disabled={!editEnabled.phoneNumber}
+            />
+            <div className="w- border border-black"></div>
 
-          <div className="w- border border-black"></div>
+            <label className="flex items-center gap-2">
+                <input type="checkbox"
+                    checked={editEnabled.businessHours} onChange={() => handleToggleEdit("businessHours")} />
+                Editar horario de atención
+            </label>
+            <input
+                type="text"
+                name="businessHours"
+                value={form.businessHours ?? ""}
+                className={user?.businessHours ? "border p-2 rounded" : "border-red-500 border p-2 rounded"}
+                placeholder={user?.businessHours || "Horario de atención"}
+                onChange={handleChange}
+                disabled={!editEnabled.businessHours}
+            />
 
-          <label className="flex items-center gap-2">
-              <input type="checkbox" checked={editEnabled.instagramUrl} 
-              onChange={() => handleToggleEdit("instagramUrl")} />
-              Editar link para instagram
-          </label>
-          <input
-              type="text"
-              name="instagramUrl"
-              value={form.instagramUrl ?? ""}
-              placeholder={user?.instagramUrl}
-              onChange={handleChange}
+            <div className="w- border border-black"></div>
+
+            <label className="flex items-center gap-2">
+                <input type="checkbox" checked={editEnabled.instagramUrl}
+                    onChange={() => handleToggleEdit("instagramUrl")} />
+                Editar link para instagram
+            </label>
+            <input
+                type="text"
+                name="instagramUrl"
+                value={form.instagramUrl ?? ""}
+                placeholder={user?.instagramUrl}
+                onChange={handleChange}
                 className={user?.instagramUrl ? "border p-2 rounded" : "border-red-500 border p-2 rounded"}
-              disabled={!editEnabled.instagramUrl}
-          />
+                disabled={!editEnabled.instagramUrl}
+            />
 
-          <div className="w- border border-black"></div>
+            <div className="w- border border-black"></div>
 
-          <label className="flex items-center gap-2">
-              <input type="checkbox" checked={editEnabled.facebookUrl}
-                onChange={() => handleToggleEdit("facebookUrl")} />
-              Editar link para facebook
-          </label>
-          <input
-              type="facebookUrl"
-              name="facebookUrl"
-              value={form.facebookUrl ?? ""}
-              placeholder={user?.facebookUrl}
-              onChange={handleChange}
-              className={user?.facebookUrl ? "border p-2 rounded" : "border-red-500 border p-2 rounded"}
-              disabled={!editEnabled.facebookUrl}
-          />
-          <div className="w- border border-black"></div>
+            <label className="flex items-center gap-2">
+                <input type="checkbox" checked={editEnabled.facebookUrl}
+                    onChange={() => handleToggleEdit("facebookUrl")} />
+                Editar link para facebook
+            </label>
+            <input
+                type="facebookUrl"
+                name="facebookUrl"
+                value={form.facebookUrl ?? ""}
+                placeholder={user?.facebookUrl}
+                onChange={handleChange}
+                className={user?.facebookUrl ? "border p-2 rounded" : "border-red-500 border p-2 rounded"}
+                disabled={!editEnabled.facebookUrl}
+            />
+            <div className="w- border border-black"></div>
 
-          <label className="flex items-center gap-2">
-              <input type="checkbox" checked={editEnabled.whatsappAvailable} onChange={() => handleToggleEdit("whatsappAvailable")} />
-              Editar disponibilidad en WhatsApp
-          </label>
-          <label className="flex items-center gap-2">
-              <input
-                  type="checkbox"
-                  name="whatsappAvailable"
-                  checked={form.whatsappAvailable ?? false}
-                  onChange={handleChange}
-                  disabled={!editEnabled.whatsappAvailable}
+            <label className="flex items-center gap-2">
+                <input type="checkbox" checked={editEnabled.whatsappAvailable} onChange={() => handleToggleEdit("whatsappAvailable")} />
+                Editar disponibilidad en WhatsApp
+            </label>
+            <label className="flex items-center gap-2">
+                <input
+                    type="checkbox"
+                    name="whatsappAvailable"
+                    checked={form.whatsappAvailable ?? false}
+                    onChange={handleChange}
+                    disabled={!editEnabled.whatsappAvailable}
 
-              />
-              Disponible en WhatsApp
-          </label>
-          <div className="w- border border-black"></div>
+                />
+                Disponible en WhatsApp
+            </label>
+            <div className="w- border border-black"></div>
 
-          <label className="flex items-center gap-2">
-              <input type="checkbox" checked={editEnabled.delivery} onChange={() => handleToggleEdit("delivery")} />
-              Editar disponibilidad de delivery
-          </label>
-          <label className="flex items-center gap-2">
-              <input
-                  type="checkbox"
-                  name="delivery"
-                  checked={form.delivery ?? false}
-                  onChange={handleChange}
-                  disabled={!editEnabled.delivery}
-              />
-              Ofrece delivery
-          </label>
+            <label className="flex items-center gap-2">
+                <input type="checkbox" checked={editEnabled.delivery} onChange={() => handleToggleEdit("delivery")} />
+                Editar disponibilidad de delivery
+            </label>
+            <label className="flex items-center gap-2">
+                <input
+                    type="checkbox"
+                    name="delivery"
+                    checked={form.delivery ?? false}
+                    onChange={handleChange}
+                    disabled={!editEnabled.delivery}
+                />
+                Ofrece delivery
+            </label>
 
-          <Button
-              type="submit"
-              onClick={handleSubmit}
+            <Button
+                type="submit"
+                onClick={handleSubmit}
 
-          >
-              Guardar cambios
-          </Button>
-      </form>
-  );
+            >
+                Guardar cambios
+            </Button>
+        </form>
+    );
 }

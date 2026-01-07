@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { useNavigate, useParams } from "react-router-dom";
 import { useUserStore } from "../../store/userStore";
 
-    const API_URL = import.meta.env.VITE_BACKEND_URL;
+const API_URL = import.meta.env.VITE_BACKEND_URL;
 
 export default function UserProducts() {
   const user = useUserStore((state) => state.user);
@@ -51,45 +51,45 @@ export default function UserProducts() {
         <p className="text-center text-gray-600">No tenés productos creados aún.</p>
       ) : (
         <div>
-        {products.map((product: any) => (
-          <motion.div
-            key={product._id}
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.2 }}
-          >
-            <Card className="rounded-2xl shadow-md p-3 m-4">
-              <CardContent className="p-2 ">
+          {products.map((product: any) => (
+            <motion.div
+              key={product._id}
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.2 }}
+            >
+              <Card className="rounded-2xl shadow-md p-3 m-4">
+                <CardContent className="p-2 ">
 
-                <div className="flex flex-col gap-2">
+                  <div className="flex flex-col gap-2">
                     {product.imageUrl && product.imageUrl.length > 0 && (
-                    <img
-                      src={product.imageUrl}
-                      alt="Producto"
-                      className="rounded-xl w-full max-h-48 object-cover"
-                    />
-                  )}
+                      <img
+                        src={product.imageUrl}
+                        alt="Producto"
+                        className="rounded-xl w-full max-h-48 object-cover"
+                      />
+                    )}
                     <div className="flex flex-row justify-around">
-                        <div className="flex flex-col gap-1">
+                      <div className="flex flex-col gap-1">
                         <h2 className="text-lg font-semibold">{product.title}</h2>
                         <p className="text-xs text-blue-600 uppercase font-bold">{product.category}</p>
-                        </div>
-                        <div className="flex flex-col text-center gap-1">
-                          <p className="font-semibold">${product.price}</p>
-                          <p className={product.stock <= 5 ? "text-red-500" : "text-black"}>Stock: {product.stock}</p>
-                        </div>
+                      </div>
+                      <div className="flex flex-col text-center gap-1">
+                        <p className="font-semibold">${product.price}</p>
+                        <p className={product.stock <= 5 ? "text-red-500" : "text-black"}>Stock: {product.stock}</p>
+                      </div>
                     </div>
-                  
 
-                  { user?.id === userId &&
-                    <Button onClick={() => navigate(`/products/edit/${product._id}`)}>Editar</Button>
-                  }
-                  <Button onClick={() => navigate(`/products/${product._id}`)} >Ver detalle de producto</Button>
-                </div>
-              </CardContent>
-            </Card>
-          </motion.div>
-        ))}
+
+                    {user?.id === userId &&
+                      <Button onClick={() => navigate(`/products/edit/${product._id}`)}>Editar</Button>
+                    }
+                    <Button onClick={() => navigate(`/products/${product._id}`)} >Ver detalle de producto</Button>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          ))}
         </div>
       )}
     </div>

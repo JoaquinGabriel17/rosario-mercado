@@ -2,13 +2,12 @@ import { Button } from "../ui/Button";
 import { useNavigate } from "react-router-dom";
 import { useUserStore } from "../../store/userStore";
 
-export default function Shop(){
-
+export default function Shop() {
 
     const user = useUserStore((state) => state.user);
     const navigate = useNavigate()
 
-    return(
+    return (
         <div className="text-center">
             <h2 className="border-t-2 border-b-2 border-[#1E40AF] text-3xl">
                 Mi tienda

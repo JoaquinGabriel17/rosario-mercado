@@ -8,7 +8,6 @@ import { useUserStore } from '../../store/userStore';
 const OrderDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>(); // Obtiene el ID de la URL
   const navigate = useNavigate();
-  
   const [order, setOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -20,6 +19,7 @@ const OrderDetail: React.FC = () => {
     console.log("ID de la orden:", id);
     if (!id) return;
 
+    // Obtener información del pedido
     const fetchOrderDetail = async () => {
       try {
         const response = await axios.get(API_URL, {
@@ -57,27 +57,27 @@ const OrderDetail: React.FC = () => {
       </div>
 
       <div className="max-w-md mx-auto p-4 space-y-6">
-        
+
         {/* Info General */}
         <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
-           <div className="flex justify-between items-center mb-4">
-              <div>
-                <p className="text-xs text-gray-500 uppercase tracking-wide">Fecha</p>
-                <p className="text-sm font-medium text-gray-800">
-                  {new Date(order.createdAt).toLocaleString()}
-                </p>
-              </div>
-              <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide
-                  ${order.status === 'paid' ? 'bg-green-100 text-green-700' : 
-                    order.status === 'expired' ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-700'}`
-                }>
-                  {order.status}
-              </span>
-           </div>
-           <div>
-             <p className="text-xs text-gray-500 uppercase tracking-wide">ID de Transacción</p>
-             <p className="text-sm text-gray-600 font-mono">{order._id}</p>
-           </div>
+          <div className="flex justify-between items-center mb-4">
+            <div>
+              <p className="text-xs text-gray-500 uppercase tracking-wide">Fecha</p>
+              <p className="text-sm font-medium text-gray-800">
+                {new Date(order.createdAt).toLocaleString()}
+              </p>
+            </div>
+            <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide
+                  ${order.status === 'paid' ? 'bg-green-100 text-green-700' :
+                order.status === 'expired' ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-700'}`
+            }>
+              {order.status}
+            </span>
+          </div>
+          <div>
+            <p className="text-xs text-gray-500 uppercase tracking-wide">ID de Transacción</p>
+            <p className="text-sm text-gray-600 font-mono">{order._id}</p>
+          </div>
         </div>
 
         {/* Lista de Productos */}
@@ -86,9 +86,9 @@ const OrderDetail: React.FC = () => {
           <div className="space-y-3">
             {order.items.map((item) => (
               <div key={item._id} className="bg-white p-3 rounded-xl shadow-sm border border-gray-100 flex gap-4">
-                <img 
-                  src={item.productId.imageUrl} 
-                  alt={item.productId.title} 
+                <img
+                  src={item.productId.imageUrl}
+                  alt={item.productId.title}
                   className="w-20 h-20 object-cover rounded-lg bg-gray-100"
                 />
                 <div className="flex-1 flex flex-col justify-between py-1">
@@ -114,7 +114,7 @@ const OrderDetail: React.FC = () => {
           </div>
           <div className="flex justify-between items-center text-gray-600 mb-4">
             <span>Envío</span>
-            <span>$0.00</span> 
+            <span>$0.00</span>
           </div>
           <div className="border-t border-dashed border-gray-200 pt-4 flex justify-between items-center">
             <span className="font-bold text-gray-800 text-lg">Total</span>

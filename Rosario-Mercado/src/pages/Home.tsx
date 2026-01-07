@@ -78,19 +78,19 @@ function Home() {
           onClose={() => setAlert({ ...alert, open: false })} />}
 
           {productsInfo.bebidasTop.length > 0 && (
-          <div className="border-black border-t-4 border-b-4 mb-4">
+          <div className="border-black border-b-4 mb-4">
             <h2 className="font-bold text-3xl text-center m-2">Bebidas</h2>
             <BestProductsCarousel products={productsInfo.bebidasTop} />
           </div>
         )}
         {productsInfo.comidas.length > 0 && (
-          <div className="lg:h-1/2 border-black border-t-4 border-b-4 mb-4">
+          <div className="lg:h-1/2 border-black border-b-4 mb-4">
             <h2 className="font-bold text-3xl text-center m-2">Comidas</h2>
             <BestProductsCarousel products={productsInfo.comidas} />
           </div>
         )}
         {productsInfo.combos.length > 0 && (
-          <div className="border-black border-t-4 border-b-4 mb-4">
+          <div className="border-black border-b-4 mb-4">
             <h2 className=" font-bold text-3xl text-center m-2">Combos especiales</h2>
             <BestProductsCarousel products={productsInfo.combos} />
           </div>

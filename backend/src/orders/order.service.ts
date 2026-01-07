@@ -4,6 +4,7 @@ import { ProductDAL } from "../products/product.DAL";
 import { mpPreference, client } from "../config/mercadopago";
 import { Payment } from "mercadopago";
 import Schema from "mongoose";
+import { sendNotification } from "../utils/sendNotification";
 
 const orderDal = new OrderDAL();
 const productDal = new ProductDAL();
@@ -20,6 +21,11 @@ export const createOrder = async (items: any[], userId: Schema.Types.ObjectId) =
   // Usamos Promise.all para que las consultas se ejecuten en paralelo (más rápido)
   await Promise.all(
     items.map(async (item) => {
+      const productToBuy = await productDal.findById(item.productId);
+
+      if(!productToBuy) throw new AppError('Uno o mas productos no existentes', 404);
+      if(productToBuy.stock < item.quantity) throw new AppError(`Stock insuficiente para el producto: ${productToBuy.title}`, 400)
+
       const updatedProduct = await productDal.decrementStock(
         item.productId,
         item.quantity
@@ -47,72 +53,61 @@ export const createOrder = async (items: any[], userId: Schema.Types.ObjectId) =
     status: "pending_payment",
     userId
   });
-  // 4. Crear la Preferencia en Mercado Pago
-  /*
-  const response = await mpPreference.create({
-    body: {
-      items: itemsForMercadoPago,
-      back_urls: {
-        success: `${frontendUrl}/orders/payment/success`,
-        failure: `${frontendUrl}/orders/payment/failure`,
-        pending: `${frontendUrl}/orders/payment/pending`,
-      },
-      auto_return: "approved",
-      external_reference: newOrder._id.toString(), // Guardamos el ID de la orden para identificarla luego
-      notification_url: "https://pvgj8rdd-4000.brs.devtunnels.ms/orders/webhook", // Muy importante para recibir el pago
-    }
-  });
-
-  // Retornamos la orden y el init_point (el link al que el usuario debe ir)
-  return {
-    order: newOrder,
-    init_point: response.init_point, // Link de Checkout Pro
-    preferenceId: response.id
-  };
-
-  */
+  
  // 4. Crear la Preferencia en Mercado Pago
  if(!frontendUrl) throw new AppError("url mal definida", 500);
-/*try {*/
 
+ try {
   const response = await mpPreference.create({
     body: {
       items: itemsForMercadoPago,
       back_urls: {
-        success: `https://agora-six-rho.vercel.app/`,
-        failure: `https://agora-six-rho.vercel.app/`,
-        pending: `https://agora-six-rho.vercel.app/`,
+        success: `https://agora-six-rho.vercel.app/orders/payment/success`,
+        failure: `https://agora-six-rho.vercel.app/orders/payment/failure`,
+        pending: `https://agora-six-rho.vercel.app/orders/payment/pending`,
       },
       auto_return: "approved",
       external_reference: newOrder._id.toString(),
-      notification_url: "https://pvgj8rdd-4000.brs.devtunnels.ms/orders/webhook",
+      notification_url: `${process.env.BACKEND_URL}/orders/webhook`,
     }
   });
-
   return {
     order: newOrder,
     init_point: response.init_point,
     preferenceId: response.id
   };
-/** } catch (error: any) {
-  // ESTO TE DIRÁ EXACTAMENTE QUÉ CAMPO FALLA
-  console.error("Error detallado de Mercado Pago:", error.api_response?.data || error);
-  throw new AppError("Error al crear la preferencia de pago", 400);
-}*/
+ } catch (error) {
+  console.log(error);
+  throw new AppError('Error al crear la orden', 500);
+ }
+ 
 };
 
+// OBTENER ORDEN POR ID
 export const getOrder = async (id: string) => {
-  const order = await orderDal.findById(id);
+  // Buscar orden
+  const order = await orderDal.getByIdWithProductsInfo(id);
   if (!order) throw new AppError("La orden solicitada no existe", 404);
   return order;
 };
 
+// ACTUALIZAR ESTADO DE LA ORDEN
 export const updateStatus = async (id: string, status: "paid" | "expired") => {
+  // Actualizar el estado de la orden
   const updatedOrder = await orderDal.update(id, { status });
+  // Enviar notificación al usuario sobre el cambio de estado
+  sendNotification({
+    user: updatedOrder?.userId,
+    title: `Estado de orden actualizado a ${status}`,
+    message: `Tu orden ha sido actualizada a estado ${status}.`,
+    link: `/orders/detail/${id}`
+  });
+
   if (!updatedOrder) throw new AppError("No se pudo actualizar la orden", 404);
   return updatedOrder;
 };
 
+// MANEJAR WEBHOOK DE MERCADO PAGO
 export const handleWebhook = async (paymentId: string) => {
   const payment = new Payment(client);
 
@@ -123,18 +118,33 @@ export const handleWebhook = async (paymentId: string) => {
   const orderId = paymentInfo.external_reference;
   const status = paymentInfo.status;
 
+  const order = await orderDal.findById(orderId!);
+  if(!order) throw new AppError(`La orden ${orderId} no fue encontrada`, 404);
+
   if (!orderId) throw new AppError("No se encontró la referencia de la orden", 400);
 
   // 3. Si el pago fue aprobado, actualizamos nuestra base de datos
   if (status === "approved") {
-    await orderDal.update(orderId, { status: "paid" });
-    await orderDal.increaseSoldCount(orderId);
-    // Aquí podrías disparar otras acciones: enviar mail, imprimir ticket, etc.
+    await orderDal.update(orderId, { status: "paid" }); // Actualizamos el estado de la orden
+    await orderDal.increaseSoldCount(orderId); // Aumentamos el contador de ventas de los productos
+    await sendNotification({ // Creamos y enviamos una notificación de pago exitoso
+      user: order.userId,
+      title: 'Pago exitoso',
+      message: `Tu orden con ID ${orderId} ha sido pagada exitosamente. Ponte en contacto con el vendedor para consultar sobre el envío.`,
+      link: `/orders/detail/${orderId}`
+    });
   } 
   
-  // 4. (Opcional) Si el pago fue rechazado o cancelado, se devuelve el stock
+  // 4. Si el pago fue rechazado o cancelado, se devuelve el stock y se actualiza el estado del pedido
   else if (status === "rejected" || status === "cancelled") {
-    const order = await orderDal.findById(orderId);
+    
+    await sendNotification({ // Creamos y enviamos una notificación de pago cancelado o rechazado
+      user: order.userId,
+      title: 'Pago cancelado o rechazado',
+      message: `El pago de tu orden con ID ${orderId} ha sido cancelado o rechazado. Por favor, intenta realizar el pago nuevamente si deseas completar tu compra.`,
+      link: `/orders/detail/${orderId}`
+    });
+
     if (order) {
       await Promise.all(
         order.items.map(async (item) => {
