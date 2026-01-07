@@ -6,7 +6,7 @@ const notificationDal = new NotificationDAL();
 export async function sendNotification(notificationData: any) {
     try {
         // Crear notificación en BD
-        const newNotification = notificationDal.create(notificationData);
+        const newNotification = await notificationDal.create(notificationData);
 
         // Emitir notificación en tiempo real vía Socket.io
         const io = getIO();

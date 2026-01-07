@@ -52,7 +52,7 @@ const OrdersList: React.FC = () => {
   return (
     <div className="bg-gray-50 min-h-screen pb-20">
       <div className="p-4 max-w-md mx-auto">
-        <h1 className="text-2xl font-bold text-gray-800 mb-6">Mis Pedidos</h1>
+        <h1 className="text-2xl font-bold text-gray-800 mb-6 text-center">Mis Pedidos</h1>
 
         <div className="space-y-4">
           {orders.map((order) => {

@@ -8,6 +8,7 @@ const NotificationSchema = new mongoose.Schema({
   read: { type: Boolean, default: false },
   type: { type: String, enum: ['order_status', 'promo', 'system'], default: 'order_status' },
   link: { type: String },
+  createDate: {type: Date}
 }, { timestamps: true });
 
 export const Notification = mongoose.model('Notification', NotificationSchema);

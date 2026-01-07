@@ -17,7 +17,7 @@ const NotificationList = () => {
 
   const markAllNotificationsAsReadOnServer = async () => {
     try {
-      const response = await fetch(`${backendUrl}/notifications/mark-all-read`, {
+      const response = await fetch(`${backendUrl}/notifications/mark-all-as-read`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -43,7 +43,7 @@ const NotificationList = () => {
           {notifications.map((notification) => (
             <li
               key={notification._id}
-              className={`border p-4 rounded-lg shadow-sm transition hover:shadow-md ${notification.read ? 'bg-gray-50' : 'bg-white border-blue-200'
+              className={`border p-4 rounded-lg shadow-sm transition hover:shadow-md ${notification.read ? 'bg-gray-50' : 'bg-white border-red-300'
                 }`}
             >
               <div className="flex justify-between items-start">
@@ -63,8 +63,6 @@ const NotificationList = () => {
               <div className="mt-3 flex justify-end">
                 <a
                   href={notification.link}
-                  target="_blank"
-                  rel="noopener noreferrer" // Importante para seguridad al usar target="_blank"
                   className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded hover:bg-blue-700 transition-colors"
                 >
                   Ver detalle

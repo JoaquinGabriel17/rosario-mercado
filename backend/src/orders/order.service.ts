@@ -11,7 +11,7 @@ export const createOrder = async (items: any[], userId: Schema.Types.ObjectId) =
   const expiresAt = new Date();
   // Tiempo de expiración de la orden: 20 minutos
   expiresAt.setMinutes(expiresAt.getMinutes() + 20);
-  let sellerId = ""
+  let sellerId = "";
 
   // 1. Mapeamos y procesamos el stock de cada item
   // Usamos Promise.all para que las consultas se ejecuten en paralelo (más rápido)
@@ -45,22 +45,24 @@ export const createOrder = async (items: any[], userId: Schema.Types.ObjectId) =
   // Enviamos notificaciones al usuario comprador y al vendedor.
 
   sendNotification({  //comprador
-    user: userId,
+    user: userId.toString(),
     title: 'Tu pedido fue creado',
     message: `Tu pedido con ID ${newOrder._id} ha sido creada exitosamente. Puedes ver la información del vendedor haciendo click aquí.`,
-    link: `/users/${sellerId}`
+    link: `/users/${sellerId}`,
+    createDate: Date.now()
   });
   sendNotification({  //vendedor
     user: sellerId,
     title: '¡Tienes un pedido pendiente!',
     message: `Se ha creado el pedido con ID ${newOrder._id}. Puedes ver la información del comprador haciendo click aquí.`,
-    link: `/users/${userId}`
+    link: `/users/${userId}`,
+    createDate: Date.now()
   });
 
   return newOrder ;
 };
 
-// OBTENER ORDEN POR ID
+// OBTENER ORDEN POR ID 
 export const getOrder = async (id: string) => {
   // Buscar orden
   const order = await orderDal.getByIdWithProductsInfo(id);

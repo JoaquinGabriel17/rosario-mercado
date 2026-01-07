@@ -51,7 +51,7 @@ export const updateStatus = catchAsync(async (req: Request, res: Response) => {
 });
 
 
-// OBTENER TODAS LAS ORDENES POR ID DE USUARIO
+// OBTENER TODAS LAS ORDENES POR ID DE USUARIO COMPRADOR
 export const getOrdersByBuyerId = catchAsync(async (req: AuthRequest, res: Response) => {
   const userId = req.user?.id;
 
