@@ -44,7 +44,7 @@ const NotificationList = () => {
       <h2 className="text-2xl font-bold mb-4 text-center">Mis Notificaciones</h2>
 
       {notifications.length === 0 ? (
-        <p className="text-gray-500">No tienes notificaciones nuevas.</p>
+        <p className="text-gray-500 text-center">No tienes notificaciones nuevas.</p>
       ) : (
         <ul className="space-y-4">
           {notifications.map((notification) => (

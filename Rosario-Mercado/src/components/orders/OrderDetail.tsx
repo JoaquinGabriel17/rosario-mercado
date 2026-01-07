@@ -4,6 +4,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import type { Order } from '../../types/orders';
 import Loading from '../ui/Loading';
 import { useUserStore } from '../../store/userStore';
+import { Button } from '../ui/Button';
+import Alert from '../ui/Alert';
 
 const OrderDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>(); // Obtiene el ID de la URL
@@ -13,10 +15,15 @@ const OrderDetail: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const user = useUserStore((state) => state.user);
 
+  const [alert, setAlert] = useState({
+  open: false,
+  message: "",
+  type: "info" as "info" | "success" | "error",
+});
+
   const API_URL = `${import.meta.env.VITE_BACKEND_URL}/orders/${id}`;
 
   useEffect(() => {
-    console.log("ID de la orden:", id);
     if (!id) return;
 
     // Obtener información del pedido
@@ -39,6 +46,31 @@ const OrderDetail: React.FC = () => {
     fetchOrderDetail();
   }, [id]);
 
+  const updateStatusHandler = async(status:"pending" | "completed" | "expired" | "cancelled") => {
+    try {
+      setLoading(true);
+
+      await axios.patch(`${import.meta.env.VITE_BACKEND_URL}/orders/update-status`,{
+        id,
+        status
+      },{
+          headers: {
+            Authorization: `Bearer ${user?.token}`,
+          },
+        });
+        order!.status = status
+    } catch (error:any) {
+      setAlert({
+        type: "error",
+        open: true,
+        message: error
+      })
+    }
+    finally{
+      setLoading(false);
+    }
+  } 
+
   if (loading) return <Loading />;
   if (error || !order) return <div className="text-center text-red-500 p-10">{error || 'Pedido no encontrado'}</div>;
 
@@ -46,6 +78,11 @@ const OrderDetail: React.FC = () => {
 
   return (
     <div className="bg-gray-50 min-h-screen">
+      {alert && <Alert
+  open={alert.open}
+  message={alert.message}
+  type={alert.type}
+  onClose={() => setAlert({ ...alert, open: false })}/>}
       {/* Header con botón Back */}
       <div className="bg-white shadow-sm p-4 flex items-center gap-4 sticky top-0 z-10">
         <button onClick={() => navigate(-1)} className="text-gray-600 hover:text-blue-600">
@@ -126,7 +163,18 @@ const OrderDetail: React.FC = () => {
                   <div className='flex flex-col text-center'>
                     <a className='border-2 border-blue-600 rounded p-2 cursor-pointer m-2' onClick={() => navigate(`/users/${order.sellerId}`)}>Ver perfil de <strong>vendedor</strong></a>
                     <a className='border-2 border-blue-600 rounded p-2 cursor-pointer m-2' onClick={() => navigate(`/users/${order.buyerId}`)}>Ver perfil de <strong>comprador</strong></a>
+                  </div>
+
+            {/*Manejo de estado del pedido */}
+            {user?.id == order.sellerId &&
+                  <div className='mb-4 mt-2'>
+                    <h2 className='text-center font-bold m-2 text-2xl'>Opciones de estado</h2>
+                    <div className='flex flex-row justify-center'>
+                      <Button onClick={() => updateStatusHandler('completed')} className="bg-green-600">Confirmar pedido</Button>
+                      <Button onClick={() => updateStatusHandler('cancelled')} className="bg-red-600" >Cancelar pedido</Button>
+                      </div>
                   </div>  
+}
       </div>
     </div>
   );
