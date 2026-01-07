@@ -25,9 +25,9 @@ export async function expireOrder(orderId: string) {
 
   // Crear notificación en BD y enviar vía socket
   await sendNotification({
-    user: order.userId,
-    title: 'Orden expirada',
-    message: `Tu orden con ID ${orderId} ha expirado por falta de pago.`,
+    user: order.sellerId,
+    title: 'Pedido expirado',
+    message: `Tu pedido con ID ${orderId} ha expirado.`,
     link: `/orders/detail/${orderId}`
   });
 

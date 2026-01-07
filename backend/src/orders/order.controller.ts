@@ -2,8 +2,8 @@ import { Request, Response } from "express";
 import { catchAsync } from "../utils/catchAsync";
 import { AppError } from "../utils/AppError";
 import * as OrderService from "./order.service";
-import { AuthRequest } from "../middlewares/auth";
 import { sendNotification } from "../utils/sendNotification";
+import { AuthRequest } from "../middlewares/auth";
 
 // CREAR ORDEN
 export const createOrder = catchAsync(async (req: AuthRequest, res: Response) => {
@@ -18,19 +18,9 @@ export const createOrder = catchAsync(async (req: AuthRequest, res: Response) =>
 
   const newOrder = await OrderService.createOrder(items, userId);
 
-  // Enviar notificación de orden creada
-  await sendNotification({
-    user: userId,
-    title: 'Orden creada',
-    message: `Tu orden con ID ${newOrder.order._id} ha sido creada exitosamente. Con este link puedes proceder al pago.`,
-    link: newOrder.init_point
-  });
-
   return res.status(201).json({
     message: "Orden generada. Redirigiendo a pago...",
-    orderId: newOrder.order._id,
-    init_point: newOrder.init_point, // El frontend usará este link
-    preferenceId: newOrder.preferenceId,
+    orderId: newOrder._id
   });
 });
 
@@ -45,51 +35,38 @@ export const getOrderById = catchAsync(async (req: Request, res: Response) => {
   return res.status(200).json(order);
 });
 
-// MARCAR COMO PAGADA
-export const markAsPaid = catchAsync(async (req: Request, res: Response) => {
-  const { id } = req.params;
+// ACTUALIZAR ESTADO DE PEDIDO
+export const updateStatus = catchAsync(async (req: AuthRequest, res: Response) => {
+  const { id, status } = req.body;
 
   if(!id) throw new AppError("Id de orden requerido", 400);
+  if(!status) throw new AppError("El estado es obligatorio para actualizar el pedido", 400)
 
-  // Actualizar el estado de la orden a 'paid'
-  const updatedOrder = await OrderService.updateStatus(id, "paid");
+  // Actualizar el estado de la orden
+  const updatedOrder = await OrderService.updateStatus(id, status);
+
+  
 
   return res.status(200).json({
-    message: "Orden pagada con éxito",
+    message: "Orden actualizada con éxito",
     order: updatedOrder,
   });
 });
 
-// WEBHOOK DE MERCADO PAGO
-export const receiveWebhook = catchAsync(async (req: Request, res: Response) => {
-  const { query } = req;
-
-// OBTENER TODAS LAS ORDENES POR ID DE USUARIO COMPRADOR
+// OBTENER TODAS LAS COMPRAS POR ID DE USUARIO 
 export const getOrdersByBuyerId = catchAsync(async (req: AuthRequest, res: Response) => {
   const userId = req.user?.id;
 
-  if (!userId) throw new AppError("ID de usuario requerido", 400);
-
   const orders = await OrderService.getOrdersByBuyerId(userId);
-
-  if (topic === "payment") {
-    const paymentId = query.id || query["data.id"];
-    
-    if (paymentId) {
-      await OrderService.handleWebhook(paymentId as string);
-    }
-  }
-  // Siempre respondemos 200 o 201 a Mercado Pago para que deje de reintentar
-  return res.status(200).send("OK");
+  
+  return res.status(200).json(orders);
 });
 
-// OBTENER TODAS LAS ORDENES POR ID DE USUARIO
-export const getOrdersByUserId = catchAsync(async (req: AuthRequest, res: Response) => {
+// OBTENER TODAS LAS VENTAS POR ID DE USUARIO
+export const getOrdersBySellerId = catchAsync(async (req: AuthRequest, res: Response) => {
   const userId = req.user?.id;
 
-  if (!userId) throw new AppError("ID de usuario requerido", 400);
-
-  const orders = await OrderService.getOrdersByUserId(userId);
+  const orders = await OrderService.getOrdersBySellerId(userId);
 
   return res.status(200).json(orders);
 });

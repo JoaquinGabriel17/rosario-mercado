@@ -1,7 +1,7 @@
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { Footer } from "../components/Footer";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { io } from "socket.io-client";
 import toast, {Toaster} from "react-hot-toast";
 import { useUserStore } from "../store/userStore";
@@ -15,10 +15,7 @@ const MainLayout = () => {
   const user = useUserStore((state) => state.user);
   const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:4000";
   const socket = io(backendUrl);
-  const navigate = useNavigate();
   const { setNotifications } = useNotificationStore();
-  const notification = useNotificationStore((state) => state.notifications[0]);
-  const [ currentNotification, setCurrentNotification ] =  useState<null | typeof notification>(null);
   const addNotification = useNotificationStore((state) => state.addLastNotification);
 
   const getUserNotifications = async () => {
@@ -50,10 +47,10 @@ const MainLayout = () => {
       // 2. Escuchar notificaciones
       socket.on('new_notification', (notification) => {
         // Reproducir sonido de notificación
+        console.log(notification)
         playNotificationSound();
         addNotification(notification);
         // A. Mostrar Toast (Popup visual bonito)
-        setCurrentNotification(notification);
         toast(notification.message, {
             icon: '🍔',
             duration: 5000,
@@ -73,7 +70,7 @@ const MainLayout = () => {
   return (
     <>
       <Navbar />
-      { currentNotification && <a onClick={() => navigate(currentNotification.link)} target="_blank"> <Toaster position="top-center" /> </a>}
+      <Toaster position="top-center" />
       <div className="mb-20">
       <Outlet />
       </div>
