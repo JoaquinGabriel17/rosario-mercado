@@ -10,7 +10,7 @@ export async function sendNotification(notificationData: any) {
 
         // Emitir notificación en tiempo real vía Socket.io
         const io = getIO();
-        io.to(notificationData.user).emit('new_notification', newNotification);
+        io.to(notificationData.user).emit('new_notification', notificationData);
     } catch (error) {
         console.error("Error enviando socket:", error);
     }

@@ -24,12 +24,8 @@ export class OrderDAL {
 
   };
 
-  async findByBuyerId(userId: string): Promise<OrderDocument[]> {
-    return await Order.find({ buyerId: userId }).sort({ createdAt: -1 }).populate("items.productId");
-  };
-
-  async findBySellerId(userId: string): Promise<OrderDocument[]>{
-    return await Order.find({ sellerId: userId }).sort({ createdAt: -1}).populate("items.productId");
+  async findByUserId(userId: string): Promise<OrderDocument[]> {
+    return await Order.find({ userId }).sort({ createdAt: -1 }).populate("items.productId");
   };
 
   async increaseSoldCount(orderId: string): Promise<void> {

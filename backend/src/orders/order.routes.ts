@@ -1,6 +1,7 @@
 import { Router } from "express";
 import * as OrderController from "./order.controller";
 import { auth } from "../middlewares/auth";
+// import { protect } from "../middlewares/auth"; // Si quisieras protegerlas
 
 const router = Router();
 
