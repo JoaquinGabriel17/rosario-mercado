@@ -1,8 +1,6 @@
 import { OrderDAL } from "./order.DAL";
 import { AppError } from "../utils/AppError";
 import { ProductDAL } from "../products/product.DAL";
-import { mpPreference, client } from "../config/mercadopago";
-import { Payment } from "mercadopago";
 import Schema from "mongoose";
 import { sendNotification } from "../utils/sendNotification";
 
@@ -15,6 +13,7 @@ export const createOrder = async (items: any[], userId: Schema.Types.ObjectId) =
   // Tiempo de expiración de la orden: 20 minutos
   expiresAt.setMinutes(expiresAt.getMinutes() + 20);
   let sellerId = "";
+  try{
 
   // 1. Mapeamos y procesamos el stock de cada item
   // Usamos Promise.all para que las consultas se ejecuten en paralelo (más rápido)
@@ -32,16 +31,6 @@ export const createOrder = async (items: any[], userId: Schema.Types.ObjectId) =
 
       // 2. Si el DAL devuelve null, es porque no había stock suficiente
       if (!updatedProduct) throw new AppError(`Stock insuficiente para el producto con ID: ${item.productId}`,400);
-
-      // Guardamos la info para MP (título y precio vienen del producto actualizado)
-      itemsForMercadoPago.push({
-        id: updatedProduct._id.toString(),
-        title: updatedProduct.title, 
-        quantity: Number(item.quantity),
-        unit_price: Number(updatedProduct.price), 
-        currency_id: "ARS"
-      });
-
     })
   );
 
@@ -69,11 +58,7 @@ export const createOrder = async (items: any[], userId: Schema.Types.ObjectId) =
     link: `/users/${userId}`,
     createDate: Date.now()
   });
-  return {
-    order: newOrder,
-    init_point: response.init_point,
-    preferenceId: response.id
-  };
+  return newOrder;
  } catch (error) {
   console.log(error);
   throw new AppError('Error al crear la orden', 500);
@@ -103,57 +88,6 @@ export const updateStatus = async (id: string, status: "paid" | "expired") => {
 
   if (!updatedOrder) throw new AppError("No se pudo actualizar la orden", 404);
   return updatedOrder;
-};
-
-// MANEJAR WEBHOOK DE MERCADO PAGO
-export const handleWebhook = async (paymentId: string) => {
-  const payment = new Payment(client);
-
-  // 1. Buscamos el pago en los servidores de Mercado Pago para estar seguros
-  const paymentInfo = await payment.get({ id: paymentId });
-
-  // 2. Extraemos el ID de la orden que guardamos en 'external_reference'
-  const orderId = paymentInfo.external_reference;
-  const status = paymentInfo.status;
-
-  const order = await orderDal.findById(orderId!);
-  if(!order) throw new AppError(`La orden ${orderId} no fue encontrada`, 404);
-
-  if (!orderId) throw new AppError("No se encontró la referencia de la orden", 400);
-
-  // 3. Si el pago fue aprobado, actualizamos nuestra base de datos
-  if (status === "approved") {
-    await orderDal.update(orderId, { status: "paid" }); // Actualizamos el estado de la orden
-    await orderDal.increaseSoldCount(orderId); // Aumentamos el contador de ventas de los productos
-    await sendNotification({ // Creamos y enviamos una notificación de pago exitoso
-      user: order.userId,
-      title: 'Pago exitoso',
-      message: `Tu orden con ID ${orderId} ha sido pagada exitosamente. Ponte en contacto con el vendedor para consultar sobre el envío.`,
-      link: `/orders/detail/${orderId}`
-    });
-  } 
-  
-  // 4. Si el pago fue rechazado o cancelado, se devuelve el stock y se actualiza el estado del pedido
-  else if (status === "rejected" || status === "cancelled") {
-    
-    await sendNotification({ // Creamos y enviamos una notificación de pago cancelado o rechazado
-      user: order.userId,
-      title: 'Pago cancelado o rechazado',
-      message: `El pago de tu orden con ID ${orderId} ha sido cancelado o rechazado. Por favor, intenta realizar el pago nuevamente si deseas completar tu compra.`,
-      link: `/orders/detail/${orderId}`
-    });
-
-    if (order) {
-      await Promise.all(
-        order.items.map(async (item) => {
-          await productDal.incrementStock(item.productId.toString(), item.quantity);
-        })
-      );
-      await orderDal.update(orderId, { status });
-    }
-  }
-
-  return { orderId, status };
 };
 
 // OBTENER PEDIDOS POR ID DE USUARIO
