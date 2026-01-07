@@ -29,6 +29,10 @@ export default function Shop() {
                     className="min-w-2xs mt-4"
                 >Categorías</Button>
 
+                <Button onClick={() => navigate("/connectMP")}
+                    className="min-w-2xs mt-4 mb-4 bg-sky-400"
+                >Vincular cuenta de Mercado Pago</Button>
+
                 <Button
                     onClick={() => navigate("/dashboard")}
                 >Menú principal</Button>
