@@ -1,6 +1,9 @@
 import { useNotificationStore } from '../../store/notificationsStore';
 import { useEffect } from 'react';
 import { useUserStore } from '../../store/userStore';
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+import "dayjs/locale/es";
 
 const NotificationList = () => {
   // Obtenemos las notificaciones del store
@@ -8,6 +11,10 @@ const NotificationList = () => {
   const markAllAsRead = useNotificationStore((state) => state.markAllAsRead);
   const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:4000";
   const user = useUserStore((state) => state.user);
+
+  // Notificaciones dayjs
+  dayjs.extend(relativeTime);
+  dayjs.locale("es");
 
   useEffect(() => {
     // Al montar el componente, marcamos todas las notificaciones como leídas en el servidor y en el store
@@ -55,7 +62,7 @@ const NotificationList = () => {
                     {notification.message}
                   </p>
                   <span className="text-xs text-gray-400 mt-2 block">
-                    {new Date(notification.createdAt).toLocaleString()}
+                    {dayjs(notification.createdAt).fromNow()}
                   </span>
                 </div>
               </div>
