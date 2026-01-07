@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { register, login, updateInfo, forgotPassword, resetPassword, getUserById } from "./user.controller";
+import { register, login, updateInfo, forgotPassword, resetPassword, getUserById, linkSellerAccountMP } from "./user.controller";
 import { auth } from "../middlewares/auth";
 
 const router = Router();
@@ -10,5 +10,6 @@ router.put("/update", auth, updateInfo) //Actualizar información del usuario
 router.post("/forgotPassword", forgotPassword) // Enviar correo para cambio de contraseña
 router.post("/resetPassword",  resetPassword); // Cambiar contraseña
 router.get("/:userId",  getUserById); // Obtener información del usuario
+router.post("/linkMP", auth, linkSellerAccountMP); // Vinuclar cuenta de MP
 
 export default router;

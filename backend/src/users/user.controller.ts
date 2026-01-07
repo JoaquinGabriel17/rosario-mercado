@@ -130,3 +130,16 @@ export const getUserById = async (req: Request, res: Response) => {
     res.status(500).json({ error: error ?? "Error al obtener información de usuario por ID"})
   }
 }
+
+//VINCULAR CUENTA SELLER CON MP
+export const linkSellerAccountMP = catchAsync( async (req: AuthRequest, res: Response) => {
+  
+    const userId = req.user.id;
+    const {code} = req.body
+
+    if (!code) throw new AppError("Código de autorización requerido", 400);
+
+    await UserService.linkSellerAccount(userId, code);
+
+    res.status(201).json({ message: "Cuenta vinculada correctamente" });
+});

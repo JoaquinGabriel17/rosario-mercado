@@ -3,6 +3,7 @@ import { AppError } from "../utils/AppError";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { resend } from "../config/resend";
+import axios from "axios";
 
 export const registerUser = async (userData: any) => {
   const emailExists = await UserDAL.findByEmail(userData.email);
@@ -86,4 +87,40 @@ export const resetUserPassword = async (token: string, password: string) => {
         // Guardar contraseña hasheada
         const salt = await bcrypt.genSalt(10);
         await UserDAL.updatePassword(decoded.id, await bcrypt.hash(password, salt));
+}
+
+// VINCULAR CUENTA CON MERCADO PAGO
+export const linkSellerAccount = async (userId: string, code: string) => {
+  try {
+    // 1. Intercambiar code por tokens con MP
+    const mpResponse = await axios.post('https://api.mercadopago.com/oauth/token', null, {
+      headers: {
+        'accept': 'application/json',
+        'content-type': 'application/x-www-form-urlencoded'
+      },
+      params: {
+        client_id: process.env.MP_CLIENT_ID,
+        client_secret: process.env.MP_CLIENT_SECRET,
+        grant_type: 'authorization_code',
+        code: code,
+        redirect_uri: process.env.MP_REDIRECT_URI // Ej: http://localhost:5173/mp-callback
+      }
+    });
+
+    const { access_token, refresh_token, public_key, user_id, expires_in } = mpResponse.data;
+
+    await UserDAL.updateMPSellerLink({
+      userId: userId,
+      access_token,
+      refreshToken: refresh_token,
+      publicKey: public_key,
+      user_id: user_id.toString(),
+      expiresIn: expires_in,
+      linkedAt: new Date()
+    });
+
+    return ({ success: true, msg: "Cuenta vinculada con éxito"})
+  } catch (error:any) {
+    throw new AppError(`Error vinculando MP: ${error.response?.data || error.message}`, 500);
+  }
 }
