@@ -5,7 +5,7 @@ import type { Order } from '../../types/orders';
 import Loading from '../ui/Loading';
 import { useUserStore } from '../../store/userStore';
 
-const OrdersList: React.FC = () => {
+const Sales: React.FC = () => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -17,7 +17,7 @@ const OrdersList: React.FC = () => {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const response = await axios.get(`${API_URL}/orders/user/orders`, {
+        const response = await axios.get(`${API_URL}/orders/user/sales`, {
           headers: {
             Authorization: `Bearer ${user?.token}`,
           },
@@ -52,7 +52,7 @@ const OrdersList: React.FC = () => {
   return (
     <div className="bg-gray-50 min-h-screen pb-20">
       <div className="p-4 max-w-md mx-auto">
-        <h1 className="text-2xl font-bold text-gray-800 mb-6 text-center">Mis Pedidos</h1>
+        <h1 className="text-2xl font-bold text-gray-800 mb-6 text-center">Ventas</h1>
 
         <div className="space-y-4">
           {orders.map((order) => {
@@ -112,4 +112,4 @@ const OrdersList: React.FC = () => {
   );
 };
 
-export default OrdersList;
+export default Sales;

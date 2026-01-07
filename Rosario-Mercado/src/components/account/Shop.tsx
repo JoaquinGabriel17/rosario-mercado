@@ -29,6 +29,10 @@ export default function Shop() {
                     className="min-w-2xs mt-4"
                 >Categorías</Button>
 
+                <Button onClick={() => navigate("/sales")}
+                    className="min-w-2xs mt-4"
+                >Ventas</Button>
+
                 <Button
                     onClick={() => navigate("/dashboard")}
                 >Menú principal</Button>

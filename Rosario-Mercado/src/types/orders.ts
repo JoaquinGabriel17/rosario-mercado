@@ -16,9 +16,10 @@ export interface OrderItem {
 
 export interface Order {
   _id: string;
-  status: "pending_payment" | "paid" | "expired" | "rejected" | "cancelled";
+  status: "pending" | "completed" | "expired" | "cancelled";
   items: OrderItem[];
-  userId: string;
+  buyerId: string;
+  sellerId: string;
   expiresAt: string;
   createdAt: string;
   updatedAt: string;

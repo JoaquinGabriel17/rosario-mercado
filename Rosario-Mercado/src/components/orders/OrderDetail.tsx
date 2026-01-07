@@ -68,7 +68,7 @@ const OrderDetail: React.FC = () => {
               </p>
             </div>
             <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide
-                  ${order.status === 'paid' ? 'bg-green-100 text-green-700' :
+                  ${order.status === 'completed' ? 'bg-green-100 text-green-700' :
                 order.status === 'expired' ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-700'}`
             }>
               {order.status}
@@ -121,6 +121,12 @@ const OrderDetail: React.FC = () => {
             <span className="font-bold text-blue-600 text-xl">${totalOrder.toFixed(2)}</span>
           </div>
         </div>
+
+        {/* Enlaces a información de usuarios */}
+                  <div className='flex flex-col text-center'>
+                    <a className='border-2 border-blue-600 rounded p-2 cursor-pointer m-2' onClick={() => navigate(`/users/${order.sellerId}`)}>Ver perfil de <strong>vendedor</strong></a>
+                    <a className='border-2 border-blue-600 rounded p-2 cursor-pointer m-2' onClick={() => navigate(`/users/${order.buyerId}`)}>Ver perfil de <strong>comprador</strong></a>
+                  </div>  
       </div>
     </div>
   );

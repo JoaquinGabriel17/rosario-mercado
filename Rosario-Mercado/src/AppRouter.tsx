@@ -26,6 +26,7 @@ import OrderDetail from "./components/orders/OrderDetail.tsx";
 import NotificationList from "./components/notifications/NotificationsList.tsx";
 import { PaymentStatus } from "./components/orders/PaymentStatus.tsx";
 import OAuth from "./components/orders/OAuth.tsx";
+import Sales from "./components/orders/Sales.tsx";
 
 /*import { useUserStore } from "./store/userStore.ts";
 const user = useUserStore((state) => state.user);*/
@@ -74,6 +75,7 @@ const AppRouter = () => {
         <Route path="/orders/user" element={ <OrdersList/>} />
         <Route path="/orders/detail/:id" element={ <OrderDetail/> } />
         <Route path="/OAuth" element={<OAuth/>} />
+        <Route path="/sales" element={<Sales/>} />
 
         {/* Notificaciones */}
         <Route path="/notifications" element={<NotificationList />} />
