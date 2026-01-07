@@ -74,7 +74,6 @@ export const useCartStore = create<CartState>()(
       decreaseItem: (productId) => {
         set((state) => {
           const existingItem = state.items.find((item) => item.productId === productId);
-          console.log(existingItem, productId)
           if (!existingItem) return { items: state.items };
 
           if (existingItem.quantity === 1) {

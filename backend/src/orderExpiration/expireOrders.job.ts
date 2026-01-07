@@ -8,7 +8,7 @@ export function startExpireOrdersJob() {
     try {
       // Encontrar todas las órdenes que han expirado y están pendientes de pago
       const expiredOrders = await Order.find({
-        status: "pending_payment",
+        status: "pending",
         expiresAt: { $lt: new Date() },
       }).select("_id");
 

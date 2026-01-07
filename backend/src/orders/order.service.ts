@@ -49,15 +49,15 @@ export const createOrder = async (items: any[], userId: Schema.Types.ObjectId) =
   await sendNotification({  //comprador
     user: userId.toString(),
     title: 'Tu pedido fue creado',
-    message: `Tu pedido con ID ${newOrder._id} ha sido creada exitosamente. Puedes ver la información del vendedor haciendo click aquí.`,
-    link: `/users/${sellerId}`,
+    message: `Tu pedido ha sido creada exitosamente.`,
+    link: `/orders/detail/${newOrder._id}`,
     createDate: Date.now()
   });
   await sendNotification({  //vendedor
     user: sellerId.toString(),
     title: '¡Tienes un pedido pendiente!',
-    message: `Se ha creado el pedido con ID ${newOrder._id}. Puedes ver la información del comprador haciendo click aquí.`,
-    link: `/users/${userId}`,
+    message: `Se ha creado un nuevo pedido.`,
+    link: `/orders/detail/${newOrder._id}`,
     createDate: Date.now()
   });
 
