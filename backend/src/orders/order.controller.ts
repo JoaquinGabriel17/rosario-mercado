@@ -64,8 +64,13 @@ export const markAsPaid = catchAsync(async (req: Request, res: Response) => {
 export const receiveWebhook = catchAsync(async (req: Request, res: Response) => {
   const { query } = req;
 
-  // Mercado Pago envía notificaciones de varios tipos. Nos interesa 'payment'.
-  const topic = query.topic || query.type;
+// OBTENER TODAS LAS ORDENES POR ID DE USUARIO COMPRADOR
+export const getOrdersByBuyerId = catchAsync(async (req: AuthRequest, res: Response) => {
+  const userId = req.user?.id;
+
+  if (!userId) throw new AppError("ID de usuario requerido", 400);
+
+  const orders = await OrderService.getOrdersByBuyerId(userId);
 
   if (topic === "payment") {
     const paymentId = query.id || query["data.id"];
